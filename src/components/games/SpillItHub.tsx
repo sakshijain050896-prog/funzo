@@ -1,12 +1,12 @@
 import React, { useState, useRef } from 'react';
-import { 
-  Heart, Shuffle, Share2, HelpCircle, Flame, 
+import {
+  Heart, Shuffle, Share2, HelpCircle, Flame,
   ThumbsUp, ThumbsDown, Sparkles
 } from 'lucide-react';
 import { sound } from '../../lib/soundEffects';
-import { 
-  BASE_TOD_DATA, 
-  generateDynamicQuestion, 
+import {
+  BASE_TOD_DATA,
+  generateDynamicQuestion,
   generateTwoTruthsRound,
   generateDynamicWYR,
   generateDynamicNHIE,
@@ -28,9 +28,9 @@ interface SpillItHubProps {
 
 type SocialSubGame = 'truth-or-dare' | 'two-truths' | 'would-you-rather' | 'never-have-i-ever' | 'most-likely-to';
 
-export const SpillItHub: React.FC<SpillItHubProps> = ({ 
+export const SpillItHub: React.FC<SpillItHubProps> = ({
   currentIQ,
-  onActivity, 
+  onActivity,
   onWinLevel,
   onRequestAd,
   onOpenHowToPlay,
@@ -56,7 +56,7 @@ export const SpillItHub: React.FC<SpillItHubProps> = ({
 
   // 2. 2 TRUTHS 1 LIE STATE (Infinite 10,000+ rounds, never repeating after 7 rounds)
   const [twoTruthsRoundNum, setTwoTruthsRoundNum] = useState<number>(1);
-  const [currentTwoTruths, setCurrentTwoTruths] = useState<TwoTruthsRound>(() => 
+  const [currentTwoTruths, setCurrentTwoTruths] = useState<TwoTruthsRound>(() =>
     generateTwoTruthsRound(1, seenLieIndices.current)
   );
   const [twoTruthsSelected, setTwoTruthsSelected] = useState<number | null>(null);
@@ -262,11 +262,10 @@ export const SpillItHub: React.FC<SpillItHubProps> = ({
           <div className="relative w-full aspect-[4/3] max-w-[340px] sm:max-w-[360px] rounded-3xl bg-slate-950 border border-slate-800/80 p-5 flex flex-col justify-between shadow-2xl">
             <div className="flex items-center justify-between">
               <span
-                className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest ${
-                  currentTod.type === 'TRUTH'
-                    ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30'
-                    : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
-                }`}
+                className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest ${currentTod.type === 'TRUTH'
+                  ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30'
+                  : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
+                  }`}
               >
                 {currentTod.type} · Card #{roundCounter} / 10,000+
               </span>
@@ -417,11 +416,10 @@ export const SpillItHub: React.FC<SpillItHubProps> = ({
                   onWinLevel(10, 'DILEMMA MASTER! ⚖️', '5 intense dilemmas decided! Your personality profile is sharpening.');
                 }
               }}
-              className={`w-full p-4 rounded-3xl border-2 text-center transition active:scale-95 ${
-                wyrVoted === 'A'
-                  ? 'bg-blue-600/30 border-blue-500 shadow-md'
-                  : 'bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-800'
-              }`}
+              className={`w-full p-4 rounded-3xl border-2 text-center transition active:scale-95 ${wyrVoted === 'A'
+                ? 'bg-blue-600/30 border-blue-500 shadow-md'
+                : 'bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-800'
+                }`}
             >
               <span className="text-[9px] uppercase font-bold text-blue-500 block mb-0.5">
                 Option A
@@ -448,11 +446,10 @@ export const SpillItHub: React.FC<SpillItHubProps> = ({
                   onWinLevel(10, 'DILEMMA MASTER! ⚖️', '5 intense dilemmas decided! Your personality profile is sharpening.');
                 }
               }}
-              className={`w-full p-4 rounded-3xl border-2 text-center transition active:scale-95 ${
-                wyrVoted === 'B'
-                  ? 'bg-rose-600/30 border-rose-500 shadow-md'
-                  : 'bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-800'
-              }`}
+              className={`w-full p-4 rounded-3xl border-2 text-center transition active:scale-95 ${wyrVoted === 'B'
+                ? 'bg-rose-600/30 border-rose-500 shadow-md'
+                : 'bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-800'
+                }`}
             >
               <span className="text-[9px] uppercase font-bold text-rose-500 block mb-0.5">
                 Option B
@@ -487,9 +484,8 @@ export const SpillItHub: React.FC<SpillItHubProps> = ({
             {Array.from({ length: 10 }).map((_, i) => (
               <Heart
                 key={i}
-                className={`w-3.5 h-3.5 transition ${
-                  i < nhieLives ? 'fill-rose-500 text-rose-500' : 'fill-slate-700 text-slate-700'
-                }`}
+                className={`w-3.5 h-3.5 transition ${i < nhieLives ? 'fill-rose-500 text-rose-500' : 'fill-slate-700 text-slate-700'
+                  }`}
               />
             ))}
           </div>
