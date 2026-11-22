@@ -137,7 +137,71 @@ const DARES_TEMPLATES = [
   'Send an innocent message to your family group chat asking: "Guys, how do you remove glitter from a cat?" and mute it.'
 ];
 
-export function generateDynamicQuestion(_deck: 'kitty' | 'spicy' | 'wild' | 'deep'): TodItem {
+// Genre-specific scenario banks for procedural generation
+const SPICY_SUBJECTS = ['your secret crush', 'your last ex', 'a hot coworker', 'someone in this room you find attractive', 'a celebrity you dream about', 'your Tinder match'];
+const SPICY_TRUTHS = [
+  'What is the most scandalous thought you have had about someone playing this game with you right now?',
+  'Have you ever sent a spicy selfie and immediately regretted who you sent it to?',
+  'What is your biggest romantic fantasy that you have never spoken out loud to anyone?',
+  'If you had to kiss one person currently in this room on the lips, who are you picking without hesitation?',
+  'Have you ever stayed with someone purely because the physical chemistry was amazing even though their personality was toxic?',
+  'What is the wildest place you have ever wanted to make out or hook up?'
+];
+const SPICY_DARES = [
+  'Whisper the most seductive pickup line you know into the ear of the person to your left.',
+  'Let someone in the room send a playful flirty heart emoji to the 3rd person in your Instagram DM list.',
+  'Hold eye contact with your secret favorite person in the room for 45 seconds without breaking or laughing.',
+  'Text your crush: "Hey, I had a wild dream about you last night..." and do not reply for 10 minutes.',
+  'Demonstrate your best slow-motion romantic movie kiss on the back of your own hand.'
+];
+
+const WILD_DARES = [
+  'Do 20 explosive jumping jacks while shouting "I love partying!" after every count.',
+  'Let the player to your right write a funny nickname on your cheek with a washable marker.',
+  'Eat a spoonful of the spiciest condiment available in the kitchen right now.',
+  'Put ice cubes inside both of your socks and dance for 30 seconds.',
+  'Do a dramatic runway model walk across the room and end with an over-the-top superhero pose.',
+  'Speak only in an angry pirate accent until your next turn.'
+];
+
+const DEEP_TRUTHS = [
+  'What is the deepest secret sorrow you carry that you rarely let anyone see?',
+  'If you could apologize to one person from your past without any judgment, who would it be and why?',
+  'What is something you pretend to care about socially just to fit in with your friends?',
+  'What was the single most defining failure of your life, and what did it teach you?',
+  'Do you genuinely love who you are becoming, or are you living to fulfill someone else\'s expectations?'
+];
+
+export function generateDynamicQuestion(deck: 'kitty' | 'spicy' | 'wild' | 'deep'): TodItem {
+  if (deck === 'spicy') {
+    const isTruth = Math.random() < 0.6;
+    if (isTruth) {
+      const useSub = Math.random() < 0.5;
+      if (useSub) {
+        const sub = SPICY_SUBJECTS[Math.floor(Math.random() * SPICY_SUBJECTS.length)];
+        return { type: 'TRUTH', text: `If you were alone in a room with ${sub} right now with no consequences, what would you say or do?` };
+      }
+      return { type: 'TRUTH', text: SPICY_TRUTHS[Math.floor(Math.random() * SPICY_TRUTHS.length)] };
+    } else {
+      return { type: 'DARE', text: SPICY_DARES[Math.floor(Math.random() * SPICY_DARES.length)] };
+    }
+  }
+
+  if (deck === 'wild') {
+    const isDare = Math.random() < 0.75;
+    if (isDare) {
+      return { type: 'DARE', text: WILD_DARES[Math.floor(Math.random() * WILD_DARES.length)] };
+    } else {
+      const sub = SUBJECTS[Math.floor(Math.random() * SUBJECTS.length)];
+      return { type: 'TRUTH', text: `What is the most reckless or wild stunt you pulled with ${sub} that almost got you caught?` };
+    }
+  }
+
+  if (deck === 'deep') {
+    return { type: 'TRUTH', text: DEEP_TRUTHS[Math.floor(Math.random() * DEEP_TRUTHS.length)] };
+  }
+
+  // Default 'kitty' deck
   const isTruth = Math.random() < 0.55;
   if (isTruth) {
     const sub = SUBJECTS[Math.floor(Math.random() * SUBJECTS.length)];

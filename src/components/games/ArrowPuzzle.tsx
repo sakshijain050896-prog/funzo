@@ -6,6 +6,8 @@ import {
   Tv, ChevronLeft, ChevronRight, Hash
 } from 'lucide-react';
 import { sound } from '../../lib/soundEffects';
+import { syncPlayerProgress } from '../../lib/authService';
+import { getStoredStats } from '../../lib/storage';
 
 interface ArrowPuzzleProps {
   onWin: () => void;
@@ -201,6 +203,7 @@ export const ArrowPuzzle: React.FC<ArrowPuzzleProps> = ({ onWin, onRequestAd }) 
   useEffect(() => {
     try {
       localStorage.setItem('funzo_arrow_level', levelNum.toString());
+      syncPlayerProgress(getStoredStats(), levelNum);
     } catch {
       // storage unavailable
     }

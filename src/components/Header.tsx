@@ -1,6 +1,7 @@
 import React from 'react';
-import { Flame, Coins, Volume2, VolumeX, BarChart3, Sun, Moon, HelpCircle, Brain } from 'lucide-react';
+import { Flame, Coins, Volume2, VolumeX, BarChart3, Sun, Moon, HelpCircle, Brain, Cloud, User } from 'lucide-react';
 import { PlayerStats, GenreType, ThemeMode, CARTOON_AVATARS, getIQRank } from '../types';
+import { getCurrentUser } from '../lib/authService';
 
 interface HeaderProps {
   stats: PlayerStats;
@@ -52,9 +53,20 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="text-base font-black tracking-tight text-white leading-none">
                 FUNZO
               </span>
-              <span className="text-[9px] px-1 py-0.2 rounded bg-emerald-500/10 text-emerald-400 font-bold uppercase">
-                FREE
-              </span>
+              {getCurrentUser() ? (
+                <span className="text-[8px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center gap-0.5" title="Cloud Synced">
+                  <Cloud className="w-2.5 h-2.5" />
+                  <span className="hidden sm:inline">Synced</span>
+                </span>
+              ) : (
+                <button
+                  onClick={(e) => { e.stopPropagation(); onOpenProfile(); }}
+                  className="text-[8px] px-1.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-bold hover:bg-indigo-500/30 transition flex items-center gap-0.5"
+                >
+                  <User className="w-2.5 h-2.5" />
+                  <span>Login</span>
+                </button>
+              )}
             </div>
           </div>
 

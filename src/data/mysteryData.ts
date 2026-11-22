@@ -224,45 +224,106 @@ export const CRIME_CASES: CrimeCase[] = [
   },
 ];
 
-export const DETECTIVE_RIDDLES = [
+export interface DetectiveRiddle {
+  title: string;
+  story: string;
+  options: string[];
+  correctOptionIndex: number;
+  clue1: string;
+  clue2: string;
+  solution: string;
+  rewardIQ: number;
+}
+
+export const DETECTIVE_RIDDLES: DetectiveRiddle[] = [
   {
     title: 'The Poisoned Ice Cubes',
     story: 'Two ladies enter a cocktail lounge on a scorching 40°C afternoon. Both order the identical iced lemon iced-tea drink. Sarah drinks hers in under 30 seconds because she is intensely thirsty. Emily sips hers slowly over 45 minutes while texting. Emily collapses and dies of poison, while Sarah is completely unharmed. How did Emily die if both drinks were poured from the exact same pitcher?',
-    clue1: 'The poison was not on the glass rim or in the tea pitcher itself.',
+    options: [
+      'The poison was smeared only on the second glass rim.',
+      'The poison was frozen inside the ice cubes, which melted and dissolved as Emily waited.',
+      'Emily had a severe allergic reaction to lemon pulp in the second glass.',
+      'Sarah was secretly immune to cyanide poison through daily microdoses.'
+    ],
+    correctOptionIndex: 1,
+    clue1: 'The poison was not on the glass rim or in the liquid tea pitcher itself.',
     clue2: 'Think about what happens to ice cubes over 45 minutes versus 30 seconds.',
-    solution: 'The poison was frozen inside the ice cubes! Sarah drank hers so fast the ice cubes didn\'t melt. Emily let her drink sit, allowing the poisoned ice cubes to dissolve into her glass.',
-    rewardIQ: 10,
+    solution: 'The poison was frozen inside the ice cubes! Sarah drank hers so fast the ice cubes didn\'t melt. Emily let her drink sit for 45 minutes, allowing the poisoned ice cubes to dissolve into her glass.',
+    rewardIQ: 15,
   },
   {
-    title: 'The Snowy Cabin Murder',
+    title: 'The Snowy Cabin Mystery',
     story: 'A hermit is found dead in his remote mountain cabin after a 3-day blizzard. The police arrive and find all doors and windows locked from the inside. There are only two sets of footprints in the deep snow: the milkman who arrived this morning and discovered the body, and the mail carrier who delivered a parcel yesterday. Yet the detective arrests the milkman immediately. Why?',
+    options: [
+      'The milkman was wearing boots matching a footprint found on the ceiling.',
+      'The milkman had walked backwards in his own tracks to pretend he never entered.',
+      'The mail carrier had a verified GPS tracking tag on his delivery vehicle.',
+      'The milkman was carrying a stolen set of mountain cabin keys in his apron.'
+    ],
+    correctOptionIndex: 1,
     clue1: 'Look at the footprints leading TO and FROM the cabin door.',
     clue2: 'How could someone lock a door from the inside if they walked away?',
     solution: 'The milkman claimed he only walked to the door and peered through the window. But the snow tracks showed one set going IN, and zero sets leaving—the milkman had walked backwards in his own footsteps to deceive police!',
-    rewardIQ: 10,
+    rewardIQ: 15,
   },
   {
     title: 'The Frozen Watch Alibi',
     story: 'A wealthy art collector was found dead in his private cold-storage vault (-15°C). The collector\'s luxury mechanical wristwatch stopped at exactly 03:15. The suspect claimed he had an ironclad alibi at 03:15 AM because he was seen at an all-night diner 5 miles away. The detective instantly arrested the suspect on the spot. How did the detective know the alibi was fraudulent?',
+    options: [
+      'In a -15°C vault, mechanical watch oil freezes 2-3 hours AFTER death, making the real crime time 12:30 AM (no alibi!).',
+      'The wristwatch had a quartz digital battery that never stops from cold.',
+      'The suspect was caught on camera setting the collector\'s watch hands forward.',
+      'The diner was closed for cleaning between 03:00 AM and 04:00 AM.'
+    ],
+    correctOptionIndex: 0,
     clue1: 'What happens to mechanical lubricated watches inside a sub-zero freezer?',
     clue2: 'Did the watch stop when the victim died, or hours later?',
     solution: 'In a -15°C sub-zero vault, mechanical watch lubricating oil freezes and causes the gears to stop running 2 to 3 hours AFTER the door is sealed. The murder occurred at 12:30 AM when the suspect had NO alibi!',
-    rewardIQ: 15,
+    rewardIQ: 20,
   },
   {
     title: 'The Left-Handed Suicide',
     story: 'A man is found dead in his study slumped over his mahogany desk. A gun is in his right hand, and an audio cassette recorder sits on the desk. When the detective presses PLAY, they hear the man\'s voice: "I cannot go on any longer, life has lost all meaning..." followed by the sound of a gunshot. The detective immediately declares it a homicide, not a suicide. Why?',
+    options: [
+      'The man was left-handed and would not hold a gun in his right hand.',
+      'If the man died immediately from the gunshot, he could not have rewound the cassette tape for the detective to hit PLAY.',
+      'The gunshot audio acoustics sounded like an outdoor firing range.',
+      'The cassette recorder had batteries from a different manufacturer.'
+    ],
+    correctOptionIndex: 1,
     clue1: 'Think about how a cassette tape recorder functions mechanically.',
     clue2: 'Who pressed the REWIND button so the detective could press PLAY?',
-    solution: 'If the man shot himself while recording, who rewound the cassette tape back to the beginning so the detective could hit play? The killer rewound the tape before leaving!',
+    solution: 'If the man shot himself while recording, who rewound the cassette tape back to the beginning so the detective could hit play? The killer rewound the tape before fleeing!',
     rewardIQ: 15,
   },
   {
-    title: 'The Doctor in the Operating Room',
+    title: 'The Emergency Surgeon',
     story: 'A father and son are in a catastrophic car crash. The father dies on the spot. The son is rushed to the emergency room in critical condition. The surgeon looks at the boy on the operating table and gasps: "I cannot operate on this boy, he is my son!" How is this possible if the father died at the scene?',
+    options: [
+      'The surgeon is the boy\'s biological MOTHER.',
+      'The father in the car was an adoptive father, and the surgeon is his biological father.',
+      'The surgeon was confused due to extreme hospital exhaustion.',
+      'The boy was cloned in a medical laboratory.'
+    ],
+    correctOptionIndex: 0,
     clue1: 'Think about family relationships beyond father and son.',
     clue2: 'Who else can be a parent?',
-    solution: 'The surgeon is the boy\'s MOTHER! Simple gender assumptions often trip up the brain.',
+    solution: 'The surgeon is the boy\'s MOTHER! Traditional gender assumptions frequently deceive the brain.',
     rewardIQ: 10,
   },
+  {
+    title: 'The Wet Umbrella Dilemma',
+    story: 'A thief broke into a jewelry estate during a midnight rainstorm. Detectives bring in three suspects found nearby. Suspect A has soaking wet shoes and a dry coat. Suspect B has a completely dry coat and shoes, but his umbrella in the foyer is dripping water. Suspect C is soaking wet from head to toe. Why did the detective arrest Suspect B?',
+    options: [
+      'Suspect B was wearing rubber galoshes matching muddy tracks.',
+      'Suspect B left his wet umbrella outside while hiding inside the dry estate robbing jewels, keeping his clothes dry!',
+      'Suspect A had a receipt for a nearby taxi ride.',
+      'Suspect C had water in his lungs indicating he fell in a pond.'
+    ],
+    correctOptionIndex: 1,
+    clue1: 'How could someone be in a rainstorm without getting their clothes wet?',
+    clue2: 'Where was the thief standing while committing the burglary?',
+    solution: 'Suspect B entered the mansion, left his umbrella dripping, and stayed inside out of the rain while looting the safe, keeping his clothing dry!',
+    rewardIQ: 15,
+  }
 ];

@@ -22,6 +22,7 @@ import {
   saveThemePreference,
   increasePlayerIQ
 } from './lib/storage';
+import { syncPlayerProgress } from './lib/authService';
 import { sound } from './lib/soundEffects';
 import { GenreType, ThemeMode } from './types';
 import { Flame } from 'lucide-react';
@@ -93,6 +94,7 @@ export const App: React.FC = () => {
   const handleGameActivity = (gameId: string) => {
     const { stats: updated, isNewStreakDay, coinsEarned } = recordDailyAttempt(gameId);
     setStats(updated);
+    syncPlayerProgress(updated);
 
     if (isNewStreakDay) {
       sound.playVictory();
@@ -110,6 +112,7 @@ export const App: React.FC = () => {
   const handleLevelCelebration = (iqPoints: number, title: string, subtitle: string) => {
     const { stats: updated } = increasePlayerIQ(iqPoints);
     setStats(updated);
+    syncPlayerProgress(updated);
     setCelebrationTitle(title);
     setCelebrationSubtitle(subtitle);
     setCelebrationIQGained(iqPoints);

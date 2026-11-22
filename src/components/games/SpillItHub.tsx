@@ -78,10 +78,11 @@ export const SpillItHub: React.FC<SpillItHubProps> = ({
   const [mltRoundNum, setMltRoundNum] = useState<number>(1);
   const [currentMltText, setCurrentMltText] = useState<string>(() => generateDynamicMLT(0));
 
-  // DRAW TRUTH OR DARE (Guarantees no repetition in session)
-  const drawTod = (preferredType?: 'TRUTH' | 'DARE') => {
+  // DRAW TRUTH OR DARE (Guarantees no repetition in session and respects chosen deck)
+  const drawTod = (preferredType?: 'TRUTH' | 'DARE', overrideDeck?: 'kitty' | 'spicy' | 'wild' | 'deep') => {
     sound.playTap();
     onActivity();
+    const activeDk = overrideDeck || todDeck;
     const nextRound = roundCounter + 1;
     setRoundCounter(nextRound);
 
@@ -97,9 +98,9 @@ export const SpillItHub: React.FC<SpillItHubProps> = ({
       attempts++;
       const useProcedural = Math.random() < 0.55 || attempts > 5;
       if (useProcedural) {
-        candidate = generateDynamicQuestion(todDeck);
+        candidate = generateDynamicQuestion(activeDk);
       } else {
-        const list = BASE_TOD_DATA[todDeck];
+        const list = BASE_TOD_DATA[activeDk];
         const filtered = preferredType ? list.filter((i) => i.type === preferredType) : list;
         candidate = filtered[Math.floor(Math.random() * filtered.length)];
       }
@@ -114,7 +115,7 @@ export const SpillItHub: React.FC<SpillItHubProps> = ({
     }
 
     if (!candidate) {
-      candidate = generateDynamicQuestion(todDeck);
+      candidate = generateDynamicQuestion(activeDk);
     }
 
     seenTodQuestions.current.add(candidate.text);
@@ -126,11 +127,12 @@ export const SpillItHub: React.FC<SpillItHubProps> = ({
       onRequestAd('Unlock Spicy Couples Deck', () => {
         setUnlockedSpicy(true);
         setTodDeck('spicy');
+        drawTod(undefined, 'spicy');
       });
       return;
     }
     setTodDeck(deck);
-    sound.playTap();
+    drawTod(undefined, deck);
   };
 
   const handleShareCard = (text: string) => {
