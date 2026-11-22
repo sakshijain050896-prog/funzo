@@ -1,6 +1,6 @@
 import React from 'react';
-import { Flame, Coins, Volume2, VolumeX, BarChart3, Sun, Moon, HelpCircle, Brain, Cloud, User } from 'lucide-react';
-import { PlayerStats, GenreType, ThemeMode, CARTOON_AVATARS, getIQRank } from '../types';
+import { Flame, Coins, Volume2, VolumeX, Sun, Moon, HelpCircle } from 'lucide-react';
+import { PlayerStats, GenreType, ThemeMode, CARTOON_AVATARS } from '../types';
 import { getCurrentUser } from '../lib/authService';
 
 interface HeaderProps {
@@ -31,7 +31,6 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenAdmin,
 }) => {
   const avatar = CARTOON_AVATARS.find((a) => a.id === stats.avatarId) || CARTOON_AVATARS[0];
-  const rank = getIQRank(stats.iq || 105);
   const [logoClicks, setLogoClicks] = React.useState<number>(0);
 
   const handleLogoClick = () => {
@@ -46,151 +45,129 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-30 w-full bg-slate-900/95 dark:bg-[#0b0f19]/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800/80 px-2.5 py-1.5 transition-colors">
-      <div className="max-w-2xl mx-auto flex flex-col gap-1.5">
-        {/* Compact Single Row Header */}
+    <header className="sticky top-0 z-30 w-full bg-white/90 dark:bg-[#090d16]/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800/80 px-3 py-2 transition-colors">
+      <div className="max-w-md mx-auto flex flex-col gap-2">
+        {/* Clean Top Navigation Bar */}
         <div className="flex items-center justify-between">
-          {/* Logo & Profile Avatar */}
-          <div className="flex items-center gap-1.5">
+          {/* Left: Avatar & Funzo Brand */}
+          <div className="flex items-center gap-2">
             <button
               onClick={onOpenProfile}
-              className="relative w-7 h-7 rounded-lg bg-gradient-to-tr from-indigo-500 to-pink-500 flex items-center justify-center text-white shadow-sm text-sm hover:scale-105 active:scale-95 transition"
-              title="Edit Profile Avatar"
+              className="relative w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 flex items-center justify-center text-base hover:scale-105 active:scale-95 transition shadow-sm"
+              title="Profile & Cloud Account"
             >
               <span>{avatar.emoji}</span>
-              <span className="absolute -bottom-1 -right-1 px-1 rounded-full bg-amber-500 text-slate-950 font-black text-[7px]">
+              <span className="absolute -bottom-1 -right-1 px-1 rounded-full bg-indigo-600 text-white font-black text-[7px] shadow-sm">
                 {stats.level}
               </span>
             </button>
 
-            <div className="flex items-center gap-1 cursor-pointer" onClick={handleLogoClick} title="Tap 5x for Owner Panel">
-              <span className="text-base font-black tracking-tight text-white leading-none">
+            <div
+              className="flex items-center gap-1.5 cursor-pointer select-none"
+              onClick={handleLogoClick}
+              title="Tap 5x for Admin Panel"
+            >
+              <span className="text-lg font-black tracking-tight text-slate-900 dark:text-white leading-none">
                 FUNZO
               </span>
               {getCurrentUser() ? (
-                <span className="text-[8px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center gap-0.5" title="Cloud Synced">
-                  <Cloud className="w-2.5 h-2.5" />
-                  <span className="hidden sm:inline">Synced</span>
-                </span>
+                <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/50" title="Cloud Synced" />
               ) : (
                 <button
                   onClick={(e) => { e.stopPropagation(); onOpenProfile(); }}
-                  className="text-[8px] px-1.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-bold hover:bg-indigo-500/30 transition flex items-center gap-0.5"
+                  className="text-[9px] px-1.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-500 dark:text-indigo-400 font-bold hover:bg-indigo-500/20 transition"
                 >
-                  <User className="w-2.5 h-2.5" />
-                  <span>Login</span>
+                  Login
                 </button>
               )}
             </div>
           </div>
 
-          {/* Right Controls: IQ Rank Pill, Streak, Coins, Guide, Theme, Sound, Stats */}
-          <div className="flex items-center gap-1 sm:gap-1.5">
-            {/* Universal IQ & Rank Pill */}
+          {/* Right: Consolidated Quick Stats Pill & Utility Controls */}
+          <div className="flex items-center gap-1.5">
+            {/* Unified Stats Pill (Streak + Coins + IQ) */}
             <button
               onClick={onOpenStats}
-              className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-xs font-bold hover:bg-indigo-500/20 transition active:scale-95"
-              title={`Rank: ${rank.title} (${stats.iq || 105} IQ)`}
+              className="flex items-center gap-2 px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 text-xs font-bold hover:border-slate-300 dark:hover:border-slate-700 transition active:scale-95 shadow-sm"
+              title="View Stats & Records"
             >
-              <Brain className="w-3 h-3 text-indigo-400" />
-              <span>{stats.iq || 105}</span>
-              <span>{rank.badge}</span>
-            </button>
-
-            {/* Streak */}
-            <button
-              onClick={onOpenStats}
-              className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold hover:bg-amber-500/20 transition active:scale-95"
-              title="Daily Universal Streak"
-            >
-              <Flame className="w-3 h-3 fill-amber-500 text-amber-500 animate-pulse" />
-              <span>{stats.streak}d</span>
-            </button>
-
-            {/* Coins */}
-            <div 
-              className="flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 text-xs font-bold"
-              title="Funzo Coins"
-            >
-              <Coins className="w-3 h-3 text-yellow-500" />
-              <span>{stats.coins}</span>
-            </div>
-
-            {/* How to Play Guide Button */}
-            <button
-              onClick={() => onOpenHowToPlay()}
-              className="px-1.5 py-1 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 font-bold text-[11px] flex items-center gap-1 transition"
-              title="How to Play Instructions"
-            >
-              <HelpCircle className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Guide</span>
-            </button>
-
-            {/* Theme Toggle */}
-            <button
-              onClick={onToggleTheme}
-              className="p-1 rounded-lg text-slate-400 hover:text-slate-200 transition"
-              title={theme === 'dark' ? 'Switch to Bright Mode' : 'Switch to Dark Mode'}
-            >
-              {theme === 'dark' ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5 text-indigo-400" />}
+              <span className="flex items-center gap-0.5 text-amber-500">
+                <Flame className="w-3.5 h-3.5 fill-amber-500" />
+                <span>{stats.streak}</span>
+              </span>
+              <span className="text-slate-300 dark:text-slate-700">·</span>
+              <span className="flex items-center gap-0.5 text-yellow-500">
+                <Coins className="w-3.5 h-3.5" />
+                <span>{stats.coins}</span>
+              </span>
             </button>
 
             {/* Sound Toggle */}
             <button
               onClick={onToggleSound}
-              className="p-1 rounded-lg text-slate-400 hover:text-slate-200 transition"
+              className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white transition active:scale-95 shadow-sm"
               aria-label="Toggle Sound"
+              title={soundEnabled ? 'Mute Sound' : 'Enable Sound'}
             >
               {soundEnabled ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5 text-rose-500" />}
             </button>
 
-            {/* Stats */}
+            {/* Theme Toggle */}
             <button
-              onClick={onOpenStats}
-              className="p-1 rounded-lg text-slate-400 hover:text-slate-200 transition"
-              aria-label="Stats"
+              onClick={onToggleTheme}
+              className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white transition active:scale-95 shadow-sm"
+              title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             >
-              <BarChart3 className="w-3.5 h-3.5" />
+              {theme === 'dark' ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5 text-indigo-500" />}
+            </button>
+
+            {/* Help / Guide */}
+            <button
+              onClick={() => onOpenHowToPlay()}
+              className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white transition active:scale-95 shadow-sm"
+              title="How to Play"
+            >
+              <HelpCircle className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
 
-        {/* 3 Active Genres Seen Prominently on Single Showing Screen */}
-        <div className="grid grid-cols-3 gap-1 p-0.5 rounded-xl bg-slate-100 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 text-xs font-bold">
+        {/* Modern Segmented Control for 3 Genres */}
+        <div className="grid grid-cols-3 gap-1 p-1 rounded-2xl bg-slate-100 dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 text-xs font-bold">
           <button
             onClick={() => onSelectGenre('brain')}
-            className={`py-1.5 px-1 rounded-lg flex items-center justify-center gap-1 transition active:scale-95 ${
+            className={`py-1.5 px-2 rounded-xl flex items-center justify-center gap-1.5 transition active:scale-95 ${
               activeGenre === 'brain'
-                ? 'bg-indigo-600 text-white shadow-sm font-extrabold'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                ? 'bg-white dark:bg-indigo-600 text-slate-900 dark:text-white shadow-sm font-black'
+                : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
             <span>🧠</span>
-            <span className="truncate">Brain (3)</span>
+            <span className="truncate">Brain</span>
           </button>
 
           <button
             onClick={() => onSelectGenre('social')}
-            className={`py-1.5 px-1 rounded-lg flex items-center justify-center gap-1 transition active:scale-95 ${
+            className={`py-1.5 px-2 rounded-xl flex items-center justify-center gap-1.5 transition active:scale-95 ${
               activeGenre === 'social'
-                ? 'bg-gradient-to-r from-pink-500 to-rose-600 text-white shadow-sm font-extrabold'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                ? 'bg-white dark:bg-indigo-600 text-slate-900 dark:text-white shadow-sm font-black'
+                : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
             <span>💬</span>
-            <span className="truncate">Spill It! (5)</span>
+            <span className="truncate">Spill It</span>
           </button>
 
           <button
             onClick={() => onSelectGenre('mystery')}
-            className={`py-1.5 px-1 rounded-lg flex items-center justify-center gap-1 transition active:scale-95 ${
+            className={`py-1.5 px-2 rounded-xl flex items-center justify-center gap-1.5 transition active:scale-95 ${
               activeGenre === 'mystery'
-                ? 'bg-amber-600 text-white shadow-sm font-extrabold'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                ? 'bg-white dark:bg-indigo-600 text-slate-900 dark:text-white shadow-sm font-black'
+                : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
             <span>🔍</span>
-            <span className="truncate">Mystery (3)</span>
+            <span className="truncate">Mystery</span>
           </button>
         </div>
       </div>

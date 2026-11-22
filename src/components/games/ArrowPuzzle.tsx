@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import confetti from 'canvas-confetti';
 import { 
-  Sparkles, Trophy, RotateCcw, Lightbulb, 
+  HelpCircle, Trophy, RotateCcw, Lightbulb, 
   ArrowUp, ArrowDown, ArrowLeft, ArrowRight, ArrowRightCircle,
   Tv, ChevronLeft, ChevronRight, Hash
 } from 'lucide-react';
@@ -401,91 +401,86 @@ export const ArrowPuzzle: React.FC<ArrowPuzzleProps> = ({ onWin, onRequestAd }) 
     }
   };
 
-  return (
-    <div className="w-full max-w-sm mx-auto flex flex-col items-center select-none pb-6">
-      {/* Top Header with Level & Hint Status */}
-      <div className="w-full flex items-center justify-between mb-2 px-0.5">
-        <div>
-          <h2 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-1.5">
-            <span>Arrow Escape</span>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 font-bold">
-              Level {levelNum} / 10,000+
-            </span>
-          </h2>
-          <p className="text-[11px] text-slate-500 dark:text-slate-400">Clear all arrows with unblocked trajectories!</p>
-        </div>
+  const [showHowToPlay, setShowHowToPlay] = useState<boolean>(false);
 
-        {/* Free Hints Pill */}
+  return (
+    <div className="w-full max-w-sm mx-auto flex flex-col items-center select-none pb-4">
+      {/* Sleek Top Navigation Bar: Level, Prev/Next, Jump, Hints */}
+      <div className="w-full flex items-center justify-between mb-2 px-0.5">
+        {/* Left: Level & Jump */}
         <div className="flex items-center gap-1.5">
           <button
-            onClick={handleHint}
-            className={`px-2.5 py-1 rounded-xl border flex items-center gap-1 transition active:scale-95 ${
-              freeHints > 0
-                ? 'bg-amber-500/10 border-amber-500/30 text-amber-500 dark:text-amber-400'
-                : 'bg-indigo-500/10 border-indigo-500/30 text-indigo-500 dark:text-indigo-400 animate-pulse'
-            }`}
-            title={freeHints > 0 ? `${freeHints} hints left` : 'Watch sponsor video for +2 hints'}
+            onClick={() => setIsJumpModalOpen(true)}
+            className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-white font-black text-xs hover:border-slate-300 dark:hover:border-slate-700 transition active:scale-95 shadow-sm"
+            title="Jump to Level (1–10,000)"
           >
-            <Lightbulb className="w-3.5 h-3.5 fill-current" />
-            <span className="text-xs font-black font-mono">
-              {freeHints > 0 ? `${freeHints} Hints` : 'Ad Hint'}
-            </span>
+            <span>Level {levelNum}</span>
+            <span className="text-[10px] text-slate-400 font-normal">/ 10k</span>
+          </button>
+
+          <button
+            onClick={() => setShowHowToPlay((p) => !p)}
+            className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition"
+            title="How to Play"
+          >
+            <HelpCircle className="w-3.5 h-3.5" />
           </button>
         </div>
-      </div>
 
-      {/* Prominent In-Screen Instruction Card */}
-      <div className="w-full p-2.5 rounded-2xl bg-cyan-50 dark:bg-cyan-950/40 border border-cyan-500/30 mb-2.5 text-left shadow-sm">
-        <div className="text-[10px] font-black uppercase tracking-wider text-cyan-600 dark:text-cyan-400 mb-0.5 flex items-center gap-1">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>HOW TO PLAY (ARROW OUT):</span>
+        {/* Center: Prev / Next buttons */}
+        <div className="flex items-center gap-1">
+          <button
+            onClick={handlePrevLevel}
+            disabled={levelNum <= 1}
+            className="p-1 rounded-lg bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 disabled:opacity-30 text-slate-600 dark:text-slate-300 transition active:scale-95"
+            title="Previous Level"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          <button
+            onClick={handleNextLevel}
+            disabled={levelNum >= 10000}
+            className="p-1 rounded-lg bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 disabled:opacity-30 text-slate-600 dark:text-slate-300 transition active:scale-95"
+            title="Next Level"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
         </div>
-        <p className="text-[11px] text-slate-700 dark:text-slate-200 leading-snug">
-          Tap each arrow to launch it! An arrow can <strong>ONLY</strong> fly away if there is <strong>NO other block in front of it</strong>. Clear outer arrows first to free up the trapped ones inside!
-        </p>
-      </div>
 
-      {/* Level Navigation & Jump Bar */}
-      <div className="w-full flex items-center justify-between gap-1 mb-2.5 px-0.5">
+        {/* Right: Hint Button */}
         <button
-          onClick={handlePrevLevel}
-          disabled={levelNum <= 1}
-          className="p-1.5 rounded-xl bg-slate-200 dark:bg-slate-800 disabled:opacity-40 text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center gap-0.5 transition active:scale-95"
-          title="Previous Level"
+          onClick={handleHint}
+          className={`flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold transition active:scale-95 shadow-sm ${
+            freeHints > 0
+              ? 'bg-amber-500/10 border border-amber-500/30 text-amber-500'
+              : 'bg-indigo-600 text-white shadow-indigo-600/20'
+          }`}
+          title={freeHints > 0 ? `${freeHints} Free Hints Left` : 'Watch Video for +2 Free Hints'}
         >
-          <ChevronLeft className="w-4 h-4" />
-          <span className="hidden sm:inline">Prev</span>
-        </button>
-
-        <button
-          onClick={() => setIsJumpModalOpen(true)}
-          className="px-3 py-1 rounded-xl bg-cyan-600/10 border border-cyan-500/30 text-cyan-600 dark:text-cyan-400 font-black text-xs flex items-center gap-1 hover:bg-cyan-600/20 transition active:scale-95"
-        >
-          <Hash className="w-3.5 h-3.5" />
-          <span>Level {levelNum} (Jump)</span>
-        </button>
-
-        <button
-          onClick={handleNextLevel}
-          disabled={levelNum >= 10000}
-          className="p-1.5 rounded-xl bg-slate-200 dark:bg-slate-800 disabled:opacity-40 text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center gap-0.5 transition active:scale-95"
-          title="Next Level"
-        >
-          <span className="hidden sm:inline">Next</span>
-          <ChevronRight className="w-4 h-4" />
+          <Lightbulb className="w-3.5 h-3.5 fill-current" />
+          <span>{freeHints > 0 ? freeHints : 'Ad'}</span>
         </button>
       </div>
+
+      {/* Optional Collapsible Minimalist Instruction Tip */}
+      {showHowToPlay && (
+        <div className="w-full p-2.5 rounded-2xl bg-indigo-50 dark:bg-slate-900/80 border border-indigo-200/80 dark:border-slate-800 mb-2 text-left text-xs text-slate-600 dark:text-slate-300 animate-fade-in shadow-sm">
+          <p className="leading-relaxed text-[11px]">
+            Tap each arrow to fly away! An arrow can <strong>only escape</strong> if no other block is directly in its path.
+          </p>
+        </div>
+      )}
 
       {/* Active Hint Banner */}
       {highlightedTileId && (
         <div className="w-full py-1.5 px-3 rounded-xl bg-amber-500 text-slate-950 font-black text-xs text-center mb-2 shadow-lg animate-bounce flex items-center justify-center gap-1.5">
-          <Lightbulb className="w-4 h-4 fill-slate-950" />
-          <span>💡 HINT: Tap the flashing golden arrow to launch it!</span>
+          <Lightbulb className="w-3.5 h-3.5 fill-slate-950" />
+          <span>Tap the glowing golden arrow!</span>
         </div>
       )}
 
       {/* ---------------- ARROW PUZZLE STAGE ---------------- */}
-      <div className="relative w-full aspect-square max-w-[340px] p-3 rounded-3xl bg-slate-950 border-2 border-slate-800 shadow-2xl flex items-center justify-center overflow-hidden">
+      <div className="relative w-full aspect-square max-w-[340px] sm:max-w-[360px] p-3 rounded-3xl bg-slate-950 border border-slate-800/80 shadow-2xl flex items-center justify-center overflow-hidden">
         
         {/* Dynamic Grid */}
         <div
@@ -553,34 +548,21 @@ export const ArrowPuzzle: React.FC<ArrowPuzzleProps> = ({ onWin, onRequestAd }) 
         )}
       </div>
 
-      {/* Control Buttons */}
-      <div className="flex items-center justify-between w-full mt-3 px-1 gap-2">
+      {/* Bottom Actions */}
+      <div className="flex items-center justify-between w-full mt-3 px-1">
         <button
           onClick={handleRestart}
-          className="px-3 py-1.5 rounded-xl bg-slate-200 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-slate-700 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-xs font-bold flex items-center gap-1 transition active:scale-95"
+          className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-xs font-bold flex items-center gap-1.5 transition active:scale-95 shadow-sm"
         >
-          <RotateCcw className="w-3.5 h-3.5" /> Reset
+          <RotateCcw className="w-3.5 h-3.5" /> Restart Level
         </button>
 
-        {/* Rewarded Sponsor Video Button */}
         <button
           onClick={handleWatchAdForHints}
-          className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-xs font-bold flex items-center gap-1 shadow-md hover:brightness-110 transition active:scale-95"
+          className="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold flex items-center gap-1.5 transition active:scale-95 shadow-sm shadow-indigo-600/30"
         >
           <Tv className="w-3.5 h-3.5" />
-          <span>🎁 Free Hints (Ad)</span>
-        </button>
-
-        <button
-          onClick={handleHint}
-          className={`px-3 py-1.5 rounded-xl border text-xs font-bold flex items-center gap-1 transition active:scale-95 ${
-            freeHints > 0
-              ? 'bg-amber-500/10 border-amber-500/30 text-amber-500 dark:text-amber-400 hover:bg-amber-500/20'
-              : 'bg-indigo-600 text-white border-indigo-500 shadow-md'
-          }`}
-        >
-          <Lightbulb className="w-3.5 h-3.5" />
-          <span>{freeHints > 0 ? `Hint (${freeHints})` : 'Get Hint (Ad)'}</span>
+          <span>+2 Hints (Ad)</span>
         </button>
       </div>
 

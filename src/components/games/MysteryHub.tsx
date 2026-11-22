@@ -139,7 +139,7 @@ export const MysteryHub: React.FC<MysteryHubProps> = ({
         )}
       </div>
 
-      <div className="w-full grid grid-cols-3 gap-1 p-0.5 bg-slate-200 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-xl mb-3 text-xs font-bold">
+      <div className="w-full grid grid-cols-3 gap-1 p-1 bg-slate-100 dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl mb-3 text-xs font-bold">
         {[
           { id: 'crime-scene', label: `Cases (${CRIME_CASES.length})`, icon: '🔍' },
           { id: 'safe-code', label: 'Vault Safe', icon: '🔐' },
@@ -152,10 +152,10 @@ export const MysteryHub: React.FC<MysteryHubProps> = ({
               setActiveTab(tab.id as MysterySubGame);
               onActivity();
             }}
-            className={`py-1.5 px-1 rounded-lg flex items-center justify-center gap-1 transition active:scale-95 ${
+            className={`py-1.5 px-1 rounded-xl flex items-center justify-center gap-1.5 transition active:scale-95 ${
               activeTab === tab.id
-                ? 'bg-amber-600 text-white shadow-sm font-extrabold'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm font-extrabold border border-slate-200/60 dark:border-slate-700/60'
+                : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
             <span>{tab.icon}</span>
@@ -173,10 +173,10 @@ export const MysteryHub: React.FC<MysteryHubProps> = ({
               <button
                 key={c.caseId}
                 onClick={() => handleSelectCase(idx)}
-                className={`px-3 py-1 rounded-xl text-xs font-bold whitespace-nowrap transition ${
+                className={`px-3 py-1 rounded-xl text-xs font-bold whitespace-nowrap transition shadow-sm ${
                   currentCaseIndex === idx
-                    ? 'bg-amber-600 text-white shadow-md'
-                    : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700'
+                    ? 'bg-indigo-600 text-white shadow-indigo-600/20'
+                    : 'bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800'
                 }`}
               >
                 Case #{101 + idx}
@@ -185,7 +185,7 @@ export const MysteryHub: React.FC<MysteryHubProps> = ({
           </div>
 
           {/* Active Case Narrative Card */}
-          <div className="w-full p-3.5 rounded-2xl bg-slate-900 border border-amber-500/30 mb-3 shadow-lg">
+          <div className="w-full p-4 rounded-3xl bg-slate-950 border border-slate-800 shadow-xl mb-3">
             <div className="flex items-center justify-between mb-1">
               <span className="text-[10px] uppercase font-bold tracking-widest text-amber-400 flex items-center gap-1">
                 <ShieldAlert className="w-3.5 h-3.5" /> {activeCase.title}

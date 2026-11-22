@@ -344,17 +344,17 @@ export const DailyGrid: React.FC<DailyGridProps> = ({
 
   return (
     <div className="w-full max-w-sm sm:max-w-md mx-auto flex flex-col items-center select-none pb-4">
-      {/* Top Header: Difficulty Tabs + Instructions Toggle */}
+      {/* Top Header: Difficulty Tabs */}
       <div className="w-full mb-2">
-        <div className="flex items-center justify-between gap-1 p-0.5 rounded-xl bg-slate-200 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-xs font-bold mb-1.5">
+        <div className="grid grid-cols-4 gap-1 p-1 rounded-2xl bg-slate-100 dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 text-xs font-bold mb-2">
           {(['daily', 'easy', 'medium', 'hard'] as Difficulty[]).map((d) => (
             <button
               key={d}
               onClick={() => setDifficulty(d)}
-              className={`flex-1 py-1 rounded-lg capitalize transition text-center ${
+              className={`py-1.5 rounded-xl capitalize transition text-center ${
                 difficulty === d
-                  ? 'bg-indigo-600 text-white shadow-sm font-bold'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                  ? 'bg-white dark:bg-indigo-600 text-slate-900 dark:text-white shadow-sm font-black'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
               }`}
             >
               {d === 'daily' ? (
@@ -368,11 +368,11 @@ export const DailyGrid: React.FC<DailyGridProps> = ({
           ))}
         </div>
 
-        {/* Status Info + How to Play Toggle */}
-        <div className="flex items-center justify-between px-1 text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+        {/* Minimalist Status Info */}
+        <div className="flex items-center justify-between px-1 text-xs text-slate-500 dark:text-slate-400 font-medium">
           <div className="flex items-center gap-1.5">
             <span>Mistakes:</span>
-            <span className={`font-mono font-bold ${mistakes > 1 ? 'text-rose-400' : 'text-slate-700 dark:text-slate-200'}`}>
+            <span className={`font-mono font-bold ${mistakes > 1 ? 'text-rose-500' : 'text-slate-800 dark:text-slate-200'}`}>
               {mistakes}/3
             </span>
           </div>
@@ -423,7 +423,7 @@ export const DailyGrid: React.FC<DailyGridProps> = ({
       </div>
 
       {/* 9x9 Sudoku Board Container (Viewport-fitted) */}
-      <div className="relative w-full aspect-square max-w-[340px] sm:max-w-[380px] p-1 bg-slate-950 rounded-2xl border-2 border-slate-700/80 shadow-2xl">
+      <div className="relative w-full aspect-square max-w-[340px] sm:max-w-[360px] p-1.5 bg-slate-950 rounded-3xl border border-slate-800/80 shadow-2xl">
         {isPaused && (
           <div className="absolute inset-0 z-20 rounded-2xl bg-slate-950/90 backdrop-blur-sm flex flex-col items-center justify-center">
             <h3 className="text-xl font-bold text-white mb-3">Game Paused</h3>
@@ -502,7 +502,7 @@ export const DailyGrid: React.FC<DailyGridProps> = ({
       </div>
 
       {/* Action Toolbar: Undo, Erase, Pencil, Hint */}
-      <div className="w-full max-w-[340px] sm:max-w-[380px] flex items-center justify-between mt-2.5 mb-2 gap-1.5">
+      <div className="w-full max-w-[340px] sm:max-w-[360px] flex items-center justify-between mt-2.5 mb-2 gap-1.5">
         <button
           onClick={handleUndo}
           disabled={history.length === 0}
@@ -545,7 +545,7 @@ export const DailyGrid: React.FC<DailyGridProps> = ({
       </div>
 
       {/* Number Pad (1-9) */}
-      <div className="w-full max-w-[340px] sm:max-w-[380px] grid grid-cols-9 gap-1">
+      <div className="w-full max-w-[340px] sm:max-w-[360px] grid grid-cols-9 gap-1">
         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
           <button
             key={num}

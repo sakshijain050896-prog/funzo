@@ -208,7 +208,7 @@ export const SpillItHub: React.FC<SpillItHubProps> = ({
       </div>
 
       {/* Sub-Game Tabs Navigation */}
-      <div className="w-full grid grid-cols-5 gap-1 p-0.5 bg-slate-200 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-xl mb-3 text-[10px] sm:text-[11px] font-bold">
+      <div className="w-full grid grid-cols-5 gap-1 p-1 bg-slate-100 dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl mb-3 text-[10px] sm:text-xs font-bold">
         {[
           { id: 'truth-or-dare', label: 'T or D', icon: '🔥' },
           { id: 'two-truths', label: '2T 1L', icon: '🤥' },
@@ -223,10 +223,10 @@ export const SpillItHub: React.FC<SpillItHubProps> = ({
               setActiveTab(tab.id as SocialSubGame);
               onActivity();
             }}
-            className={`py-1.5 px-0.5 rounded-lg flex flex-col items-center justify-center transition active:scale-95 ${
+            className={`py-1.5 px-0.5 rounded-xl flex flex-col items-center justify-center transition active:scale-95 ${
               activeTab === tab.id
-                ? 'bg-gradient-to-br from-pink-500 to-rose-600 text-white shadow-md font-black'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm font-extrabold border border-slate-200/60 dark:border-slate-700/60'
+                : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
             <span className="text-xs">{tab.icon}</span>
@@ -239,15 +239,15 @@ export const SpillItHub: React.FC<SpillItHubProps> = ({
       {activeTab === 'truth-or-dare' && (
         <div className="w-full flex flex-col items-center animate-fade-in text-center">
           {/* Deck Selector Pills */}
-          <div className="flex gap-1 mb-2.5 overflow-x-auto w-full pb-0.5 px-0.5">
+          <div className="flex gap-1.5 mb-3 overflow-x-auto w-full pb-0.5 px-0.5">
             {(['kitty', 'spicy', 'wild', 'deep'] as const).map((d) => (
               <button
                 key={d}
                 onClick={() => handleSelectDeck(d)}
-                className={`px-2.5 py-1 rounded-xl text-xs font-bold capitalize whitespace-nowrap transition ${
+                className={`px-3 py-1 rounded-xl text-xs font-bold capitalize whitespace-nowrap transition shadow-sm ${
                   todDeck === d
-                    ? 'bg-rose-500 text-white shadow-md'
-                    : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-400 border border-slate-300 dark:border-slate-700'
+                    ? 'bg-indigo-600 text-white shadow-indigo-600/20'
+                    : 'bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800'
                 }`}
               >
                 {d === 'kitty' && '🐱 Kitty Party'}
@@ -259,7 +259,7 @@ export const SpillItHub: React.FC<SpillItHubProps> = ({
           </div>
 
           {/* Main Card */}
-          <div className="relative w-full aspect-[4/3] max-w-[340px] rounded-3xl bg-gradient-to-br from-slate-900 to-slate-950 border-2 border-rose-500/40 p-5 flex flex-col justify-between shadow-2xl">
+          <div className="relative w-full aspect-[4/3] max-w-[340px] sm:max-w-[360px] rounded-3xl bg-slate-950 border border-slate-800/80 p-5 flex flex-col justify-between shadow-2xl">
             <div className="flex items-center justify-between">
               <span
                 className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest ${

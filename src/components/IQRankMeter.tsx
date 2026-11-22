@@ -1,5 +1,5 @@
 import React from 'react';
-import { Brain, ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import { getIQRankDetails } from '../types';
 
 interface IQRankMeterProps {
@@ -10,73 +10,44 @@ interface IQRankMeterProps {
 
 export const IQRankMeter: React.FC<IQRankMeterProps> = ({
   currentIQ,
-  sectionName = 'Cognitive Arena',
   onOpenStats,
 }) => {
   const details = getIQRankDetails(currentIQ);
   const remaining = Math.max(0, details.nextIQ - currentIQ);
 
   return (
-    <div className={`w-full p-2.5 rounded-2xl bg-white dark:bg-slate-900 border ${details.borderColor} mb-2.5 shadow-sm transition-all`}>
-      <div className="flex items-center justify-between mb-1.5">
-        {/* Left: Icon & IQ */}
-        <div className="flex items-center gap-2">
-          <div className={`w-8 h-8 rounded-xl ${details.bgColor} flex items-center justify-center font-bold text-lg shrink-0`}>
-            <span>{details.badge}</span>
+    <div
+      onClick={onOpenStats}
+      className="w-full mb-2.5 px-3 py-2 rounded-2xl bg-white/80 dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-800/80 backdrop-blur-sm flex items-center justify-between cursor-pointer hover:border-indigo-500/40 transition group shadow-sm"
+    >
+      <div className="flex items-center gap-2.5">
+        <div className="w-7 h-7 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-sm shadow-sm shrink-0">
+          <span>{details.badge}</span>
+        </div>
+        <div>
+          <div className="flex items-center gap-1.5 text-xs">
+            <span className="font-black text-slate-900 dark:text-white font-mono">
+              {currentIQ} IQ
+            </span>
+            <span className="text-slate-400 dark:text-slate-600">·</span>
+            <span className={`font-bold text-[11px] ${details.color}`}>
+              {details.title}
+            </span>
           </div>
-          <div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                {sectionName}
-              </span>
-              <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-black">
-                +15 IQ/WIN
-              </span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-sm font-black font-mono text-slate-900 dark:text-white">
-                {currentIQ} IQ
-              </span>
-              <span className="text-slate-400 dark:text-slate-600">·</span>
-              <span className={`text-xs font-black ${details.color}`}>
-                {details.title}
-              </span>
-            </div>
+          <div className="w-28 sm:w-36 bg-slate-200 dark:bg-slate-800 rounded-full h-1 mt-1 overflow-hidden">
+            <div
+              className="bg-indigo-500 h-full rounded-full transition-all duration-500"
+              style={{ width: `${details.progressPercent}%` }}
+            />
           </div>
         </div>
-
-        {/* Right: Quick action / Stats */}
-        {onOpenStats && (
-          <button
-            onClick={onOpenStats}
-            className="flex items-center gap-0.5 text-[11px] font-bold text-indigo-500 dark:text-indigo-400 hover:underline px-1.5 py-0.5 rounded-lg hover:bg-indigo-500/10 transition"
-            title="View Rank Stats & Records"
-          >
-            <span>Ranks</span>
-            <ArrowUpRight className="w-3 h-3" />
-          </button>
-        )}
       </div>
 
-      {/* Progress Bar Gauge towards next rank */}
-      <div className="w-full">
-        <div className="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 mb-1">
-          <span className="flex items-center gap-1">
-            <Brain className="w-3 h-3 text-indigo-400" />
-            <span>Next Tier:</span>
-            <strong className="text-slate-700 dark:text-slate-200">{details.nextTitle}</strong>
-          </span>
-          <span className="font-mono font-bold text-amber-500 dark:text-amber-400">
-            {remaining > 0 ? `${remaining} IQ needed` : 'MAX RANK'}
-          </span>
-        </div>
-
-        <div className="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
-          <div
-            className="bg-gradient-to-r from-indigo-500 via-cyan-400 to-amber-400 h-full transition-all duration-700 rounded-full"
-            style={{ width: `${details.progressPercent}%` }}
-          />
-        </div>
+      <div className="flex items-center gap-1 text-right">
+        <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+          {remaining > 0 ? `${remaining} to ${details.nextTitle}` : 'Max'}
+        </span>
+        <ArrowUpRight className="w-3 h-3 text-slate-400 group-hover:text-indigo-400 transition" />
       </div>
     </div>
   );

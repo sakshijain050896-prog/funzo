@@ -266,7 +266,7 @@ export const Game2048: React.FC<Game2048Props> = ({ onWinOrScore, onRequestAd })
       <div
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
-        className="relative w-full aspect-square bg-slate-950 p-2.5 rounded-2xl border-2 border-slate-800 shadow-2xl grid grid-cols-4 grid-rows-4 gap-2 touch-none"
+        className="relative w-full aspect-square max-w-[340px] sm:max-w-[360px] bg-slate-950 p-3 rounded-3xl border border-slate-800/80 shadow-2xl grid grid-cols-4 grid-rows-4 gap-2.5 touch-none"
       >
         {board.map((row, r) =>
           row.map((cell, c) => (

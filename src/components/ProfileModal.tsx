@@ -209,7 +209,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
         )}
 
         {/* Navigation Tabs (Phone OTP, Password, Google, Profile) */}
-        <div className="grid grid-cols-4 gap-1 p-0.5 bg-slate-950 rounded-xl mb-3 text-[10px] font-bold">
+        <div className="grid grid-cols-4 gap-1 p-1 bg-slate-950/80 border border-slate-800/80 rounded-2xl mb-3 text-[10px] font-bold">
           <button
             onClick={() => { sound.playTap(); setActiveTab('phone'); }}
             className={`py-1.5 rounded-lg transition ${

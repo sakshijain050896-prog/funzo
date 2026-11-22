@@ -183,22 +183,22 @@ export const App: React.FC = () => {
       )}
 
       {/* Main Single-Screen Game Stage (Keep-Alive: All games stay mounted in memory when switching) */}
-      <main className="flex-1 w-full max-w-lg mx-auto px-2.5 py-2 flex flex-col items-center justify-start">
+      <main className="flex-1 w-full max-w-md mx-auto px-3 py-2 flex flex-col items-center justify-start">
         {/* 1. BRAIN GENRE (3 CURATED GAMES) */}
         <div className={`w-full flex flex-col items-center ${activeGenre === 'brain' ? 'block' : 'hidden'}`}>
           {/* Universal IQ & Rank Progress Meter in Brain Hub */}
           <IQRankMeter
             currentIQ={stats.iq || 105}
-            sectionName="Brain Grid Arena"
+            sectionName="Cognitive Logic"
             onOpenStats={() => setIsStatsOpen(true)}
           />
 
           {/* Brain Sub-Game Pills (Sudoku, 2048, Arrow Escape) */}
-          <div className="flex items-center justify-between gap-1 mb-2 p-0.5 rounded-xl bg-slate-200 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-[11px] font-bold overflow-x-auto w-full">
+          <div className="grid grid-cols-3 gap-1 p-1 rounded-2xl bg-slate-100 dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 text-xs font-bold mb-3 w-full">
             {[
-              { id: 'sudoku', label: 'Sudoku Master' },
-              { id: '2048', label: '2048 Rush' },
-              { id: 'arrows', label: 'Arrow Escape 🏹' },
+              { id: 'sudoku', label: 'Sudoku' },
+              { id: '2048', label: '2048' },
+              { id: 'arrows', label: 'Arrow Out' },
             ].map((g) => (
               <button
                 key={g.id}
@@ -207,10 +207,10 @@ export const App: React.FC = () => {
                   setBrainGame(g.id as BrainSubGame);
                   handleGameActivity(g.id);
                 }}
-                className={`flex-1 py-1.5 rounded-lg text-center transition active:scale-95 ${
+                className={`py-1.5 px-2 rounded-xl text-center transition active:scale-95 ${
                   brainGame === g.id
-                    ? 'bg-indigo-600 text-white shadow-sm font-black'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm font-extrabold border border-slate-200/60 dark:border-slate-700/60'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 {g.label}
