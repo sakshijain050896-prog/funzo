@@ -22,30 +22,30 @@ export const StatsModal: React.FC<StatsModalProps> = ({ isOpen, onClose, stats }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in">
-      <div className="relative w-full max-w-sm rounded-3xl bg-[#1a2c35] border-2 border-[#2b4554] p-5 shadow-2xl">
+      <div className="relative w-full max-w-sm rounded-3xl bg-white dark:bg-[#1a2c35] border-2 border-slate-200 dark:border-[#2b4554] p-5 shadow-2xl">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-base font-black text-white flex items-center gap-2">
-            <Trophy className="w-4 h-4 text-amber-400" />
+          <h2 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
+            <Trophy className="w-4 h-4 text-amber-500" />
             Player Ranking &amp; Stats
           </h2>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-slate-400 hover:text-white transition"
+            className="p-1 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-white transition"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Universal IQ & Rank Banner */}
-        <div className="p-3.5 rounded-2xl bg-slate-950 border border-indigo-500/40 mb-3 text-left">
+        <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-indigo-500/40 mb-3 text-left">
           <div className="flex items-center justify-between mb-1.5">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-base">
+              <div className="w-8 h-8 rounded-xl bg-indigo-500/20 text-indigo-500 dark:text-indigo-400 flex items-center justify-center font-bold text-base">
                 <Brain className="w-4 h-4" />
               </div>
               <div>
-                <div className="text-[10px] uppercase font-bold text-slate-400">Universal IQ Rating</div>
-                <div className="text-base font-black font-mono text-white flex items-center gap-1.5">
+                <div className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400">Universal IQ Rating</div>
+                <div className="text-base font-black font-mono text-slate-900 dark:text-white flex items-center gap-1.5">
                   <span>{stats.iq || 105} IQ</span>
                   <span className={`text-xs ${rank.color}`}>({rank.title} {rank.badge})</span>
                 </div>

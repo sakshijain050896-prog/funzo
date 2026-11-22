@@ -81,11 +81,30 @@
   border-bottom-width: 2px;
 }
 
+/* Bright Mode Tactile Overrides */
+.light .btn-tactile-slate {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-bottom: 4px solid #cbd5e1;
+  color: #1e293b;
+}
+.light .btn-tactile-slate:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
 .neo-card {
   background-color: #1a2c35;
   border: 2px solid #2b4554;
   border-radius: 1.5rem;
   box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.4);
+}
+
+.light .neo-card {
+  background-color: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
 }
 
 /* Custom subtle scrollbar */
@@ -98,11 +117,23 @@
   background: #131f24;
 }
 
+.light ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
 ::-webkit-scrollbar-thumb {
   background: #2b4554;
   border-radius: 9999px;
 }
 
+.light ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+}
+
 ::-webkit-scrollbar-thumb:hover {
   background: #3b5a6d;
+}
+
+.light ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }

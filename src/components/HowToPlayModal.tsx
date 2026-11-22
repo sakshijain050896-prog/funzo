@@ -142,29 +142,29 @@ export const HowToPlayModal: React.FC<HowToPlayModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-3 sm:p-4 overflow-y-auto">
-      <div className="relative w-full max-w-lg rounded-3xl bg-slate-900 border border-slate-700/80 p-5 sm:p-6 shadow-2xl my-6 max-h-[90vh] flex flex-col">
+      <div className="relative w-full max-w-lg rounded-3xl bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700/80 p-5 sm:p-6 shadow-2xl my-6 max-h-[90vh] flex flex-col text-slate-900 dark:text-white">
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
               <BookOpen className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-base sm:text-lg font-black text-white">How to Play Guide</h2>
-              <p className="text-[11px] text-slate-400">Rules, controls &amp; pro tips for all games</p>
+              <h2 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">How to Play Guide</h2>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">Rules, controls &amp; pro tips for all games</p>
             </div>
           </div>
 
           <button
             onClick={onClose}
-            className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition"
+            className="p-1.5 rounded-xl text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Game Switcher Tabs */}
-        <div className="flex gap-1.5 py-3 overflow-x-auto w-full no-scrollbar border-b border-slate-800/60">
+        <div className="flex gap-1.5 py-3 overflow-x-auto w-full no-scrollbar border-b border-slate-200 dark:border-slate-800/60">
           {INSTRUCTIONS_DATA.map((g) => {
             const isSelected = g.id === selectedGameId;
             return (
@@ -177,7 +177,7 @@ export const HowToPlayModal: React.FC<HowToPlayModalProps> = ({
                 className={`px-3 py-1.5 rounded-xl whitespace-nowrap text-xs font-bold transition flex items-center gap-1.5 shrink-0 ${
                   isSelected
                     ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                    : 'bg-slate-800/80 text-slate-400 hover:text-slate-200'
+                    : 'bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                 }`}
               >
                 <span>{g.icon}</span>
@@ -190,33 +190,33 @@ export const HowToPlayModal: React.FC<HowToPlayModalProps> = ({
         {/* Scrollable Instruction Body */}
         <div className="overflow-y-auto pr-1 py-4 flex-1 text-left space-y-4 text-xs">
           {/* Title Banner */}
-          <div className="p-3.5 rounded-2xl bg-gradient-to-br from-indigo-950/40 via-slate-800/40 to-slate-900 border border-indigo-500/30">
+          <div className="p-3.5 rounded-2xl bg-indigo-50 dark:bg-gradient-to-br dark:from-indigo-950/40 dark:via-slate-800/40 dark:to-slate-900 border border-indigo-200 dark:border-indigo-500/30">
             <div className="flex items-center justify-between mb-1">
-              <span className="text-base font-black text-white flex items-center gap-1.5">
+              <span className="text-base font-black text-slate-900 dark:text-white flex items-center gap-1.5">
                 <span>{currentGame.icon}</span>
                 <span>{currentGame.title}</span>
               </span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-bold uppercase tracking-wider">
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 font-bold uppercase tracking-wider">
                 {currentGame.genre}
               </span>
             </div>
-            <p className="text-xs text-slate-300 font-medium">{currentGame.tagline}</p>
+            <p className="text-xs text-slate-600 dark:text-slate-300 font-medium">{currentGame.tagline}</p>
           </div>
 
           {/* 1. Objective */}
           <div>
-            <h4 className="text-[11px] font-black uppercase tracking-wider text-amber-400 flex items-center gap-1.5 mb-1.5">
+            <h4 className="text-[11px] font-black uppercase tracking-wider text-amber-600 dark:text-amber-400 flex items-center gap-1.5 mb-1.5">
               <span>🎯</span> Game Objective
             </h4>
-            <p className="text-slate-300 bg-slate-950/60 p-3 rounded-xl border border-slate-800 leading-relaxed">
+            <p className="text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-950/60 p-3 rounded-xl border border-slate-200 dark:border-slate-800 leading-relaxed">
               {currentGame.objective}
             </p>
           </div>
 
           {/* 2. Controls (Mobile vs Laptop) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800">
-              <h5 className="font-bold text-emerald-400 flex items-center gap-1.5 mb-1 text-[11px]">
+            <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
+              <h5 className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5 mb-1 text-[11px]">
                 <Smartphone className="w-3.5 h-3.5" /> Mobile Phone Controls
               </h5>
               <p className="text-slate-400 leading-relaxed text-[11px]">

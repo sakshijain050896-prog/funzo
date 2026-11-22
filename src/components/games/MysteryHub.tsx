@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Search, ShieldAlert, KeyRound, HelpCircle, Lock
 } from 'lucide-react';
@@ -34,6 +34,24 @@ export const MysteryHub: React.FC<MysteryHubProps> = ({
   const [selectedHotspot, setSelectedHotspot] = useState<string | null>(null);
   const [accusedSuspect, setAccusedSuspect] = useState<string | null>(null);
   const [caseSolved, setCaseSolved] = useState<boolean>(false);
+
+  // Sequential progression: Cases must be solved in order
+  const [maxUnlockedCase, setMaxUnlockedCase] = useState<number>(() => {
+    try {
+      const saved = localStorage.getItem('funzo_mystery_max_case');
+      return saved ? parseInt(saved, 10) : 0;
+    } catch {
+      return 0;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('funzo_mystery_max_case', maxUnlockedCase.toString());
+    } catch {
+      // storage unavailable
+    }
+  }, [maxUnlockedCase]);
 
   // ---------------- 2. SAFE CODEBREAKER STATE ----------------
   const [secretCode, setSecretCode] = useState<string>(() => generateRandomCode());
@@ -104,8 +122,9 @@ export const MysteryHub: React.FC<MysteryHubProps> = ({
   const [isRiddleCorrect, setIsRiddleCorrect] = useState<boolean | null>(null);
   const [showSolution, setShowSolution] = useState<boolean>(false);
 
-  // Switch Crime Case
+  // Switch Crime Case (Only allowed if unlocked)
   const handleSelectCase = (idx: number) => {
+    if (idx > maxUnlockedCase) return;
     sound.playTap();
     setCurrentCaseIndex(idx);
     setDiscoveredClues(new Set());
@@ -167,34 +186,41 @@ export const MysteryHub: React.FC<MysteryHubProps> = ({
       {/* ---------------- 1. CRIME SCENE INVESTIGATION ---------------- */}
       {activeTab === 'crime-scene' && (
         <div className="w-full flex flex-col items-center animate-fade-in text-left">
-          {/* Case Selector Pills */}
+          {/* Case Selector Pills (Strictly Sequential Unlocking) */}
           <div className="flex gap-2 mb-3 overflow-x-auto w-full pb-1">
-            {CRIME_CASES.map((c, idx) => (
-              <button
-                key={c.caseId}
-                onClick={() => handleSelectCase(idx)}
-                className={`px-3.5 py-1.5 rounded-2xl text-xs font-black whitespace-nowrap transition shadow-sm ${
-                  currentCaseIndex === idx
-                    ? 'btn-tactile-blue'
-                    : 'btn-tactile-slate'
-                }`}
-              >
-                Case #{101 + idx}
-              </button>
-            ))}
+            {CRIME_CASES.map((c, idx) => {
+              const isLocked = idx > maxUnlockedCase;
+              return (
+                <button
+                  key={c.caseId}
+                  disabled={isLocked}
+                  onClick={() => handleSelectCase(idx)}
+                  className={`px-3.5 py-1.5 rounded-2xl text-xs font-black whitespace-nowrap transition shadow-sm ${
+                    isLocked
+                      ? 'opacity-40 cursor-not-allowed bg-slate-100 dark:bg-slate-800 border-b-2 border-slate-300 dark:border-slate-700 text-slate-500'
+                      : currentCaseIndex === idx
+                      ? 'btn-tactile-blue'
+                      : 'btn-tactile-slate'
+                  }`}
+                  title={isLocked ? `Solve Case #${101 + idx - 1} first to unlock!` : `Case #${101 + idx}`}
+                >
+                  {isLocked ? `🔒 Case #${101 + idx}` : `Case #${101 + idx}`}
+                </button>
+              );
+            })}
           </div>
 
           {/* Active Case Narrative Card */}
-          <div className="w-full p-5 rounded-3xl bg-[#1a2c35] border-2 border-[#2b4554] shadow-2xl mb-3.5">
+          <div className="w-full p-5 rounded-3xl bg-white dark:bg-[#1a2c35] border-2 border-slate-200 dark:border-[#2b4554] shadow-xl dark:shadow-2xl mb-3.5">
             <div className="flex items-center justify-between mb-1">
-              <span className="text-[10px] uppercase font-bold tracking-widest text-amber-400 flex items-center gap-1">
+              <span className="text-[10px] uppercase font-bold tracking-widest text-amber-500 dark:text-amber-400 flex items-center gap-1">
                 <ShieldAlert className="w-3.5 h-3.5" /> {activeCase.title}
               </span>
-              <span className="text-xs font-mono text-slate-400">
+              <span className="text-xs font-mono text-slate-500 dark:text-slate-400">
                 Clues: {discoveredClues.size}/{activeCase.hotspots.length}
               </span>
             </div>
-            <p className="text-[11px] text-slate-300 leading-relaxed mb-2.5">
+            <p className="text-[11px] text-slate-700 dark:text-slate-300 leading-relaxed mb-2.5">
               {activeCase.story}
             </p>
 
@@ -252,17 +278,17 @@ export const MysteryHub: React.FC<MysteryHubProps> = ({
               {activeCase.suspects.map((sus) => (
                 <div
                   key={sus.id}
-                  className="p-3 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col justify-between"
+                  className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 flex flex-col justify-between"
                 >
                   <div className="mb-1.5">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-white">{sus.name}</span>
-                      <span className="text-[10px] text-slate-400">{sus.role}</span>
+                      <span className="text-xs font-black text-slate-900 dark:text-white">{sus.name}</span>
+                      <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold">{sus.role}</span>
                     </div>
-                    <p className="text-[10px] text-slate-300 mt-0.5">
+                    <p className="text-[10px] text-slate-700 dark:text-slate-300 mt-0.5">
                       <strong>Wearing/Appearance:</strong> {sus.wearing}
                     </p>
-                    <p className="text-[10px] text-slate-400 mt-0.5">
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
                       <strong>Alibi:</strong> {sus.alibi}
                     </p>
                   </div>
@@ -273,13 +299,15 @@ export const MysteryHub: React.FC<MysteryHubProps> = ({
                       setAccusedSuspect(sus.id);
                       if (sus.isKiller) {
                         setCaseSolved(true);
+                        const nextCase = Math.min(CRIME_CASES.length - 1, currentCaseIndex + 1);
+                        setMaxUnlockedCase((prev) => Math.max(prev, nextCase));
                         onLevelWin(activeCase.rewardIQ, 'CASE SOLVED! 🔍', activeCase.solutionExplanation);
                       } else {
                         sound.playError();
                         setCaseSolved(false);
                       }
                     }}
-                    className="w-full py-1.5 rounded-xl bg-slate-800 hover:bg-rose-600 hover:text-white text-rose-400 font-bold text-xs border border-rose-500/20 transition active:scale-95"
+                    className="w-full py-1.5 rounded-xl bg-slate-100 hover:bg-rose-600 hover:text-white text-rose-500 dark:bg-slate-800 dark:hover:bg-rose-600 dark:text-rose-400 font-black text-xs border border-rose-500/20 transition active:scale-95"
                   >
                     Arrest {sus.name}
                   </button>

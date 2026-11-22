@@ -42,22 +42,22 @@ export const AdModal: React.FC<AdModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-      <div className="relative w-full max-w-sm rounded-2xl bg-slate-900 border border-slate-700 p-6 text-center shadow-2xl">
+      <div className="relative w-full max-w-sm rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 p-6 text-center shadow-2xl text-slate-900 dark:text-white">
         {!isCompleted ? (
           <div className="flex flex-col items-center">
-            <div className="w-12 h-12 rounded-full bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center text-indigo-400 mb-3 animate-pulse">
+            <div className="w-12 h-12 rounded-full bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center text-indigo-500 dark:text-indigo-400 mb-3 animate-pulse">
               <PlayCircle className="w-7 h-7" />
             </div>
-            <span className="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-1">
+            <span className="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1">
               Sponsored Video Ad
             </span>
-            <h3 className="text-lg font-bold text-white mb-2">Watching Sponsor</h3>
-            <p className="text-xs text-slate-400 mb-6">
-              Hold on! You are unlocking: <span className="text-indigo-300 font-semibold">{rewardTitle}</span>
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Watching Sponsor</h3>
+            <p className="text-xs text-slate-600 dark:text-slate-400 mb-6">
+              Hold on! You are unlocking: <span className="text-indigo-600 dark:text-indigo-300 font-semibold">{rewardTitle}</span>
             </p>
 
             {/* Countdown circular / bar */}
-            <div className="w-full bg-slate-800 rounded-full h-2 mb-4 overflow-hidden">
+            <div className="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2 mb-4 overflow-hidden">
               <div
                 className="bg-indigo-500 h-2 transition-all duration-1000"
                 style={{ width: `${((5 - secondsLeft) / 5) * 100}%` }}
@@ -69,12 +69,12 @@ export const AdModal: React.FC<AdModalProps> = ({
           </div>
         ) : (
           <div className="flex flex-col items-center">
-            <div className="w-12 h-12 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 mb-3">
+            <div className="w-12 h-12 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-500 dark:text-emerald-400 mb-3">
               <CheckCircle2 className="w-7 h-7" />
             </div>
-            <h3 className="text-lg font-bold text-white mb-1">Reward Ready!</h3>
-            <p className="text-xs text-slate-300 mb-6">
-              You unlocked: <span className="text-emerald-400 font-semibold">{rewardTitle}</span>
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1">Reward Ready!</h3>
+            <p className="text-xs text-slate-600 dark:text-slate-300 mb-6">
+              You unlocked: <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{rewardTitle}</span>
             </p>
 
             <button
@@ -91,7 +91,7 @@ export const AdModal: React.FC<AdModalProps> = ({
 
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 text-slate-500 hover:text-slate-300 p-1"
+          className="absolute top-3 right-3 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 p-1"
           title="Close"
         >
           <X className="w-5 h-5" />

@@ -176,10 +176,10 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto animate-fade-in">
-      <div className="relative w-full max-w-sm rounded-3xl bg-[#1a2c35] border-2 border-[#2b4554] p-5 shadow-2xl text-center my-6">
+      <div className="relative w-full max-w-sm rounded-3xl bg-white dark:bg-[#1a2c35] border-2 border-slate-200 dark:border-[#2b4554] p-5 shadow-2xl text-center my-6">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-white transition"
+          className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-white transition"
           title="Close"
         >
           <X className="w-5 h-5" />
@@ -187,33 +187,33 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
 
         {/* Cloud Account Status Banner */}
         {currentUser ? (
-          <div className="flex items-center justify-between p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold mb-3">
+          <div className="flex items-center justify-between p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-bold mb-3">
             <span className="flex items-center gap-1.5">
-              <Cloud className="w-4 h-4 text-emerald-400" />
+              <Cloud className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
               <span>Cloud Level Synced: Lvl {stats.level}</span>
             </span>
             <button
               onClick={handleLogout}
-              className="text-[11px] text-rose-400 hover:text-rose-300 flex items-center gap-0.5"
+              className="text-[11px] text-rose-500 hover:text-rose-600 dark:text-rose-400 dark:hover:text-rose-300 flex items-center gap-0.5"
             >
               <LogOut className="w-3 h-3" /> Log Out
             </button>
           </div>
         ) : (
-          <div className="flex items-center justify-between p-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold mb-3">
+          <div className="flex items-center justify-between p-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-400 text-xs font-bold mb-3">
             <span className="flex items-center gap-1">
-              <Sparkles className="w-3.5 h-3.5" />
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
               <span>Log in to back up levels &amp; IQ!</span>
             </span>
           </div>
         )}
 
         {/* Navigation Tabs (Phone OTP, Password, Google, Profile) */}
-        <div className="grid grid-cols-4 gap-1 p-1 bg-slate-950/80 border border-slate-800/80 rounded-2xl mb-3 text-[10px] font-bold">
+        <div className="grid grid-cols-4 gap-1 p-1 bg-slate-100 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800/80 rounded-2xl mb-3 text-[10px] font-bold">
           <button
             onClick={() => { sound.playTap(); setActiveTab('phone'); }}
             className={`py-1.5 rounded-lg transition ${
-              activeTab === 'phone' ? 'bg-indigo-600 text-white font-black' : 'text-slate-400 hover:text-white'
+              activeTab === 'phone' ? 'bg-indigo-600 text-white font-black shadow-sm' : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
             }`}
           >
             📱 Phone OTP

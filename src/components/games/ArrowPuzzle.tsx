@@ -3,7 +3,7 @@ import confetti from 'canvas-confetti';
 import { 
   HelpCircle, Trophy, RotateCcw, Lightbulb, 
   ArrowUp, ArrowDown, ArrowLeft, ArrowRight, ArrowRightCircle,
-  Tv, ChevronLeft, ChevronRight, Hash
+  Tv, ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { sound } from '../../lib/soundEffects';
 import { syncPlayerProgress } from '../../lib/authService';
@@ -210,10 +210,19 @@ export const ArrowPuzzle: React.FC<ArrowPuzzleProps> = ({ onWin, onRequestAd }) 
   const [highlightedTileId, setHighlightedTileId] = useState<string | null>(null);
   const [moves, setMoves] = useState<number>(0);
   const [isLevelSolved, setIsLevelSolved] = useState<boolean>(false);
-  const [isJumpModalOpen, setIsJumpModalOpen] = useState<boolean>(false);
-  const [jumpInput, setJumpInput] = useState<string>('');
 
-  // Persist level and hints
+  // Highest unlocked level (Players cannot jump ahead to unreached levels)
+  const [maxUnlockedLevel, setMaxUnlockedLevel] = useState<number>(() => {
+    try {
+      const savedMax = localStorage.getItem('funzo_arrow_max_level');
+      const parsed = savedMax ? parseInt(savedMax, 10) : 1;
+      return Math.max(parsed, levelNum);
+    } catch {
+      return Math.max(1, levelNum);
+    }
+  });
+
+  // Persist level, max unlocked level and hints
   useEffect(() => {
     try {
       localStorage.setItem('funzo_arrow_level', levelNum.toString());
@@ -222,6 +231,14 @@ export const ArrowPuzzle: React.FC<ArrowPuzzleProps> = ({ onWin, onRequestAd }) 
       // storage unavailable
     }
   }, [levelNum]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('funzo_arrow_max_level', maxUnlockedLevel.toString());
+    } catch {
+      // storage unavailable
+    }
+  }, [maxUnlockedLevel]);
 
   useEffect(() => {
     try {
@@ -308,6 +325,8 @@ export const ArrowPuzzle: React.FC<ArrowPuzzleProps> = ({ onWin, onRequestAd }) 
           sound.playVictory();
           confetti({ particleCount: 75, spread: 80, origin: { y: 0.5 } });
           setIsLevelSolved(true);
+          const nextLvl = Math.min(10000, levelNum + 1);
+          setMaxUnlockedLevel((prev) => Math.max(prev, nextLvl));
           // Reward: +1 Free Hint every 5 levels
           if (levelNum % 5 === 0) {
             setFreeHints((h) => h + 1);
@@ -374,22 +393,15 @@ export const ArrowPuzzle: React.FC<ArrowPuzzleProps> = ({ onWin, onRequestAd }) 
   };
 
   const handleNextLevel = () => {
-    sound.playTap();
-    setLevelNum((lvl) => Math.min(10000, lvl + 1));
+    if (levelNum < maxUnlockedLevel) {
+      sound.playTap();
+      setLevelNum((lvl) => Math.min(maxUnlockedLevel, lvl + 1));
+    }
   };
 
   const handlePrevLevel = () => {
     sound.playTap();
     setLevelNum((lvl) => Math.max(1, lvl - 1));
-  };
-
-  const handleJumpToLevel = (target: number) => {
-    if (target >= 1 && target <= 10000) {
-      sound.playTap();
-      setLevelNum(target);
-      setIsJumpModalOpen(false);
-      setJumpInput('');
-    }
   };
 
   const renderIcon = (dir: Direction) => {
@@ -405,18 +417,17 @@ export const ArrowPuzzle: React.FC<ArrowPuzzleProps> = ({ onWin, onRequestAd }) 
 
   return (
     <div className="w-full max-w-sm mx-auto flex flex-col items-center select-none pb-4">
-      {/* Sleek Top Navigation Bar: Level, Prev/Next, Jump, Hints */}
+      {/* Sleek Top Navigation Bar: Level, Sequential Prev/Next, Hints */}
       <div className="w-full flex items-center justify-between mb-2 px-0.5">
-        {/* Left: Level & Jump */}
+        {/* Left: Level Display & Rules (No arbitrary jumping permitted) */}
         <div className="flex items-center gap-1.5">
-          <button
-            onClick={() => setIsJumpModalOpen(true)}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-2xl btn-tactile-slate text-xs font-black shadow-sm"
-            title="Jump to Level (1–10,000)"
+          <div
+            className="flex items-center gap-1 px-3 py-1.5 rounded-2xl btn-tactile-slate text-xs font-black shadow-sm cursor-default"
+            title={`Level ${levelNum} of 10,000 (Sequential Progress)`}
           >
             <span>Level {levelNum}</span>
             <span className="text-[10px] text-slate-400 font-normal">/ 10k</span>
-          </button>
+          </div>
 
           <button
             onClick={() => setShowHowToPlay((p) => !p)}
@@ -427,21 +438,21 @@ export const ArrowPuzzle: React.FC<ArrowPuzzleProps> = ({ onWin, onRequestAd }) 
           </button>
         </div>
 
-        {/* Center: Prev / Next buttons */}
+        {/* Center: Prev / Next buttons (Next only enabled if level is solved/unlocked) */}
         <div className="flex items-center gap-1">
           <button
             onClick={handlePrevLevel}
             disabled={levelNum <= 1}
-            className="p-2 rounded-xl btn-tactile-slate disabled:opacity-30 text-slate-300 transition"
+            className="p-2 rounded-xl btn-tactile-slate disabled:opacity-30 text-slate-700 dark:text-slate-300 transition"
             title="Previous Level"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
           <button
             onClick={handleNextLevel}
-            disabled={levelNum >= 10000}
-            className="p-2 rounded-xl btn-tactile-slate disabled:opacity-30 text-slate-300 transition"
-            title="Next Level"
+            disabled={levelNum >= maxUnlockedLevel}
+            className="p-2 rounded-xl btn-tactile-slate disabled:opacity-30 text-slate-700 dark:text-slate-300 transition"
+            title={levelNum >= maxUnlockedLevel ? "Solve current level to advance!" : "Next Level"}
           >
             <ChevronRight className="w-4 h-4" />
           </button>
@@ -480,7 +491,7 @@ export const ArrowPuzzle: React.FC<ArrowPuzzleProps> = ({ onWin, onRequestAd }) 
       )}
 
       {/* ---------------- ARROW PUZZLE STAGE ---------------- */}
-      <div className="relative w-full aspect-square max-w-[340px] sm:max-w-[360px] p-3 rounded-3xl bg-slate-950 border border-slate-800/80 shadow-2xl flex items-center justify-center overflow-hidden">
+      <div className="relative w-full aspect-square max-w-[340px] sm:max-w-[360px] p-3 rounded-3xl bg-slate-100 dark:bg-slate-950 border-2 border-slate-200 dark:border-slate-800/80 shadow-xl flex items-center justify-center overflow-hidden">
         
         {/* Dynamic Grid */}
         <div
@@ -528,17 +539,23 @@ export const ArrowPuzzle: React.FC<ArrowPuzzleProps> = ({ onWin, onRequestAd }) 
 
         {/* Level Solved Dopamine Banner */}
         {isLevelSolved && (
-          <div className="absolute inset-0 bg-slate-950/90 backdrop-blur-sm rounded-3xl flex flex-col items-center justify-center p-4 z-20 animate-fade-in text-center">
-            <div className="w-12 h-12 rounded-2xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center mb-2 animate-bounce">
+          <div className="absolute inset-0 bg-white/95 dark:bg-slate-950/95 backdrop-blur-sm rounded-3xl flex flex-col items-center justify-center p-4 z-20 animate-fade-in text-center border-2 border-emerald-500/50">
+            <div className="w-12 h-12 rounded-2xl bg-cyan-500/20 text-cyan-500 dark:text-cyan-400 flex items-center justify-center mb-2 animate-bounce">
               <Trophy className="w-6 h-6 stroke-[2.5]" />
             </div>
-            <h3 className="text-xl font-black text-white mb-0.5">Level {levelNum} Cleared! 🚀</h3>
-            <p className="text-xs text-slate-400 mb-4">
+            <h3 className="text-xl font-black text-slate-900 dark:text-white mb-0.5">Level {levelNum} Cleared! 🚀</h3>
+            <p className="text-xs text-slate-600 dark:text-slate-400 mb-4">
               All arrows escaped in {moves} moves · +15 IQ Gained
-              {levelNum % 5 === 0 && <span className="block text-amber-400 font-bold mt-1">🎁 +1 Bonus Hint Earned!</span>}
+              {levelNum % 5 === 0 && <span className="block text-amber-500 font-bold mt-1">🎁 +1 Bonus Hint Earned!</span>}
             </p>
             <button
-              onClick={handleNextLevel}
+              onClick={() => {
+                sound.playTap();
+                const nextLvl = Math.min(10000, levelNum + 1);
+                setMaxUnlockedLevel((prev) => Math.max(prev, nextLvl));
+                setLevelNum(nextLvl);
+                setIsLevelSolved(false);
+              }}
               className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-black text-xs shadow-lg shadow-cyan-500/30 active:scale-95 transition flex items-center gap-1.5"
             >
               <span>Play Level {levelNum + 1}</span>
@@ -565,74 +582,6 @@ export const ArrowPuzzle: React.FC<ArrowPuzzleProps> = ({ onWin, onRequestAd }) 
           <span>+2 Hints (Ad)</span>
         </button>
       </div>
-
-      {/* Jump To Level Modal (1 to 10,000) */}
-      {isJumpModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="w-full max-w-xs rounded-2xl bg-slate-900 border border-slate-700 p-5 text-center shadow-2xl">
-            <h3 className="text-base font-black text-white mb-1 flex items-center justify-center gap-1.5">
-              <Hash className="w-4 h-4 text-cyan-400" />
-              <span>Jump to Any Level (1-10,000)</span>
-            </h3>
-            <p className="text-[11px] text-slate-400 mb-3">
-              Enter any level number or choose a preset checkpoint:
-            </p>
-
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                const num = parseInt(jumpInput, 10);
-                if (num >= 1 && num <= 10000) handleJumpToLevel(num);
-              }}
-              className="flex gap-1.5 mb-3"
-            >
-              <input
-                type="number"
-                min={1}
-                max={10000}
-                placeholder="1 - 10000"
-                value={jumpInput}
-                onChange={(e) => setJumpInput(e.target.value)}
-                className="flex-1 px-3 py-1.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs text-center font-bold font-mono focus:outline-none focus:border-cyan-500"
-                autoFocus
-              />
-              <button
-                type="submit"
-                className="px-4 py-1.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs"
-              >
-                Go
-              </button>
-            </form>
-
-            {/* Quick Checkpoint Presets */}
-            <div className="text-[10px] uppercase font-bold text-slate-500 mb-1.5">
-              Quick Checkpoints
-            </div>
-            <div className="grid grid-cols-4 gap-1.5 mb-4">
-              {[1, 10, 50, 100, 500, 1000, 5000, 10000].map((preset) => (
-                <button
-                  key={preset}
-                  onClick={() => handleJumpToLevel(preset)}
-                  className={`py-1 rounded-lg text-xs font-bold transition ${
-                    levelNum === preset
-                      ? 'bg-cyan-600 text-white'
-                      : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                  }`}
-                >
-                  {preset}
-                </button>
-              ))}
-            </div>
-
-            <button
-              onClick={() => setIsJumpModalOpen(false)}
-              className="w-full py-1.5 rounded-xl bg-slate-800 text-slate-400 hover:text-white text-xs font-bold"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

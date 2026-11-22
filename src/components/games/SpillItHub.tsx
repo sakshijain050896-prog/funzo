@@ -259,31 +259,31 @@ export const SpillItHub: React.FC<SpillItHubProps> = ({
           </div>
 
           {/* Main Card */}
-          <div className="relative w-full aspect-[4/3] max-w-[340px] sm:max-w-[360px] rounded-3xl bg-[#1a2c35] border-2 border-[#2b4554] p-6 flex flex-col justify-between shadow-2xl">
+          <div className="relative w-full aspect-[4/3] max-w-[340px] sm:max-w-[360px] rounded-3xl bg-white dark:bg-[#1a2c35] border-2 border-slate-200 dark:border-[#2b4554] p-6 flex flex-col justify-between shadow-xl dark:shadow-2xl">
             <div className="flex items-center justify-between">
               <span
                 className={`px-2.5 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest ${
                   currentTod.type === 'TRUTH'
-                    ? 'bg-[#1cb0f6]/20 border border-[#1cb0f6]/40 text-[#1cb0f6]'
-                    : 'bg-[#ff4b4b]/20 border border-[#ff4b4b]/40 text-[#ff4b4b]'
+                    ? 'bg-[#1cb0f6]/15 border border-[#1cb0f6]/30 text-[#1899d6] dark:text-[#1cb0f6]'
+                    : 'bg-[#ff4b4b]/15 border border-[#ff4b4b]/30 text-[#d33131] dark:text-[#ff4b4b]'
                 }`}
               >
                 {currentTod.type} · Card #{roundCounter}
               </span>
               <button
                 onClick={() => handleShareCard(currentTod.text)}
-                className="text-slate-400 hover:text-white p-1"
+                className="text-slate-400 hover:text-slate-900 dark:hover:text-white p-1"
                 title="Share Card"
               >
                 <Share2 className="w-4 h-4" />
               </button>
             </div>
 
-            <p className="text-base sm:text-lg font-black text-white leading-snug px-1">
+            <p className="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-snug px-1">
               &quot;{currentTod.text}&quot;
             </p>
 
-            <div className="text-[11px] font-bold text-slate-400">
+            <div className="text-[11px] font-bold text-slate-500 dark:text-slate-400">
               Pass phone to next player or take the dare!
             </div>
           </div>
@@ -537,12 +537,12 @@ export const SpillItHub: React.FC<SpillItHubProps> = ({
       {/* ---------------- 5. MOST LIKELY TO (10,000+ Prompts) ---------------- */}
       {activeTab === 'most-likely-to' && (
         <div className="w-full flex flex-col items-center animate-fade-in text-center">
-          <div className="w-full p-6 rounded-3xl bg-gradient-to-br from-amber-950/40 via-slate-900 to-slate-950 border-2 border-amber-500/40 shadow-xl mb-3">
+          <div className="w-full p-6 rounded-3xl bg-amber-50 dark:bg-gradient-to-br dark:from-amber-950/40 dark:via-slate-900 dark:to-slate-950 border-2 border-amber-300 dark:border-amber-500/40 shadow-xl mb-3">
             <span className="text-2xl mb-1 block">👑</span>
-            <span className="text-[10px] uppercase tracking-widest text-amber-400 font-bold block mb-1">
+            <span className="text-[10px] uppercase tracking-widest text-amber-600 dark:text-amber-400 font-bold block mb-1">
               Prompt #{mltRoundNum} / 10,000+ · Point at the Person:
             </span>
-            <p className="text-base sm:text-lg font-black text-white leading-snug">
+            <p className="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-snug">
               &quot;{currentMltText}&quot;
             </p>
           </div>

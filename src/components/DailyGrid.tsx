@@ -423,10 +423,10 @@ export const DailyGrid: React.FC<DailyGridProps> = ({
       </div>
 
       {/* 9x9 Sudoku Board Container (Viewport-fitted) */}
-      <div className="relative w-full aspect-square max-w-[340px] sm:max-w-[360px] p-1.5 bg-slate-950 rounded-3xl border border-slate-800/80 shadow-2xl">
+      <div className="relative w-full aspect-square max-w-[340px] sm:max-w-[360px] p-1.5 bg-white dark:bg-slate-950 rounded-3xl border-2 border-slate-200 dark:border-slate-800/80 shadow-xl">
         {isPaused && (
-          <div className="absolute inset-0 z-20 rounded-2xl bg-slate-950/90 backdrop-blur-sm flex flex-col items-center justify-center">
-            <h3 className="text-xl font-bold text-white mb-3">Game Paused</h3>
+          <div className="absolute inset-0 z-20 rounded-2xl bg-white/90 dark:bg-slate-950/90 backdrop-blur-sm flex flex-col items-center justify-center">
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">Game Paused</h3>
             <button
               onClick={() => setIsPaused(false)}
               className="px-6 py-2 rounded-xl bg-indigo-600 text-white font-bold text-sm hover:bg-indigo-500 transition shadow-lg shadow-indigo-600/30 flex items-center gap-2"
@@ -437,7 +437,7 @@ export const DailyGrid: React.FC<DailyGridProps> = ({
         )}
 
         {/* Sudoku Grid */}
-        <div className="w-full h-full grid grid-cols-9 grid-rows-9 gap-[1px] bg-slate-800 rounded-xl overflow-hidden border border-slate-800">
+        <div className="w-full h-full grid grid-cols-9 grid-rows-9 gap-[1px] bg-slate-300 dark:bg-slate-800 rounded-xl overflow-hidden border border-slate-300 dark:border-slate-800">
           {grid.map((row, r) =>
             row.map((cell, c) => {
               const isSelected = selectedCell?.r === r && selectedCell?.c === c;
@@ -450,18 +450,18 @@ export const DailyGrid: React.FC<DailyGridProps> = ({
               const isSameNumber =
                 selectedValue && selectedValue > 0 && cell.value === selectedValue;
 
-              const borderRight = c % 3 === 2 && c !== 8 ? 'border-r-2 border-r-slate-600' : '';
-              const borderBottom = r % 3 === 2 && r !== 8 ? 'border-b-2 border-b-slate-600' : '';
+              const borderRight = c % 3 === 2 && c !== 8 ? 'border-r-2 border-r-slate-400 dark:border-r-slate-600' : '';
+              const borderBottom = r % 3 === 2 && r !== 8 ? 'border-b-2 border-b-slate-400 dark:border-b-slate-600' : '';
 
-              let cellBg = 'bg-[#131b2e]';
+              let cellBg = 'bg-white dark:bg-[#131b2e]';
               if (isSelected) {
-                cellBg = 'bg-indigo-600/60 ring-2 ring-indigo-400 z-10';
+                cellBg = 'bg-indigo-100 dark:bg-indigo-600/60 ring-2 ring-indigo-500 z-10';
               } else if (cell.isError) {
-                cellBg = 'bg-rose-950/80 text-rose-300';
+                cellBg = 'bg-rose-100 dark:bg-rose-950/80 text-rose-600 dark:text-rose-300';
               } else if (isSameNumber) {
-                cellBg = 'bg-indigo-900/40 text-indigo-200';
+                cellBg = 'bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-200';
               } else if (isRelated) {
-                cellBg = 'bg-slate-800/50';
+                cellBg = 'bg-slate-50 dark:bg-slate-800/50';
               }
 
               return (
@@ -474,10 +474,10 @@ export const DailyGrid: React.FC<DailyGridProps> = ({
                     <span
                       className={`${
                         cell.isInitial
-                          ? 'text-white font-extrabold'
+                          ? 'text-slate-950 dark:text-white font-extrabold'
                           : cell.isError
-                          ? 'text-rose-400 animate-bounce'
-                          : 'text-indigo-300'
+                          ? 'text-rose-600 dark:text-rose-400 animate-bounce'
+                          : 'text-indigo-600 dark:text-indigo-300 font-bold'
                       }`}
                     >
                       {cell.value}
@@ -487,7 +487,7 @@ export const DailyGrid: React.FC<DailyGridProps> = ({
                       {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => (
                         <span
                           key={n}
-                          className="flex items-center justify-center text-[7px] font-mono text-slate-400"
+                          className="flex items-center justify-center text-[7px] font-mono text-slate-500 dark:text-slate-400"
                         >
                           {cell.notes.has(n) ? n : ''}
                         </span>

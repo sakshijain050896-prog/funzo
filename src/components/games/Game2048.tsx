@@ -219,8 +219,8 @@ export const Game2048: React.FC<Game2048Props> = ({ onWinOrScore, onRequestAd })
 
   const getTileColor = (val: number) => {
     switch (val) {
-      case 2: return 'bg-[#202f36] border-b-4 border-[#142026] text-white font-extrabold';
-      case 4: return 'bg-[#2b4554] border-b-4 border-[#1e323d] text-white font-extrabold';
+      case 2: return 'bg-slate-200 border-b-4 border-slate-300 text-slate-800 dark:bg-[#202f36] dark:border-[#142026] dark:text-white font-extrabold';
+      case 4: return 'bg-amber-100 border-b-4 border-amber-200 text-amber-900 dark:bg-[#2b4554] dark:border-[#1e323d] dark:text-white font-extrabold';
       case 8: return 'bg-[#ff9600] border-b-4 border-[#cc7800] text-slate-950 font-black';
       case 16: return 'bg-[#ff7900] border-b-4 border-[#d46400] text-white font-black';
       case 32: return 'bg-[#ff4b4b] border-b-4 border-[#d33131] text-white font-black';
@@ -230,7 +230,7 @@ export const Game2048: React.FC<Game2048Props> = ({ onWinOrScore, onRequestAd })
       case 512: return 'bg-[#58cc02] border-b-4 border-[#46a302] text-white font-black shadow-lg';
       case 1024: return 'bg-[#1cb0f6] border-b-4 border-[#1899d6] text-white font-black text-xl shadow-xl';
       case 2048: return 'bg-[#a855f7] border-b-4 border-[#7e22ce] text-white font-black text-xl shadow-2xl animate-pulse';
-      default: return 'bg-[#1a2c35]/60 border-b-4 border-transparent text-slate-500';
+      default: return 'bg-slate-200/80 dark:bg-[#1a2c35]/60 border-b-4 border-transparent text-slate-500';
     }
   };
 
@@ -239,22 +239,22 @@ export const Game2048: React.FC<Game2048Props> = ({ onWinOrScore, onRequestAd })
       {/* Header Info */}
       <div className="w-full flex items-center justify-between mb-3 px-1">
         <div>
-          <h2 className="text-xl font-black text-white flex items-center gap-1.5">
+          <h2 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-1.5">
             <span>2048 Rush</span>
           </h2>
-          <p className="text-[11px] text-slate-400">Swipe or tap arrows to merge numbers!</p>
+          <p className="text-[11px] text-slate-500 dark:text-slate-400">Swipe or tap arrows to merge numbers!</p>
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="px-3 py-1 rounded-2xl bg-[#1a2c35] border-2 border-[#2b4554] text-center shadow-sm">
+          <div className="px-3 py-1 rounded-2xl bg-white dark:bg-[#1a2c35] border-2 border-slate-200 dark:border-[#2b4554] text-center shadow-sm">
             <span className="text-[9px] uppercase font-black text-slate-400 block">Score</span>
-            <span className="text-sm font-black text-white font-mono">{score}</span>
+            <span className="text-sm font-black text-slate-900 dark:text-white font-mono">{score}</span>
           </div>
-          <div className="px-3 py-1 rounded-2xl bg-[#1a2c35] border-2 border-[#2b4554] text-center shadow-sm">
-            <span className="text-[9px] uppercase font-black text-amber-400 block flex items-center gap-0.5 justify-center">
+          <div className="px-3 py-1 rounded-2xl bg-white dark:bg-[#1a2c35] border-2 border-slate-200 dark:border-[#2b4554] text-center shadow-sm">
+            <span className="text-[9px] uppercase font-black text-amber-500 dark:text-amber-400 block flex items-center gap-0.5 justify-center">
               <Trophy className="w-2.5 h-2.5" /> Best
             </span>
-            <span className="text-sm font-black text-amber-400 font-mono">{bestScore}</span>
+            <span className="text-sm font-black text-amber-600 dark:text-amber-400 font-mono">{bestScore}</span>
           </div>
         </div>
       </div>
@@ -263,7 +263,7 @@ export const Game2048: React.FC<Game2048Props> = ({ onWinOrScore, onRequestAd })
       <div
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
-        className="relative w-full aspect-square max-w-[340px] sm:max-w-[360px] bg-slate-950 p-3 rounded-3xl border border-slate-800/80 shadow-2xl grid grid-cols-4 grid-rows-4 gap-2.5 touch-none"
+        className="relative w-full aspect-square max-w-[340px] sm:max-w-[360px] bg-slate-100 dark:bg-slate-950 p-3 rounded-3xl border-2 border-slate-200 dark:border-slate-800/80 shadow-xl grid grid-cols-4 grid-rows-4 gap-2.5 touch-none"
       >
         {board.map((row, r) =>
           row.map((cell, c) => (

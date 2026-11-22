@@ -184,12 +184,12 @@ export const AdminModal: React.FC<AdminModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-3 sm:p-4 animate-fade-in overflow-y-auto">
-      <div className="relative w-full max-w-xl rounded-3xl bg-[#1a2c35] border-2 border-[#2b4554] p-5 sm:p-6 shadow-2xl text-left my-4">
+      <div className="relative w-full max-w-xl rounded-3xl bg-white dark:bg-[#1a2c35] border-2 border-slate-200 dark:border-[#2b4554] p-5 sm:p-6 shadow-2xl text-left my-4 text-slate-900 dark:text-white">
         
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-white transition"
+          className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-white transition"
           title="Close Admin Panel"
         >
           <X className="w-5 h-5" />
@@ -198,11 +198,11 @@ export const AdminModal: React.FC<AdminModalProps> = ({
         {/* ---------------- STAGE 1: PIN GATE ---------------- */}
         {!isUnlocked ? (
           <div className="flex flex-col items-center text-center py-6">
-            <div className="w-14 h-14 rounded-2xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-400 flex items-center justify-center mb-3">
+            <div className="w-14 h-14 rounded-2xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-500 dark:text-indigo-400 flex items-center justify-center mb-3">
               <Lock className="w-7 h-7" />
             </div>
-            <h3 className="text-xl font-black text-white mb-1">Owner &amp; Admin Panel</h3>
-            <p className="text-xs text-slate-400 mb-4 max-w-xs">
+            <h3 className="text-xl font-black text-slate-900 dark:text-white mb-1">Owner &amp; Admin Panel</h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mb-4 max-w-xs">
               Enter your Owner Security PIN to view user accounts, live game levels, and make manual changes.
             </p>
 
@@ -213,7 +213,7 @@ export const AdminModal: React.FC<AdminModalProps> = ({
                 placeholder="Enter PIN (Default: 8899)"
                 value={pinInput}
                 onChange={(e) => setPinInput(e.target.value)}
-                className="w-full py-2.5 px-4 text-center tracking-widest text-lg font-mono font-black rounded-xl bg-slate-950 border-2 border-indigo-500 text-white focus:outline-none"
+                className="w-full py-2.5 px-4 text-center tracking-widest text-lg font-mono font-black rounded-xl bg-slate-100 dark:bg-slate-950 border-2 border-indigo-500 text-slate-900 dark:text-white focus:outline-none"
                 autoFocus
               />
               <button
