@@ -4,7 +4,7 @@ import { GameKey } from './PopularGames';
 import { sound } from '../../lib/soundEffects';
 
 interface GamesGalleryViewProps {
-  onSelectGame: (gameKey: GameKey) => void;
+  onSelectGame: (gameKey: GameKey, subTab?: string) => void;
   onBackToHome: () => void;
 }
 
@@ -18,6 +18,7 @@ export const GamesGalleryView: React.FC<GamesGalleryViewProps> = ({
     color: string;
     games: {
       id: GameKey;
+      subTab?: string;
       title: string;
       desc: string;
       tag: string;
@@ -63,6 +64,7 @@ export const GamesGalleryView: React.FC<GamesGalleryViewProps> = ({
       games: [
         {
           id: 'tod',
+          subTab: 'truth-or-dare',
           title: 'Truth or Dare',
           desc: '10,000+ questions across Kitty, Spicy, Wild & Deep decks',
           tag: 'Party Favorite',
@@ -71,6 +73,7 @@ export const GamesGalleryView: React.FC<GamesGalleryViewProps> = ({
         },
         {
           id: '2t1l',
+          subTab: 'two-truths',
           title: '2 Truths & 1 Lie',
           desc: '10,000+ unique procedural science fact rounds',
           tag: 'Trivia',
@@ -78,7 +81,8 @@ export const GamesGalleryView: React.FC<GamesGalleryViewProps> = ({
           bg: 'from-lime-500 to-green-600',
         },
         {
-          id: 'tod', // Opens Spill It
+          id: 'tod',
+          subTab: 'would-you-rather',
           title: 'Would You Rather',
           desc: 'Intense moral & funny dilemmas with live player % stats',
           tag: 'Social',
@@ -94,6 +98,7 @@ export const GamesGalleryView: React.FC<GamesGalleryViewProps> = ({
       games: [
         {
           id: 'mystery',
+          subTab: 'crime-scene',
           title: 'The Case Files',
           desc: 'Investigate crime hotspots, suspect alibis & arrest killers',
           tag: 'Detective',
@@ -102,11 +107,21 @@ export const GamesGalleryView: React.FC<GamesGalleryViewProps> = ({
         },
         {
           id: 'mystery',
+          subTab: 'safe-code',
           title: 'Vault Safe Codebreaker',
           desc: '4-digit logic deduction lock with exact/misplaced clues',
           tag: 'Deduction',
           emoji: '🔐',
           bg: 'from-yellow-500 to-amber-700',
+        },
+        {
+          id: 'mystery',
+          subTab: 'daily-riddles',
+          title: 'Detective Mystery Riddles',
+          desc: '10,000+ interactive story riddles with clues & choices',
+          tag: 'Riddles',
+          emoji: '📜',
+          bg: 'from-violet-600 to-indigo-600',
         },
       ],
     },
@@ -146,11 +161,11 @@ export const GamesGalleryView: React.FC<GamesGalleryViewProps> = ({
   return (
     <div className="w-full flex flex-col gap-6 animate-fade-in pb-12">
       {/* Header Banner */}
-      <div className="p-6 rounded-3xl bg-gradient-to-r from-purple-800 via-indigo-700 to-fuchsia-700 border border-purple-400/30 shadow-2xl flex items-center justify-between">
+      <div className="p-6 rounded-3xl bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 border border-white/20 shadow-2xl flex items-center justify-between">
         <div>
           <button
             onClick={() => { sound.playTap(); onBackToHome(); }}
-            className="text-xs font-bold text-purple-200 hover:text-white flex items-center gap-1 mb-2 transition"
+            className="text-xs font-bold text-purple-100 hover:text-white flex items-center gap-1 mb-2 transition"
           >
             <ArrowLeft className="w-3.5 h-3.5" /> Back to Hub
           </button>
@@ -158,7 +173,7 @@ export const GamesGalleryView: React.FC<GamesGalleryViewProps> = ({
             <Gamepad2 className="w-7 h-7 text-yellow-300" />
             <h2 className="text-2xl sm:text-3xl font-black text-white">All Funzo Games</h2>
           </div>
-          <p className="text-xs text-purple-200 mt-1">
+          <p className="text-xs text-purple-100 mt-1">
             Pick any game to play instantly in browser with zero download!
           </p>
         </div>
@@ -180,9 +195,9 @@ export const GamesGalleryView: React.FC<GamesGalleryViewProps> = ({
                 key={gIdx}
                 onClick={() => {
                   sound.playTap();
-                  onSelectGame(g.id);
+                  onSelectGame(g.id, g.subTab);
                 }}
-                className="p-4 rounded-3xl bg-[#140a33] border border-[#2b1660] hover:border-purple-400 shadow-xl flex items-center justify-between gap-3 cursor-pointer group hover:scale-[1.02] active:scale-95 transition"
+                className="p-4 rounded-3xl bg-[#1c1e2f] border border-white/10 hover:border-violet-400 hover:bg-[#22253a] shadow-xl flex items-center justify-between gap-3 cursor-pointer group hover:scale-[1.02] active:scale-95 transition"
               >
                 <div className="flex items-center gap-3.5 overflow-hidden">
                   <div className={`w-12 h-12 rounded-2xl bg-gradient-to-tr ${g.bg} flex items-center justify-center text-2xl shadow-lg shrink-0 group-hover:scale-105 transition-transform`}>

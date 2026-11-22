@@ -26,10 +26,10 @@ export const DashboardWidgets: React.FC<DashboardWidgetsProps> = ({
       {/* ---------------- ROW 1: YOUR STATS, DAILY CHALLENGE, LEADERBOARD ---------------- */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Widget 1: Your Stats */}
-        <div className="rounded-3xl p-5 bg-[#140a33] border border-[#2b1660] shadow-xl flex flex-col justify-between">
+        <div className="rounded-3xl p-5 bg-[#1c1e2f] border border-white/10 shadow-xl flex flex-col justify-between">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <BarChart2 className="w-4 h-4 text-purple-400" />
+              <BarChart2 className="w-4 h-4 text-violet-400" />
               <h4 className="text-sm font-black text-white">Your Stats</h4>
             </div>
             <button
@@ -43,7 +43,7 @@ export const DashboardWidgets: React.FC<DashboardWidgetsProps> = ({
 
           <div className="grid grid-cols-4 gap-2 text-center">
             {/* Games Played */}
-            <div className="p-2.5 rounded-2xl bg-[#1d0e4a] border border-[#391b7d] flex flex-col items-center justify-center">
+            <div className="p-2.5 rounded-2xl bg-[#24273d] border border-white/5 flex flex-col items-center justify-center">
               <Gamepad2 className="w-5 h-5 text-purple-400 mb-1" />
               <span className="text-base font-black text-white font-mono leading-none mb-1">
                 {stats.totalGamesPlayed || 12}
@@ -52,7 +52,7 @@ export const DashboardWidgets: React.FC<DashboardWidgetsProps> = ({
             </div>
 
             {/* Total Points / IQ */}
-            <div className="p-2.5 rounded-2xl bg-[#1d0e4a] border border-[#391b7d] flex flex-col items-center justify-center">
+            <div className="p-2.5 rounded-2xl bg-[#24273d] border border-white/5 flex flex-col items-center justify-center">
               <Star className="w-5 h-5 text-yellow-400 fill-yellow-400 mb-1" />
               <span className="text-base font-black text-white font-mono leading-none mb-1">
                 {(stats.iq || 105) * 10}
@@ -61,7 +61,7 @@ export const DashboardWidgets: React.FC<DashboardWidgetsProps> = ({
             </div>
 
             {/* Day Streak */}
-            <div className="p-2.5 rounded-2xl bg-[#1d0e4a] border border-[#391b7d] flex flex-col items-center justify-center">
+            <div className="p-2.5 rounded-2xl bg-[#24273d] border border-white/5 flex flex-col items-center justify-center">
               <Flame className="w-5 h-5 text-amber-400 fill-amber-400 mb-1" />
               <span className="text-base font-black text-white font-mono leading-none mb-1">
                 {stats.streak || 7}
@@ -70,7 +70,7 @@ export const DashboardWidgets: React.FC<DashboardWidgetsProps> = ({
             </div>
 
             {/* Coins */}
-            <div className="p-2.5 rounded-2xl bg-[#1d0e4a] border border-[#391b7d] flex flex-col items-center justify-center">
+            <div className="p-2.5 rounded-2xl bg-[#24273d] border border-white/5 flex flex-col items-center justify-center">
               <Coins className="w-5 h-5 text-yellow-400 mb-1" />
               <span className="text-base font-black text-yellow-400 font-mono leading-none mb-1">
                 {stats.coins || 5430}
@@ -81,7 +81,7 @@ export const DashboardWidgets: React.FC<DashboardWidgetsProps> = ({
         </div>
 
         {/* Widget 2: Daily Challenge */}
-        <div className="rounded-3xl p-5 bg-[#140a33] border border-[#2b1660] shadow-xl flex flex-col justify-between">
+        <div className="rounded-3xl p-5 bg-[#1c1e2f] border border-white/10 shadow-xl flex flex-col justify-between">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <Trophy className="w-4 h-4 text-amber-400" />
@@ -114,7 +114,7 @@ export const DashboardWidgets: React.FC<DashboardWidgetsProps> = ({
         </div>
 
         {/* Widget 3: Leaderboard */}
-        <div className="rounded-3xl p-5 bg-[#140a33] border border-[#2b1660] shadow-xl flex flex-col justify-between">
+        <div className="rounded-3xl p-5 bg-[#1c1e2f] border border-white/10 shadow-xl flex flex-col justify-between">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <Trophy className="w-4 h-4 text-yellow-400 fill-yellow-400" />
@@ -131,7 +131,7 @@ export const DashboardWidgets: React.FC<DashboardWidgetsProps> = ({
 
           <div className="flex flex-col gap-1.5 mb-1">
             {/* Rank 1 */}
-            <div className="flex items-center justify-between p-2 rounded-2xl bg-[#1d0e4a] border border-[#391b7d]/80 text-xs">
+            <div className="flex items-center justify-between p-2 rounded-2xl bg-[#24273d] border border-white/5/80 text-xs">
               <div className="flex items-center gap-2">
                 <span className="w-5 h-5 rounded-full bg-amber-400 text-slate-950 font-black text-[10px] flex items-center justify-center">
                   1
@@ -143,7 +143,7 @@ export const DashboardWidgets: React.FC<DashboardWidgetsProps> = ({
             </div>
 
             {/* Rank 2 */}
-            <div className="flex items-center justify-between p-2 rounded-2xl bg-[#1d0e4a] border border-[#391b7d]/80 text-xs">
+            <div className="flex items-center justify-between p-2 rounded-2xl bg-[#24273d] border border-white/5/80 text-xs">
               <div className="flex items-center gap-2">
                 <span className="w-5 h-5 rounded-full bg-slate-300 text-slate-950 font-black text-[10px] flex items-center justify-center">
                   2
@@ -155,7 +155,7 @@ export const DashboardWidgets: React.FC<DashboardWidgetsProps> = ({
             </div>
 
             {/* Rank 3 */}
-            <div className="flex items-center justify-between p-2 rounded-2xl bg-[#1d0e4a] border border-[#391b7d]/80 text-xs">
+            <div className="flex items-center justify-between p-2 rounded-2xl bg-[#24273d] border border-white/5/80 text-xs">
               <div className="flex items-center gap-2">
                 <span className="w-5 h-5 rounded-full bg-amber-700 text-white font-black text-[10px] flex items-center justify-center">
                   3
@@ -197,7 +197,7 @@ export const DashboardWidgets: React.FC<DashboardWidgetsProps> = ({
         </div>
 
         {/* Widget 5: Top Games This Week (4 cols) */}
-        <div className="lg:col-span-4 rounded-3xl p-5 bg-[#140a33] border border-[#2b1660] shadow-xl flex flex-col justify-between">
+        <div className="lg:col-span-4 rounded-3xl p-5 bg-[#1c1e2f] border border-white/10 shadow-xl flex flex-col justify-between">
           <div className="flex items-center gap-2 mb-3">
             <Flame className="w-4 h-4 text-amber-400" />
             <h4 className="text-xs font-black text-white">Top Games This Week</h4>

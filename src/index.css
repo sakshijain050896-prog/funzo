@@ -99,6 +99,7 @@
   border-bottom: 4px solid #cbd5e1;
   color: #1e293b;
 }
+
 .light .btn-tactile-slate:active {
   transform: translateY(2px);
   border-bottom-width: 2px;
@@ -125,14 +126,14 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #0b051e;
+  background: #13141f;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #351a7e;
+  background: #31344f;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #5826cc;
+  background: #474c6e;
 }

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { 
-  Home, Gamepad2, Trophy, Gift, User, Settings, 
-  Crown, X
+  Home, Trophy, Gift, User, 
+  Crown, X, Gamepad2
 } from 'lucide-react';
 import { sound } from '../../lib/soundEffects';
 
-export type DashboardNavTab = 'home' | 'games' | 'leaderboard' | 'rewards' | 'profile' | 'settings';
+export type DashboardNavTab = 'home' | 'leaderboard' | 'rewards' | 'profile';
 
 interface SidebarProps {
   activeTab: DashboardNavTab;
@@ -41,11 +41,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   const navItems: { id: DashboardNavTab; label: string; icon: React.ReactNode }[] = [
     { id: 'home', label: 'Home', icon: <Home className="w-4 h-4" /> },
-    { id: 'games', label: 'Games', icon: <Gamepad2 className="w-4 h-4" /> },
     { id: 'leaderboard', label: 'Leaderboard', icon: <Trophy className="w-4 h-4" /> },
     { id: 'rewards', label: 'Rewards', icon: <Gift className="w-4 h-4" /> },
     { id: 'profile', label: 'Profile', icon: <User className="w-4 h-4" /> },
-    { id: 'settings', label: 'Settings', icon: <Settings className="w-4 h-4" /> },
   ];
 
   return (
@@ -60,7 +58,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Main Sidebar */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-50 w-64 bg-[#10072b] border-r border-[#241352] flex flex-col justify-between p-4 transition-transform duration-300 lg:translate-x-0 ${
+        className={`fixed top-0 bottom-0 left-0 z-50 w-64 bg-[#161726]/95 border-r border-white/10 flex flex-col justify-between p-4 transition-transform duration-300 lg:translate-x-0 ${
           isMobileOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -81,10 +79,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </div>
 
               <div>
-                <h1 className="text-2xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-100 to-pink-200 leading-none">
+                <h1 className="text-2xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-pink-200 leading-none">
                   Funzo
                 </h1>
-                <span className="text-[9px] uppercase tracking-widest font-extrabold text-purple-400 block mt-0.5">
+                <span className="text-[9px] uppercase tracking-widest font-extrabold text-violet-400 block mt-0.5">
                   Gaming Hub
                 </span>
               </div>
@@ -119,11 +117,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   }}
                   className={`w-full flex items-center gap-3.5 px-4 py-2.5 rounded-2xl text-xs font-black transition-all ${
                     isActive
-                      ? 'bg-gradient-to-r from-purple-600 via-indigo-600 to-fuchsia-600 text-white shadow-lg shadow-purple-600/30'
-                      : 'text-slate-300 hover:text-white hover:bg-[#1a0e42]'
+                      ? 'bg-gradient-to-r from-violet-600 via-indigo-600 to-fuchsia-600 text-white shadow-lg shadow-violet-600/25'
+                      : 'text-slate-300 hover:text-white hover:bg-white/5'
                   }`}
                 >
-                  <span className={isActive ? 'text-white' : 'text-purple-400'}>{item.icon}</span>
+                  <span className={isActive ? 'text-white' : 'text-slate-400'}>{item.icon}</span>
                   <span className="text-sm font-extrabold tracking-wide">{item.label}</span>
                 </button>
               );
@@ -134,12 +132,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Bottom Section: Promo Card & Mascot */}
         <div className="flex flex-col gap-3">
           {/* "Play More Earn More!" Card */}
-          <div className="p-3.5 rounded-3xl bg-gradient-to-br from-[#1d0e4c] to-[#120732] border border-[#3b1d82] text-center shadow-xl relative overflow-hidden group">
+          <div className="p-3.5 rounded-3xl bg-gradient-to-br from-[#23263b] to-[#1a1c2d] border border-white/10 text-center shadow-xl relative overflow-hidden group">
             <div className="w-10 h-10 mx-auto rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl mb-1.5 shadow-inner">
               🎁
             </div>
             <h4 className="text-xs font-black text-white mb-0.5">Play More Earn More!</h4>
-            <p className="text-[10px] text-purple-300 mb-2.5">
+            <p className="text-[10px] text-slate-300 mb-2.5">
               Level up your rank to claim coins.
             </p>
             <button
@@ -155,7 +153,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
 
           {/* Anime Gamer Mascot Badge */}
-          <div className="flex items-center gap-3 p-2 rounded-2xl bg-[#160a3a]/80 border border-[#2d1668]">
+          <div className="flex items-center gap-3 p-2 rounded-2xl bg-[#1c1e2f] border border-white/10">
             <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-pink-500 to-purple-600 flex items-center justify-center text-xl shadow-md shrink-0">
               🎧
             </div>

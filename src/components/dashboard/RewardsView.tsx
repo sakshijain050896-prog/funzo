@@ -71,14 +71,14 @@ export const RewardsView: React.FC<RewardsViewProps> = ({
       </div>
 
       {/* Daily Claim Box */}
-      <div className="p-6 rounded-3xl bg-[#140a33] border border-[#2b1660] shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="p-6 rounded-3xl bg-[#1c1e2f] border border-white/10 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-3xl shadow-inner shrink-0">
             🎁
           </div>
           <div>
             <h3 className="text-base font-black text-white mb-0.5">Daily Login Chest</h3>
-            <p className="text-xs text-purple-300">
+            <p className="text-xs text-slate-300">
               Claim your guaranteed <strong className="text-amber-400">+150 Coins</strong> and keep your streak hot!
             </p>
           </div>
@@ -98,14 +98,14 @@ export const RewardsView: React.FC<RewardsViewProps> = ({
       </div>
 
       {/* Sponsor Video Chest */}
-      <div className="p-6 rounded-3xl bg-[#140a33] border border-[#2b1660] shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="p-6 rounded-3xl bg-[#1c1e2f] border border-white/10 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 rounded-2xl bg-fuchsia-500/20 text-fuchsia-400 flex items-center justify-center text-3xl shadow-inner shrink-0">
             📺
           </div>
           <div>
             <h3 className="text-base font-black text-white mb-0.5">Sponsor Video Bonus</h3>
-            <p className="text-xs text-purple-300">
+            <p className="text-xs text-slate-300">
               Watch a quick 5-second sponsor video to earn <strong className="text-fuchsia-400">+250 Coins</strong>!
             </p>
           </div>

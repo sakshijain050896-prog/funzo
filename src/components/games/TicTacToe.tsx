@@ -131,7 +131,7 @@ export const TicTacToe: React.FC<TicTacToeProps> = ({ onWinOrActivity }) => {
     <div className="w-full max-w-sm mx-auto flex flex-col items-center select-none pb-4">
       {/* Mode Switcher & Status */}
       <div className="w-full flex items-center justify-between mb-3 px-1">
-        <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-[#180d38] border border-[#2f1863]">
+        <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-[#1c1e2f] border border-white/10">
           <button
             onClick={() => { sound.playTap(); setVsAI(true); handleRestart(); }}
             className={`px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 transition ${
@@ -154,7 +154,7 @@ export const TicTacToe: React.FC<TicTacToeProps> = ({ onWinOrActivity }) => {
 
         <button
           onClick={handleRestart}
-          className="p-2 rounded-xl bg-[#180d38] border border-[#2f1863] text-slate-300 hover:text-white transition active:scale-95"
+          className="p-2 rounded-xl bg-[#1c1e2f] border border-white/10 text-slate-300 hover:text-white transition active:scale-95"
           title="Restart Round"
         >
           <RotateCcw className="w-4 h-4" />
@@ -163,22 +163,22 @@ export const TicTacToe: React.FC<TicTacToeProps> = ({ onWinOrActivity }) => {
 
       {/* Score Counter */}
       <div className="w-full grid grid-cols-3 gap-2 mb-3.5">
-        <div className={`p-2.5 rounded-2xl text-center border ${isXNext && !winner ? 'bg-amber-500/10 border-amber-500/50' : 'bg-[#180d38] border-[#2f1863]'}`}>
+        <div className={`p-2.5 rounded-2xl text-center border ${isXNext && !winner ? 'bg-amber-500/10 border-amber-500/50' : 'bg-[#1c1e2f] border-white/10'}`}>
           <span className="text-[10px] uppercase font-bold text-amber-400 block">Player X</span>
           <span className="text-lg font-black text-white font-mono">{scores.X}</span>
         </div>
-        <div className="p-2.5 rounded-2xl text-center bg-[#180d38] border border-[#2f1863]">
+        <div className="p-2.5 rounded-2xl text-center bg-[#1c1e2f] border border-white/10">
           <span className="text-[10px] uppercase font-bold text-slate-400 block">Ties</span>
           <span className="text-lg font-black text-slate-300 font-mono">{scores.ties}</span>
         </div>
-        <div className={`p-2.5 rounded-2xl text-center border ${!isXNext && !winner ? 'bg-purple-500/10 border-purple-500/50' : 'bg-[#180d38] border-[#2f1863]'}`}>
-          <span className="text-[10px] uppercase font-bold text-purple-400 block">{vsAI ? 'Bot (O)' : 'Player O'}</span>
+        <div className={`p-2.5 rounded-2xl text-center border ${!isXNext && !winner ? 'bg-violet-500/10 border-violet-500/50' : 'bg-[#1c1e2f] border-white/10'}`}>
+          <span className="text-[10px] uppercase font-bold text-violet-400 block">{vsAI ? 'Bot (O)' : 'Player O'}</span>
           <span className="text-lg font-black text-white font-mono">{scores.O}</span>
         </div>
       </div>
 
       {/* 3x3 Grid Board */}
-      <div className="relative w-full aspect-square max-w-[320px] p-3 rounded-3xl bg-[#130a2e] border-2 border-[#2f1863] shadow-2xl grid grid-cols-3 grid-rows-3 gap-2.5">
+      <div className="relative w-full aspect-square max-w-[320px] p-3 rounded-3xl bg-[#1c1e2f] border-2 border-white/10 shadow-2xl grid grid-cols-3 grid-rows-3 gap-2.5">
         {board.map((cell, idx) => {
           const isWinningCell = winningLine?.includes(idx);
           return (
@@ -189,10 +189,10 @@ export const TicTacToe: React.FC<TicTacToeProps> = ({ onWinOrActivity }) => {
                 isWinningCell
                   ? 'bg-gradient-to-tr from-amber-500 to-yellow-400 text-slate-950 shadow-xl shadow-amber-500/40 animate-pulse'
                   : cell === 'X'
-                  ? 'bg-[#1e1045] border-2 border-amber-500/40 text-amber-400 shadow-md'
+                  ? 'bg-[#24273d] border-2 border-amber-500/40 text-amber-400 shadow-md'
                   : cell === 'O'
-                  ? 'bg-[#1e1045] border-2 border-purple-500/40 text-purple-400 shadow-md'
-                  : 'bg-[#180d38] hover:bg-[#231352] border border-[#2f1863]/60'
+                  ? 'bg-[#24273d] border-2 border-violet-500/40 text-violet-400 shadow-md'
+                  : 'bg-[#24273d] hover:bg-[#2e324d] border border-white/5'
               }`}
             >
               {cell}
@@ -202,7 +202,7 @@ export const TicTacToe: React.FC<TicTacToeProps> = ({ onWinOrActivity }) => {
 
         {/* Winner Overlay Banner */}
         {winner && (
-          <div className="absolute inset-0 bg-[#0f0724]/90 backdrop-blur-sm rounded-3xl flex flex-col items-center justify-center p-4 z-20 animate-fade-in text-center">
+          <div className="absolute inset-0 bg-[#12131f]/95 backdrop-blur-sm rounded-3xl flex flex-col items-center justify-center p-4 z-20 animate-fade-in text-center">
             <div className="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center mb-2 animate-bounce">
               <Trophy className="w-6 h-6 stroke-[2.5]" />
             </div>

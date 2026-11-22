@@ -110,17 +110,17 @@ export const MemoryMatch: React.FC<MemoryMatchProps> = ({ onWin }) => {
       {/* Top Header info */}
       <div className="w-full flex items-center justify-between mb-3 px-1">
         <div className="flex items-center gap-2">
-          <div className="px-3 py-1.5 rounded-xl bg-[#180d38] border border-[#2f1863] text-xs font-black text-purple-300">
+          <div className="px-3 py-1.5 rounded-xl bg-[#1c1e2f] border border-white/10 text-xs font-black text-violet-300">
             Moves: <span className="font-mono text-white text-sm">{moves}</span>
           </div>
-          <div className="px-3 py-1.5 rounded-xl bg-[#180d38] border border-[#2f1863] text-xs font-black text-amber-300">
+          <div className="px-3 py-1.5 rounded-xl bg-[#1c1e2f] border border-white/10 text-xs font-black text-amber-300">
             ⏱️ <span className="font-mono text-white text-sm">{formatTime(seconds)}</span>
           </div>
         </div>
 
         <button
           onClick={handleRestart}
-          className="p-2 rounded-xl bg-[#180d38] border border-[#2f1863] text-slate-300 hover:text-white transition active:scale-95"
+          className="p-2 rounded-xl bg-[#1c1e2f] border border-white/10 text-slate-300 hover:text-white transition active:scale-95"
           title="Restart Deck"
         >
           <RotateCcw className="w-4 h-4" />
@@ -128,17 +128,17 @@ export const MemoryMatch: React.FC<MemoryMatchProps> = ({ onWin }) => {
       </div>
 
       {/* 4x4 Grid Board */}
-      <div className="relative w-full aspect-square max-w-[320px] p-2.5 rounded-3xl bg-[#130a2e] border-2 border-[#2f1863] shadow-2xl grid grid-cols-4 grid-rows-4 gap-2">
+      <div className="relative w-full aspect-square max-w-[320px] p-2.5 rounded-3xl bg-[#1c1e2f] border-2 border-white/10 shadow-2xl grid grid-cols-4 grid-rows-4 gap-2">
         {cards.map((card, idx) => (
           <button
             key={card.id}
             onClick={() => handleCardClick(idx)}
             className={`rounded-2xl flex items-center justify-center text-2xl transition-all duration-300 active:scale-95 ${
               card.isMatched
-                ? 'bg-gradient-to-tr from-purple-600 to-indigo-600 text-white shadow-lg border-2 border-purple-400 opacity-90'
+                ? 'bg-gradient-to-tr from-violet-600 to-indigo-600 text-white shadow-lg border-2 border-violet-400 opacity-90'
                 : card.isFlipped
-                ? 'bg-[#21114a] border-2 border-purple-500 text-white shadow-md'
-                : 'bg-[#180d38] hover:bg-[#231352] border border-[#2f1863] text-transparent'
+                ? 'bg-[#24273d] border-2 border-violet-500 text-white shadow-md'
+                : 'bg-[#24273d] hover:bg-[#2d304a] border border-white/5 text-transparent'
             }`}
           >
             {card.isFlipped || card.isMatched ? card.emoji : '❓'}
@@ -147,7 +147,7 @@ export const MemoryMatch: React.FC<MemoryMatchProps> = ({ onWin }) => {
 
         {/* Won Overlay Banner */}
         {isWon && (
-          <div className="absolute inset-0 bg-[#0f0724]/90 backdrop-blur-sm rounded-3xl flex flex-col items-center justify-center p-4 z-20 animate-fade-in text-center">
+          <div className="absolute inset-0 bg-[#12131f]/95 backdrop-blur-sm rounded-3xl flex flex-col items-center justify-center p-4 z-20 animate-fade-in text-center">
             <div className="w-12 h-12 rounded-2xl bg-purple-500/20 text-purple-400 flex items-center justify-center mb-2 animate-bounce">
               <Trophy className="w-6 h-6 stroke-[2.5]" />
             </div>

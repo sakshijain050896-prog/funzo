@@ -3,11 +3,11 @@ import confetti from 'canvas-confetti';
 import { Sidebar, DashboardNavTab } from './components/dashboard/Sidebar';
 import { TopBar } from './components/dashboard/TopBar';
 import { HeroBanner } from './components/dashboard/HeroBanner';
-import { PopularGames, GameKey } from './components/dashboard/PopularGames';
+import { AllGamesCatalog } from './components/dashboard/AllGamesCatalog';
+import { GameKey } from './components/dashboard/PopularGames';
 import { DashboardWidgets } from './components/dashboard/DashboardWidgets';
 import { LeaderboardView } from './components/dashboard/LeaderboardView';
 import { RewardsView } from './components/dashboard/RewardsView';
-import { GamesGalleryView } from './components/dashboard/GamesGalleryView';
 
 // Game Components
 import { DailyGrid } from './components/DailyGrid';
@@ -45,6 +45,7 @@ export const App: React.FC = () => {
   const [soundEnabled, setSoundEnabled] = useState<boolean>(getSoundPreference);
   const [activeNavTab, setActiveNavTab] = useState<DashboardNavTab>('home');
   const [activeGame, setActiveGame] = useState<GameKey | null>(null);
+  const [activeSubTab, setActiveSubTab] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
 
@@ -142,9 +143,20 @@ export const App: React.FC = () => {
     setAdModalOpen(true);
   };
 
-  const handleLaunchGame = (gameKey: GameKey) => {
+  const handleLaunchGame = (gameKey: GameKey, subTab?: string) => {
     sound.playTap();
     setActiveGame(gameKey);
+    if (subTab) {
+      setActiveSubTab(subTab);
+    } else if (gameKey === '2t1l') {
+      setActiveSubTab('two-truths');
+    } else if (gameKey === 'tod') {
+      setActiveSubTab('truth-or-dare');
+    } else if (gameKey === 'mystery') {
+      setActiveSubTab('crime-scene');
+    } else {
+      setActiveSubTab(null);
+    }
     handleGameActivity(gameKey);
   };
 
@@ -154,7 +166,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0b051e] text-slate-100 flex overflow-x-hidden">
+    <div className="min-h-screen bg-[#12131f] text-slate-100 flex overflow-x-hidden">
       {/* 1. Left Sidebar Navigation */}
       <Sidebar
         activeTab={activeNavTab}
@@ -162,8 +174,6 @@ export const App: React.FC = () => {
           setActiveNavTab(tab);
           if (tab === 'profile') {
             setIsProfileOpen(true);
-          } else if (tab === 'settings') {
-            setIsAdminOpen(true);
           } else {
             setActiveGame(null); // Return to view
           }
@@ -203,18 +213,23 @@ export const App: React.FC = () => {
           {activeGame !== null ? (
             <div className="w-full flex flex-col items-center animate-fade-in">
               {/* Back Bar & Game Navigation */}
-              <div className="w-full flex items-center justify-between mb-4 p-3 rounded-2xl bg-[#140a33] border border-[#2b1660] shadow-xl">
+              <div className="w-full flex items-center justify-between mb-4 p-3 rounded-2xl bg-[#1c1e2f] border border-white/10 shadow-xl">
                 <button
                   onClick={handleBackToHub}
-                  className="px-4 py-2 rounded-xl bg-[#1e0f49] border border-[#3b1d82] text-xs font-black text-purple-300 hover:text-white hover:bg-purple-600 transition flex items-center gap-1.5 active:scale-95"
+                  className="px-4 py-2 rounded-xl bg-[#24273d] border border-white/10 text-xs font-black text-slate-200 hover:text-white hover:bg-violet-600 transition flex items-center gap-1.5 active:scale-95"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   <span>Back to Hub</span>
                 </button>
 
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-black text-white capitalize">
-                    {activeGame === 'tod' && 'Truth or Dare'}
+                  <span className="text-xs sm:text-sm font-black text-white">
+                    {activeGame === 'tod' && (
+                      activeSubTab === 'would-you-rather' ? 'Would You Rather' :
+                      activeSubTab === 'never-have-i-ever' ? 'Never Have I Ever' :
+                      activeSubTab === 'most-likely-to' ? 'Most Likely To' :
+                      'Truth or Dare'
+                    )}
                     {activeGame === 'sudoku' && 'Sudoku Master'}
                     {activeGame === '2t1l' && '2 Truths & 1 Lie'}
                     {activeGame === 'tictactoe' && 'Tic Tac Toe'}
@@ -222,16 +237,20 @@ export const App: React.FC = () => {
                     {activeGame === 'dice' && 'Dice Roll'}
                     {activeGame === 'arrows' && 'Arrow Out'}
                     {activeGame === '2048' && '2048 Rush'}
-                    {activeGame === 'mystery' && 'The Case Files'}
+                    {activeGame === 'mystery' && (
+                      activeSubTab === 'safe-code' ? 'Vault Safe Codebreaker' :
+                      activeSubTab === 'daily-riddles' ? 'Detective Riddles' :
+                      'The Case Files'
+                    )}
                   </span>
-                  <span className="px-2 py-0.5 rounded-full bg-purple-500/20 text-[10px] font-bold text-purple-300 uppercase">
+                  <span className="px-2 py-0.5 rounded-full bg-violet-500/20 text-[10px] font-bold text-violet-300 uppercase border border-violet-500/30">
                     Playing
                   </span>
                 </div>
 
                 <button
                   onClick={() => handleOpenHowToPlay(activeGame)}
-                  className="p-2 rounded-xl bg-[#1e0f49] border border-[#3b1d82] text-purple-300 hover:text-white transition"
+                  className="p-2 rounded-xl bg-[#24273d] border border-white/10 text-slate-300 hover:text-white hover:bg-violet-600 transition"
                   title="How to Play"
                 >
                   <HelpCircle className="w-4 h-4" />
@@ -269,6 +288,7 @@ export const App: React.FC = () => {
               <div className={`w-full ${activeGame === 'tod' || activeGame === '2t1l' ? 'block' : 'hidden'}`}>
                 <SpillItHub
                   currentIQ={stats.iq || 105}
+                  initialTab={(activeSubTab as any) || (activeGame === '2t1l' ? 'two-truths' : 'truth-or-dare')}
                   onActivity={() => handleGameActivity('spill-it')}
                   onWinLevel={handleLevelCelebration}
                   onRequestAd={handleRequestAd}
@@ -280,6 +300,7 @@ export const App: React.FC = () => {
               <div className={`w-full ${activeGame === 'mystery' ? 'block' : 'hidden'}`}>
                 <MysteryHub
                   currentIQ={stats.iq || 105}
+                  initialTab={(activeSubTab as any) || 'crime-scene'}
                   onActivity={() => handleGameActivity('mystery')}
                   onLevelWin={handleLevelCelebration}
                   onRequestAd={handleRequestAd}
@@ -326,10 +347,10 @@ export const App: React.FC = () => {
                   {/* Hero Banner: "Your Daily Gaming Hub!" */}
                   <HeroBanner onStartPlaying={() => handleLaunchGame('sudoku')} />
 
-                  {/* Popular Games (6 Colorful Cards) */}
-                  <PopularGames
+                  {/* All Game Genres & Games Catalog with Live Search & Filter */}
+                  <AllGamesCatalog
                     onSelectGame={handleLaunchGame}
-                    onViewAll={() => setActiveNavTab('games')}
+                    searchQuery={searchQuery}
                   />
 
                   {/* Dashboard Widgets: Stats, Daily Challenge, Leaderboard, Rewards, Top Games */}
@@ -341,13 +362,6 @@ export const App: React.FC = () => {
                     onPlayDailyChallenge={() => handleLaunchGame('sudoku')}
                   />
                 </div>
-              )}
-
-              {activeNavTab === 'games' && (
-                <GamesGalleryView
-                  onSelectGame={handleLaunchGame}
-                  onBackToHome={() => setActiveNavTab('home')}
-                />
               )}
 
               {activeNavTab === 'leaderboard' && (

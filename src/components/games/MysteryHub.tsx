@@ -8,6 +8,7 @@ import { IQRankMeter } from '../IQRankMeter';
 
 interface MysteryHubProps {
   currentIQ: number;
+  initialTab?: MysterySubGame;
   onActivity: () => void;
   onLevelWin: (iqPoints: number, title: string, subtitle: string) => void;
   onRequestAd: (rewardTitle: string, onReward: () => void) => void;
@@ -19,13 +20,20 @@ type MysterySubGame = 'crime-scene' | 'safe-code' | 'daily-riddles';
 
 export const MysteryHub: React.FC<MysteryHubProps> = ({ 
   currentIQ,
+  initialTab = 'crime-scene',
   onActivity, 
   onLevelWin,
   onRequestAd,
   onOpenHowToPlay,
   onOpenStats,
 }) => {
-  const [activeTab, setActiveTab] = useState<MysterySubGame>('crime-scene');
+  const [activeTab, setActiveTab] = useState<MysterySubGame>(initialTab);
+
+  useEffect(() => {
+    if (initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [initialTab]);
 
   // ---------------- 1. CRIME SCENE CASES STATE ----------------
   const [currentCaseIndex, setCurrentCaseIndex] = useState<number>(0);
@@ -328,12 +336,12 @@ export const MysteryHub: React.FC<MysteryHubProps> = ({
       {/* ---------------- 2. SAFE CODEBREAKER ---------------- */}
       {activeTab === 'safe-code' && (
         <div className="w-full flex flex-col items-center animate-fade-in text-center">
-          <div className="w-full p-4 rounded-3xl bg-slate-900 border-2 border-slate-800 mb-3 shadow-xl">
-            <div className="w-10 h-10 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 flex items-center justify-center mx-auto mb-1.5">
+          <div className="w-full p-4 rounded-3xl bg-[#1c1e2f] border border-white/10 mb-3 shadow-xl">
+            <div className="w-10 h-10 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mx-auto mb-1.5">
               {safeUnlocked ? <KeyRound className="w-5 h-5 text-emerald-400" /> : <Lock className="w-5 h-5" />}
             </div>
             <h3 className="text-sm font-black text-white">Crack the 4-Digit Vault Safe</h3>
-            <p className="text-[11px] text-slate-400">
+            <p className="text-[11px] text-slate-300">
               🟢 = Correct digit &amp; spot, 🟡 = Right digit in wrong spot.
             </p>
           </div>
@@ -343,7 +351,7 @@ export const MysteryHub: React.FC<MysteryHubProps> = ({
             {attempts.map((att, idx) => (
               <div
                 key={idx}
-                className="flex items-center justify-between p-2 rounded-xl bg-slate-900 border border-slate-800 text-xs font-mono"
+                className="flex items-center justify-between p-2 rounded-xl bg-[#22253a] border border-white/10 text-xs font-mono"
               >
                 <span className="font-bold text-white text-sm tracking-widest">{att.guess}</span>
                 <div className="flex gap-2 text-[11px]">
@@ -363,12 +371,12 @@ export const MysteryHub: React.FC<MysteryHubProps> = ({
                   value={currentGuess}
                   readOnly
                   placeholder="----"
-                  className="w-full py-2.5 text-center text-xl font-mono font-black tracking-widest bg-slate-950 border-2 border-indigo-500/60 rounded-xl text-white"
+                  className="w-full py-2.5 text-center text-xl font-mono font-black tracking-widest bg-[#13141f] border-2 border-violet-500/50 rounded-xl text-white"
                 />
                 <button
                   onClick={handleGuessCode}
                   disabled={currentGuess.length !== 4}
-                  className="px-4 py-2.5 rounded-xl bg-indigo-600 disabled:opacity-40 text-white font-bold text-xs shadow-md"
+                  className="px-4 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:opacity-40 text-white font-bold text-xs shadow-md transition"
                 >
                   Test Code
                 </button>
@@ -385,7 +393,7 @@ export const MysteryHub: React.FC<MysteryHubProps> = ({
                         setCurrentGuess((g) => g + num.toString());
                       }
                     }}
-                    className="py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm transition active:scale-90"
+                    className="py-2.5 rounded-xl bg-[#25283f] hover:bg-[#313552] text-white font-bold text-sm transition active:scale-90"
                   >
                     {num}
                   </button>

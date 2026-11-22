@@ -8,7 +8,7 @@ interface HeroBannerProps {
 
 export const HeroBanner: React.FC<HeroBannerProps> = ({ onStartPlaying }) => {
   return (
-    <div className="relative w-full rounded-3xl overflow-hidden p-6 sm:p-8 bg-gradient-to-r from-[#6b21a8] via-[#8b5cf6] to-[#ec4899] shadow-2xl shadow-purple-900/40 mb-6 border border-purple-400/30 flex flex-col md:flex-row items-center justify-between gap-6">
+    <div className="relative w-full rounded-3xl overflow-hidden p-6 sm:p-8 bg-gradient-to-r from-[#6366f1] via-[#8b5cf6] to-[#ec4899] shadow-xl shadow-purple-950/20 mb-6 border border-white/20 flex flex-col md:flex-row items-center justify-between gap-6">
       {/* Background Starry & Glow Effects */}
       <div className="absolute -top-24 -left-24 w-72 h-72 bg-fuchsia-400/30 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-24 -right-24 w-72 h-72 bg-purple-400/40 rounded-full blur-3xl pointer-events-none" />

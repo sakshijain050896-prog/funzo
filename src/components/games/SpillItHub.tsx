@@ -19,6 +19,7 @@ import { IQRankMeter } from '../IQRankMeter';
 
 interface SpillItHubProps {
   currentIQ: number;
+  initialTab?: SocialSubGame;
   onActivity: () => void;
   onWinLevel: (iqPoints: number, title: string, subtitle: string) => void;
   onRequestAd: (rewardTitle: string, onReward: () => void) => void;
@@ -30,13 +31,20 @@ type SocialSubGame = 'truth-or-dare' | 'two-truths' | 'would-you-rather' | 'neve
 
 export const SpillItHub: React.FC<SpillItHubProps> = ({
   currentIQ,
+  initialTab = 'truth-or-dare',
   onActivity,
   onWinLevel,
   onRequestAd,
   onOpenHowToPlay,
   onOpenStats,
 }) => {
-  const [activeTab, setActiveTab] = useState<SocialSubGame>('truth-or-dare');
+  const [activeTab, setActiveTab] = useState<SocialSubGame>(initialTab);
+
+  React.useEffect(() => {
+    if (initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [initialTab]);
 
   // ANTI-REPETITION SETS (Session tracking ensures 10,000+ questions never repeat)
   const seenTodQuestions = useRef<Set<string>>(new Set());
@@ -260,11 +268,10 @@ export const SpillItHub: React.FC<SpillItHubProps> = ({
           <div className="relative w-full aspect-[4/3] max-w-[340px] sm:max-w-[360px] rounded-3xl bg-white dark:bg-[#1a2c35] border-2 border-slate-200 dark:border-[#2b4554] p-6 flex flex-col justify-between shadow-xl dark:shadow-2xl">
             <div className="flex items-center justify-between">
               <span
-                className={`px-2.5 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest ${
-                  currentTod.type === 'TRUTH'
-                    ? 'bg-[#1cb0f6]/15 border border-[#1cb0f6]/30 text-[#1899d6] dark:text-[#1cb0f6]'
-                    : 'bg-[#ff4b4b]/15 border border-[#ff4b4b]/30 text-[#d33131] dark:text-[#ff4b4b]'
-                }`}
+                className={`px-2.5 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest ${currentTod.type === 'TRUTH'
+                  ? 'bg-[#1cb0f6]/15 border border-[#1cb0f6]/30 text-[#1899d6] dark:text-[#1cb0f6]'
+                  : 'bg-[#ff4b4b]/15 border border-[#ff4b4b]/30 text-[#d33131] dark:text-[#ff4b4b]'
+                  }`}
               >
                 {currentTod.type} · Card #{roundCounter}
               </span>
