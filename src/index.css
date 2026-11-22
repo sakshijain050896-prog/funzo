@@ -9,7 +9,12 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: 'Outfit', system-ui, sans-serif;
   }
 }
@@ -21,6 +26,7 @@
   color: white;
   transition: all 0.08s ease-in-out;
 }
+
 .btn-tactile-green:active {
   transform: translateY(2px);
   border-bottom-width: 2px;
@@ -32,6 +38,7 @@
   color: white;
   transition: all 0.08s ease-in-out;
 }
+
 .btn-tactile-blue:active {
   transform: translateY(2px);
   border-bottom-width: 2px;
@@ -43,6 +50,7 @@
   color: white;
   transition: all 0.08s ease-in-out;
 }
+
 .btn-tactile-purple:active {
   transform: translateY(2px);
   border-bottom-width: 2px;
@@ -54,6 +62,7 @@
   color: white;
   transition: all 0.08s ease-in-out;
 }
+
 .btn-tactile-amber:active {
   transform: translateY(2px);
   border-bottom-width: 2px;
@@ -65,6 +74,7 @@
   color: white;
   transition: all 0.08s ease-in-out;
 }
+
 .btn-tactile-rose:active {
   transform: translateY(2px);
   border-bottom-width: 2px;
@@ -76,6 +86,7 @@
   color: #e5e5e5;
   transition: all 0.08s ease-in-out;
 }
+
 .btn-tactile-slate:active {
   transform: translateY(2px);
   border-bottom-width: 2px;
@@ -114,26 +125,14 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #131f24;
-}
-
-.light ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #0b051e;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #2b4554;
+  background: #351a7e;
   border-radius: 9999px;
 }
 
-.light ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-}
-
 ::-webkit-scrollbar-thumb:hover {
-  background: #3b5a6d;
-}
-
-.light ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #5826cc;
 }

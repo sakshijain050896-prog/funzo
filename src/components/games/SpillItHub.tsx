@@ -223,11 +223,10 @@ export const SpillItHub: React.FC<SpillItHubProps> = ({
               setActiveTab(tab.id as SocialSubGame);
               onActivity();
             }}
-            className={`py-2 px-1 rounded-2xl flex flex-col items-center justify-center transition ${
-              activeTab === tab.id
-                ? 'btn-tactile-rose shadow-md'
-                : 'btn-tactile-slate'
-            }`}
+            className={`py-2 px-1 rounded-2xl flex flex-col items-center justify-center transition ${activeTab === tab.id
+              ? 'btn-tactile-rose shadow-md'
+              : 'btn-tactile-slate'
+              }`}
           >
             <span className="text-sm">{tab.icon}</span>
             <span className="truncate">{tab.label}</span>
@@ -244,11 +243,10 @@ export const SpillItHub: React.FC<SpillItHubProps> = ({
               <button
                 key={d}
                 onClick={() => handleSelectDeck(d)}
-                className={`px-3.5 py-1.5 rounded-2xl text-xs font-black capitalize whitespace-nowrap transition shadow-sm ${
-                  todDeck === d
-                    ? 'btn-tactile-amber'
-                    : 'btn-tactile-slate'
-                }`}
+                className={`px-3.5 py-1.5 rounded-2xl text-xs font-black capitalize whitespace-nowrap transition shadow-sm ${todDeck === d
+                  ? 'btn-tactile-amber'
+                  : 'btn-tactile-slate'
+                  }`}
               >
                 {d === 'kitty' && '🐱 Kitty Party'}
                 {d === 'spicy' && `🌶️ Spicy ${unlockedSpicy ? '' : '🔒 (Ad)'}`}

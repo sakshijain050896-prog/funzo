@@ -1,49 +1,71 @@
 import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
-import { Header } from './components/Header';
+import { Sidebar, DashboardNavTab } from './components/dashboard/Sidebar';
+import { TopBar } from './components/dashboard/TopBar';
+import { HeroBanner } from './components/dashboard/HeroBanner';
+import { PopularGames, GameKey } from './components/dashboard/PopularGames';
+import { DashboardWidgets } from './components/dashboard/DashboardWidgets';
+import { LeaderboardView } from './components/dashboard/LeaderboardView';
+import { RewardsView } from './components/dashboard/RewardsView';
+import { GamesGalleryView } from './components/dashboard/GamesGalleryView';
+
+// Game Components
 import { DailyGrid } from './components/DailyGrid';
 import { Game2048 } from './components/games/Game2048';
 import { ArrowPuzzle } from './components/games/ArrowPuzzle';
 import { SpillItHub } from './components/games/SpillItHub';
 import { MysteryHub } from './components/games/MysteryHub';
-import { IQRankMeter } from './components/IQRankMeter';
+import { TicTacToe } from './components/games/TicTacToe';
+import { MemoryMatch } from './components/games/MemoryMatch';
+import { DiceRoll } from './components/games/DiceRoll';
+
+// Modals
 import { StatsModal } from './components/StatsModal';
 import { ProfileModal } from './components/ProfileModal';
 import { HowToPlayModal } from './components/HowToPlayModal';
 import { CelebrationModal } from './components/CelebrationModal';
 import { AdModal } from './components/AdModal';
 import { AdminModal } from './components/AdminModal';
+
 import { 
   getStoredStats, 
   recordDailyAttempt,
   recordGameWin, 
   getSoundPreference, 
   saveSoundPreference,
-  getThemePreference,
-  saveThemePreference,
   increasePlayerIQ
 } from './lib/storage';
 import { syncPlayerProgress } from './lib/authService';
 import { sound } from './lib/soundEffects';
-import { GenreType, ThemeMode } from './types';
-import { Flame } from 'lucide-react';
-import { BottomDock } from './components/BottomDock';
-
-type BrainSubGame = 'sudoku' | '2048' | 'arrows';
+import { PlayerStats } from './types';
+import { ArrowLeft, HelpCircle, Flame } from 'lucide-react';
 
 export const App: React.FC = () => {
-  const [stats, setStats] = useState(getStoredStats);
-  const [theme, setTheme] = useState<ThemeMode>(getThemePreference);
-  const [soundEnabled, setSoundEnabled] = useState(getSoundPreference);
-  const [activeGenre, setActiveGenre] = useState<GenreType>('brain');
-  const [brainGame, setBrainGame] = useState<BrainSubGame>('sudoku');
+  const [stats, setStats] = useState<PlayerStats>(getStoredStats);
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(getSoundPreference);
+  const [activeNavTab, setActiveNavTab] = useState<DashboardNavTab>('home');
+  const [activeGame, setActiveGame] = useState<GameKey | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
 
+  // Modals
   const [isStatsOpen, setIsStatsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isHowToPlayOpen, setIsHowToPlayOpen] = useState(false);
   const [howToPlayGameId, setHowToPlayGameId] = useState<string>('sudoku');
   const [streakToast, setStreakToast] = useState<string | null>(null);
+
+  // Celebration Dopamine Modal State
+  const [celebrationOpen, setCelebrationOpen] = useState(false);
+  const [celebrationTitle, setCelebrationTitle] = useState('FANTASTIC MOVE! 🌟');
+  const [celebrationSubtitle, setCelebrationSubtitle] = useState('');
+  const [celebrationIQGained, setCelebrationIQGained] = useState(15);
+
+  // Ad simulation modal state
+  const [adModalOpen, setAdModalOpen] = useState(false);
+  const [adRewardTitle, setAdRewardTitle] = useState('');
+  const [adOnReward, setAdOnReward] = useState<() => void>(() => {});
 
   // Keyboard shortcut for Owner Admin Panel (Ctrl+Shift+A)
   useEffect(() => {
@@ -57,34 +79,6 @@ export const App: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // Celebration Dopamine Modal State
-  const [celebrationOpen, setCelebrationOpen] = useState(false);
-  const [celebrationTitle, setCelebrationTitle] = useState('FANTASTIC MOVE! 🌟');
-  const [celebrationSubtitle, setCelebrationSubtitle] = useState('');
-  const [celebrationIQGained, setCelebrationIQGained] = useState(15);
-
-  // Ad simulation modal state
-  const [adModalOpen, setAdModalOpen] = useState(false);
-  const [adRewardTitle, setAdRewardTitle] = useState('');
-  const [adOnReward, setAdOnReward] = useState<() => void>(() => {});
-
-  useEffect(() => {
-    const root = document.documentElement;
-    if (theme === 'dark') {
-      root.classList.add('dark');
-      root.classList.remove('light');
-    } else {
-      root.classList.add('light');
-      root.classList.remove('dark');
-    }
-    saveThemePreference(theme);
-  }, [theme]);
-
-  const handleToggleTheme = () => {
-    sound.playTap();
-    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
-  };
-
   const handleToggleSound = () => {
     const next = !soundEnabled;
     setSoundEnabled(next);
@@ -96,12 +90,10 @@ export const App: React.FC = () => {
     sound.playTap();
     if (gameId) {
       setHowToPlayGameId(gameId);
-    } else if (activeGenre === 'brain') {
-      setHowToPlayGameId(brainGame);
-    } else if (activeGenre === 'social') {
-      setHowToPlayGameId('spill-it');
+    } else if (activeGame) {
+      setHowToPlayGameId(activeGame);
     } else {
-      setHowToPlayGameId('mystery');
+      setHowToPlayGameId('sudoku');
     }
     setIsHowToPlayOpen(true);
   };
@@ -123,7 +115,7 @@ export const App: React.FC = () => {
     }
   };
 
-  // Universal Victory & Level Complete Celebration (All genres)
+  // Universal Victory & Level Complete Celebration
   const handleLevelCelebration = (iqPoints: number, title: string, subtitle: string) => {
     const { stats: updated } = increasePlayerIQ(iqPoints);
     setStats(updated);
@@ -134,14 +126,12 @@ export const App: React.FC = () => {
     setCelebrationOpen(true);
   };
 
-  // Sudoku solve handler
   const handleSudokuWin = (timeTakenSeconds: number, isDaily: boolean) => {
     const updated = recordGameWin(timeTakenSeconds, isDaily);
     setStats(updated);
     handleLevelCelebration(15, 'SUDOKU MASTERED! 🧩', 'Brilliant logical grid completion across all 81 cells.');
   };
 
-  // Arrow Puzzle solve handler
   const handleArrowWin = () => {
     handleLevelCelebration(15, 'ARROWS ESCAPED! 🚀', 'Spatial trajectory mastered! All directional blocks cleared.');
   };
@@ -152,137 +142,238 @@ export const App: React.FC = () => {
     setAdModalOpen(true);
   };
 
+  const handleLaunchGame = (gameKey: GameKey) => {
+    sound.playTap();
+    setActiveGame(gameKey);
+    handleGameActivity(gameKey);
+  };
+
+  const handleBackToHub = () => {
+    sound.playTap();
+    setActiveGame(null);
+  };
+
   return (
-    <div className={`min-h-screen flex flex-col transition-colors ${
-      theme === 'dark' ? 'bg-[#131f24] text-slate-100' : 'bg-[#f7f7f7] text-slate-900'
-    }`}>
-      {/* Floating Dynamic Island Top Capsule */}
-      <Header
-        stats={stats}
-        theme={theme}
-        soundEnabled={soundEnabled}
-        activeGenre={activeGenre}
-        onSelectGenre={(g) => {
-          sound.playTap();
-          setActiveGenre(g);
-          handleGameActivity(g);
+    <div className="min-h-screen bg-[#0b051e] text-slate-100 flex overflow-x-hidden">
+      {/* 1. Left Sidebar Navigation */}
+      <Sidebar
+        activeTab={activeNavTab}
+        onSelectTab={(tab) => {
+          setActiveNavTab(tab);
+          if (tab === 'profile') {
+            setIsProfileOpen(true);
+          } else if (tab === 'settings') {
+            setIsAdminOpen(true);
+          } else {
+            setActiveGame(null); // Return to view
+          }
         }}
-        onToggleTheme={handleToggleTheme}
-        onToggleSound={handleToggleSound}
-        onOpenStats={() => setIsStatsOpen(true)}
         onOpenProfile={() => setIsProfileOpen(true)}
-        onOpenHowToPlay={handleOpenHowToPlay}
         onOpenAdmin={() => setIsAdminOpen(true)}
+        onOpenRewards={() => setActiveNavTab('rewards')}
+        isMobileOpen={isMobileSidebarOpen}
+        onCloseMobile={() => setIsMobileSidebarOpen(false)}
       />
 
-      {/* Streak Notification Toast */}
-      {streakToast && (
-        <div className="fixed top-14 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-2xl bg-[#ff9600] border-b-4 border-[#cc7800] text-slate-950 font-black text-xs shadow-xl flex items-center gap-1.5 animate-bounce">
-          <Flame className="w-4 h-4 fill-slate-950" />
-          <span>{streakToast}</span>
-        </div>
-      )}
+      {/* 2. Main Content Wrapper */}
+      <div className="flex-1 flex flex-col min-h-screen lg:pl-64">
+        {/* Top Header Bar */}
+        <TopBar
+          stats={stats}
+          soundEnabled={soundEnabled}
+          onToggleSound={handleToggleSound}
+          onOpenProfile={() => setIsProfileOpen(true)}
+          onOpenStats={() => setIsStatsOpen(true)}
+          onOpenMenu={() => setIsMobileSidebarOpen(true)}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+        />
 
-      {/* Main Single-Screen Game Stage with pb-28 for Floating Bottom Dock */}
-      <main className="flex-1 w-full max-w-md mx-auto px-3 pt-3 pb-28 flex flex-col items-center justify-start">
-        {/* 1. BRAIN GENRE (3 CURATED GAMES) */}
-        <div className={`w-full flex flex-col items-center ${activeGenre === 'brain' ? 'block' : 'hidden'}`}>
-          {/* Universal IQ & Rank Progress Meter in Brain Hub */}
-          <IQRankMeter
-            currentIQ={stats.iq || 105}
-            sectionName="Cognitive Logic"
-            onOpenStats={() => setIsStatsOpen(true)}
-          />
-
-          {/* Brain Sub-Game Pills (Tactile 3D Squircles: Sudoku, 2048, Arrow Out) */}
-          <div className="grid grid-cols-3 gap-2 mb-3.5 w-full">
-            {[
-              { id: 'sudoku', label: 'Sudoku' },
-              { id: '2048', label: '2048' },
-              { id: 'arrows', label: 'Arrow Out' },
-            ].map((g) => (
-              <button
-                key={g.id}
-                onClick={() => {
-                  sound.playTap();
-                  setBrainGame(g.id as BrainSubGame);
-                  handleGameActivity(g.id);
-                }}
-                className={`py-2 px-2 rounded-2xl text-center text-xs font-black transition ${
-                  brainGame === g.id
-                    ? 'btn-tactile-blue shadow-md'
-                    : 'btn-tactile-slate'
-                }`}
-              >
-                {g.label}
-              </button>
-            ))}
+        {/* Streak Notification Toast */}
+        {streakToast && (
+          <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-2xl bg-[#ff9600] border-b-4 border-[#cc7800] text-slate-950 font-black text-xs shadow-xl flex items-center gap-1.5 animate-bounce">
+            <Flame className="w-4 h-4 fill-slate-950" />
+            <span>{streakToast}</span>
           </div>
+        )}
 
-          {/* Preserved In-Progress Brain Games (Mounted in memory, never reset on switch) */}
-          <div className={`w-full ${brainGame === 'sudoku' ? 'block' : 'hidden'}`}>
-            <DailyGrid
-              stats={stats}
-              onWin={handleSudokuWin}
-              onRequestAd={handleRequestAd}
-            />
-          </div>
-          <div className={`w-full ${brainGame === '2048' ? 'block' : 'hidden'}`}>
-            <Game2048
-              onWinOrScore={(s) => {
-                if (s > 100) handleGameActivity('2048');
-                if (s >= 512 && s % 512 === 0) {
-                  handleLevelCelebration(15, '2048 RUSH ACHIEVED! ⚡', `Huge combo score of ${s}! Numerical logic master.`);
-                }
-              }}
-              onRequestAd={handleRequestAd}
-            />
-          </div>
-          <div className={`w-full ${brainGame === 'arrows' ? 'block' : 'hidden'}`}>
-            <ArrowPuzzle
-              onWin={handleArrowWin}
-              onRequestAd={handleRequestAd}
-            />
-          </div>
-        </div>
+        {/* Main Body Area */}
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
+          {/* ---------------- SCENARIO A: ACTIVE GAME PLAYER MODE ---------------- */}
+          {activeGame !== null ? (
+            <div className="w-full flex flex-col items-center animate-fade-in">
+              {/* Back Bar & Game Navigation */}
+              <div className="w-full flex items-center justify-between mb-4 p-3 rounded-2xl bg-[#140a33] border border-[#2b1660] shadow-xl">
+                <button
+                  onClick={handleBackToHub}
+                  className="px-4 py-2 rounded-xl bg-[#1e0f49] border border-[#3b1d82] text-xs font-black text-purple-300 hover:text-white hover:bg-purple-600 transition flex items-center gap-1.5 active:scale-95"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  <span>Back to Hub</span>
+                </button>
 
-        {/* 2. SOCIAL GENRE: SPILL IT! (Preserved In-Progress, never resets on switch) */}
-        <div className={`w-full ${activeGenre === 'social' ? 'block' : 'hidden'}`}>
-          <SpillItHub
-            currentIQ={stats.iq || 105}
-            onActivity={() => handleGameActivity('spill-it')}
-            onWinLevel={handleLevelCelebration}
-            onRequestAd={handleRequestAd}
-            onOpenHowToPlay={handleOpenHowToPlay}
-            onOpenStats={() => setIsStatsOpen(true)}
-          />
-        </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-black text-white capitalize">
+                    {activeGame === 'tod' && 'Truth or Dare'}
+                    {activeGame === 'sudoku' && 'Sudoku Master'}
+                    {activeGame === '2t1l' && '2 Truths & 1 Lie'}
+                    {activeGame === 'tictactoe' && 'Tic Tac Toe'}
+                    {activeGame === 'memory' && 'Memory Match'}
+                    {activeGame === 'dice' && 'Dice Roll'}
+                    {activeGame === 'arrows' && 'Arrow Out'}
+                    {activeGame === '2048' && '2048 Rush'}
+                    {activeGame === 'mystery' && 'The Case Files'}
+                  </span>
+                  <span className="px-2 py-0.5 rounded-full bg-purple-500/20 text-[10px] font-bold text-purple-300 uppercase">
+                    Playing
+                  </span>
+                </div>
 
-        {/* 3. MYSTERY GENRE: THE CASE FILES (Preserved In-Progress, never resets on switch) */}
-        <div className={`w-full ${activeGenre === 'mystery' ? 'block' : 'hidden'}`}>
-          <MysteryHub
-            currentIQ={stats.iq || 105}
-            onActivity={() => handleGameActivity('mystery')}
-            onLevelWin={handleLevelCelebration}
-            onRequestAd={handleRequestAd}
-            onOpenHowToPlay={handleOpenHowToPlay}
-            onOpenStats={() => setIsStatsOpen(true)}
-          />
-        </div>
-      </main>
+                <button
+                  onClick={() => handleOpenHowToPlay(activeGame)}
+                  className="p-2 rounded-xl bg-[#1e0f49] border border-[#3b1d82] text-purple-300 hover:text-white transition"
+                  title="How to Play"
+                >
+                  <HelpCircle className="w-4 h-4" />
+                </button>
+              </div>
 
-      {/* Floating Bottom App Dock */}
-      <BottomDock
-        activeGenre={activeGenre}
-        onSelectGenre={(g) => {
-          sound.playTap();
-          setActiveGenre(g);
-          handleGameActivity(g);
-        }}
-        onOpenProfile={() => setIsProfileOpen(true)}
-      />
+              {/* Mounted Active Game Stages (Kept alive in memory) */}
+              <div className={`w-full ${activeGame === 'sudoku' ? 'block' : 'hidden'}`}>
+                <DailyGrid
+                  stats={stats}
+                  onWin={handleSudokuWin}
+                  onRequestAd={handleRequestAd}
+                />
+              </div>
 
-      {/* Global Modals */}
+              <div className={`w-full ${activeGame === 'arrows' ? 'block' : 'hidden'}`}>
+                <ArrowPuzzle
+                  onWin={handleArrowWin}
+                  onRequestAd={handleRequestAd}
+                />
+              </div>
+
+              <div className={`w-full ${activeGame === '2048' ? 'block' : 'hidden'}`}>
+                <Game2048
+                  onWinOrScore={(s) => {
+                    if (s > 100) handleGameActivity('2048');
+                    if (s >= 512 && s % 512 === 0) {
+                      handleLevelCelebration(15, '2048 RUSH ACHIEVED! ⚡', `Huge combo score of ${s}! Numerical logic master.`);
+                    }
+                  }}
+                  onRequestAd={handleRequestAd}
+                />
+              </div>
+
+              <div className={`w-full ${activeGame === 'tod' || activeGame === '2t1l' ? 'block' : 'hidden'}`}>
+                <SpillItHub
+                  currentIQ={stats.iq || 105}
+                  onActivity={() => handleGameActivity('spill-it')}
+                  onWinLevel={handleLevelCelebration}
+                  onRequestAd={handleRequestAd}
+                  onOpenHowToPlay={handleOpenHowToPlay}
+                  onOpenStats={() => setIsStatsOpen(true)}
+                />
+              </div>
+
+              <div className={`w-full ${activeGame === 'mystery' ? 'block' : 'hidden'}`}>
+                <MysteryHub
+                  currentIQ={stats.iq || 105}
+                  onActivity={() => handleGameActivity('mystery')}
+                  onLevelWin={handleLevelCelebration}
+                  onRequestAd={handleRequestAd}
+                  onOpenHowToPlay={handleOpenHowToPlay}
+                  onOpenStats={() => setIsStatsOpen(true)}
+                />
+              </div>
+
+              <div className={`w-full ${activeGame === 'tictactoe' ? 'block' : 'hidden'}`}>
+                <TicTacToe
+                  onWinOrActivity={() => {
+                    handleGameActivity('tictactoe');
+                    handleLevelCelebration(10, 'TICTACTOE VICTORY! 👑', '3-in-a-row domination! Strategic intellect leveled up.');
+                  }}
+                  onRequestAd={handleRequestAd}
+                />
+              </div>
+
+              <div className={`w-full ${activeGame === 'memory' ? 'block' : 'hidden'}`}>
+                <MemoryMatch
+                  onWin={(m, s) => {
+                    handleGameActivity('memory');
+                    handleLevelCelebration(15, 'MEMORY CONQUERED! 🧠', `All 8 pairs matched in ${m} moves and ${s} seconds!`);
+                  }}
+                />
+              </div>
+
+              <div className={`w-full ${activeGame === 'dice' ? 'block' : 'hidden'}`}>
+                <DiceRoll
+                  onWinBonus={(coinsWon) => {
+                    handleGameActivity('dice');
+                    const updated = { ...stats, coins: stats.coins + coinsWon };
+                    setStats(updated);
+                    syncPlayerProgress(updated);
+                  }}
+                />
+              </div>
+            </div>
+          ) : (
+            /* ---------------- SCENARIO B: DASHBOARD VIEWS ---------------- */
+            <>
+              {activeNavTab === 'home' && (
+                <div className="w-full flex flex-col animate-fade-in">
+                  {/* Hero Banner: "Your Daily Gaming Hub!" */}
+                  <HeroBanner onStartPlaying={() => handleLaunchGame('sudoku')} />
+
+                  {/* Popular Games (6 Colorful Cards) */}
+                  <PopularGames
+                    onSelectGame={handleLaunchGame}
+                    onViewAll={() => setActiveNavTab('games')}
+                  />
+
+                  {/* Dashboard Widgets: Stats, Daily Challenge, Leaderboard, Rewards, Top Games */}
+                  <DashboardWidgets
+                    stats={stats}
+                    onOpenStats={() => setIsStatsOpen(true)}
+                    onOpenLeaderboard={() => setActiveNavTab('leaderboard')}
+                    onOpenRewards={() => setActiveNavTab('rewards')}
+                    onPlayDailyChallenge={() => handleLaunchGame('sudoku')}
+                  />
+                </div>
+              )}
+
+              {activeNavTab === 'games' && (
+                <GamesGalleryView
+                  onSelectGame={handleLaunchGame}
+                  onBackToHome={() => setActiveNavTab('home')}
+                />
+              )}
+
+              {activeNavTab === 'leaderboard' && (
+                <LeaderboardView
+                  stats={stats}
+                  onBackToHome={() => setActiveNavTab('home')}
+                />
+              )}
+
+              {activeNavTab === 'rewards' && (
+                <RewardsView
+                  stats={stats}
+                  onUpdateStats={(newStats) => {
+                    setStats(newStats);
+                    syncPlayerProgress(newStats);
+                  }}
+                  onRequestAd={handleRequestAd}
+                  onBackToHome={() => setActiveNavTab('home')}
+                />
+              )}
+            </>
+          )}
+        </main>
+      </div>
+
+      {/* ---------------- GLOBAL MODALS ---------------- */}
       <StatsModal
         isOpen={isStatsOpen}
         onClose={() => setIsStatsOpen(false)}
