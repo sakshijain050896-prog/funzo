@@ -38,7 +38,36 @@ export const DailyGrid: React.FC<DailyGridProps> = ({
   const [showInstructions, setShowInstructions] = useState<boolean>(false);
 
   // Initialize or reset puzzle
-  const initGame = useCallback((diff: Difficulty) => {
+  const initGame = useCallback((diff: Difficulty, forceFresh = false) => {
+    if (!forceFresh) {
+      try {
+        const saved = localStorage.getItem(`funzo_sudoku_${diff}`);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && Array.isArray(parsed.grid) && parsed.grid.length === 9) {
+            const restoredGrid: SudokuCell[][] = parsed.grid.map((row: any[]) =>
+              row.map((cell: any) => ({
+                ...cell,
+                notes: new Set<number>(cell.notes || []),
+              }))
+            );
+            setGrid(restoredGrid);
+            setSelectedCell(null);
+            setHistory([]);
+            setMistakes(parsed.mistakes || 0);
+            setSeconds(parsed.seconds || 0);
+            setIsPaused(false);
+            setIsWon(false);
+            setIsGameOver(false);
+            setCopiedShare(false);
+            return;
+          }
+        }
+      } catch {
+        // storage fallback
+      }
+    }
+
     let puzzleData;
     if (diff === 'daily') {
       const today = new Date().toISOString().slice(0, 10);
@@ -57,11 +86,53 @@ export const DailyGrid: React.FC<DailyGridProps> = ({
     setIsWon(false);
     setIsGameOver(false);
     setCopiedShare(false);
+
+    try {
+      localStorage.removeItem(`funzo_sudoku_${diff}`);
+    } catch {
+      // storage fallback
+    }
   }, []);
 
   useEffect(() => {
     initGame(difficulty);
   }, [difficulty, initGame]);
+
+  // Mid-game Auto-Save Persistence
+  useEffect(() => {
+    if (grid.length === 0 || isWon || isGameOver) {
+      if (isWon || isGameOver) {
+        try {
+          localStorage.removeItem(`funzo_sudoku_${difficulty}`);
+        } catch {
+          // ignore
+        }
+      }
+      return;
+    }
+
+    const hasProgress = grid.some((row) =>
+      row.some((c) => !c.isInitial && (c.value > 0 || (c.notes && c.notes.size > 0)))
+    );
+    if (!hasProgress) return;
+
+    try {
+      const serialized = {
+        grid: grid.map((row) =>
+          row.map((cell) => ({
+            ...cell,
+            notes: Array.from(cell.notes),
+          }))
+        ),
+        mistakes,
+        seconds,
+        difficulty,
+      };
+      localStorage.setItem(`funzo_sudoku_${difficulty}`, JSON.stringify(serialized));
+    } catch {
+      // ignore
+    }
+  }, [grid, mistakes, seconds, difficulty, isWon, isGameOver]);
 
   // Timer
   useEffect(() => {
@@ -523,7 +594,7 @@ export const DailyGrid: React.FC<DailyGridProps> = ({
               </button>
 
               <button
-                onClick={() => initGame(difficulty)}
+                onClick={() => initGame(difficulty, true)}
                 className="w-full py-2 rounded-xl bg-slate-800 text-slate-300 font-semibold text-xs"
               >
                 Play Practice Round
@@ -553,7 +624,7 @@ export const DailyGrid: React.FC<DailyGridProps> = ({
                 Watch 5s Ad to Revive &amp; Continue
               </button>
               <button
-                onClick={() => initGame(difficulty)}
+                onClick={() => initGame(difficulty, true)}
                 className="w-full py-2 rounded-xl bg-slate-800 text-slate-400 font-semibold text-xs"
               >
                 Restart Puzzle

@@ -190,7 +190,21 @@ export const ArrowPuzzle: React.FC<ArrowPuzzleProps> = ({ onWin, onRequestAd }) 
     }));
   }, []);
 
-  const [activeArrows, setActiveArrows] = useState<ArrowTile[]>(() => initArrows(activeLevel));
+  const [activeArrows, setActiveArrows] = useState<ArrowTile[]>(() => {
+    const full = initArrows(activeLevel);
+    try {
+      const savedLevel = localStorage.getItem('funzo_arrow_level');
+      const savedIds = localStorage.getItem('funzo_arrow_active_ids');
+      if (savedLevel && parseInt(savedLevel, 10) === activeLevel.levelNum && savedIds) {
+        const idSet = new Set<string>(JSON.parse(savedIds));
+        const filtered = full.filter((a) => idSet.has(a.id));
+        if (filtered.length > 0) return filtered;
+      }
+    } catch {
+      // storage fallback
+    }
+    return full;
+  });
   const [flyingArrows, setFlyingArrows] = useState<Record<string, Direction>>({});
   const [blockedTileId, setBlockedTileId] = useState<string | null>(null);
   const [highlightedTileId, setHighlightedTileId] = useState<string | null>(null);
@@ -217,9 +231,34 @@ export const ArrowPuzzle: React.FC<ArrowPuzzleProps> = ({ onWin, onRequestAd }) 
     }
   }, [freeHints]);
 
+  // Persist in-progress active arrow remaining tiles
+  useEffect(() => {
+    try {
+      if (activeArrows.length > 0 && !isLevelSolved && activeArrows.length < activeLevel.arrows.length) {
+        localStorage.setItem('funzo_arrow_active_ids', JSON.stringify(activeArrows.map((a) => a.id)));
+      } else if (isLevelSolved || activeArrows.length === 0) {
+        localStorage.removeItem('funzo_arrow_active_ids');
+      }
+    } catch {
+      // ignore
+    }
+  }, [activeArrows, isLevelSolved, activeLevel.arrows.length]);
+
   // Sync arrows when activeLevel changes
   useEffect(() => {
-    setActiveArrows(initArrows(activeLevel));
+    let tiles = initArrows(activeLevel);
+    try {
+      const savedLevel = localStorage.getItem('funzo_arrow_level');
+      const savedIds = localStorage.getItem('funzo_arrow_active_ids');
+      if (savedLevel && parseInt(savedLevel, 10) === activeLevel.levelNum && savedIds) {
+        const idSet = new Set<string>(JSON.parse(savedIds));
+        const filtered = tiles.filter((a) => idSet.has(a.id));
+        if (filtered.length > 0) tiles = filtered;
+      }
+    } catch {
+      // ignore
+    }
+    setActiveArrows(tiles);
     setFlyingArrows({});
     setBlockedTileId(null);
     setHighlightedTileId(null);

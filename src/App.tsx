@@ -182,73 +182,71 @@ export const App: React.FC = () => {
         </div>
       )}
 
-      {/* Main Single-Screen Game Stage */}
+      {/* Main Single-Screen Game Stage (Keep-Alive: All games stay mounted in memory when switching) */}
       <main className="flex-1 w-full max-w-lg mx-auto px-2.5 py-2 flex flex-col items-center justify-start">
         {/* 1. BRAIN GENRE (3 CURATED GAMES) */}
-        {activeGenre === 'brain' && (
-          <div className="w-full flex flex-col items-center">
-            {/* Universal IQ & Rank Progress Meter in Brain Hub */}
-            <IQRankMeter
-              currentIQ={stats.iq || 105}
-              sectionName="Brain Grid Arena"
-              onOpenStats={() => setIsStatsOpen(true)}
-            />
+        <div className={`w-full flex flex-col items-center ${activeGenre === 'brain' ? 'block' : 'hidden'}`}>
+          {/* Universal IQ & Rank Progress Meter in Brain Hub */}
+          <IQRankMeter
+            currentIQ={stats.iq || 105}
+            sectionName="Brain Grid Arena"
+            onOpenStats={() => setIsStatsOpen(true)}
+          />
 
-            {/* Brain Sub-Game Pills (Sudoku, 2048, Arrow Escape) */}
-            <div className="flex items-center justify-between gap-1 mb-2 p-0.5 rounded-xl bg-slate-200 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-[11px] font-bold overflow-x-auto w-full">
-              {[
-                { id: 'sudoku', label: 'Sudoku Master' },
-                { id: '2048', label: '2048 Rush' },
-                { id: 'arrows', label: 'Arrow Escape 🏹' },
-              ].map((g) => (
-                <button
-                  key={g.id}
-                  onClick={() => {
-                    sound.playTap();
-                    setBrainGame(g.id as BrainSubGame);
-                    handleGameActivity(g.id);
-                  }}
-                  className={`flex-1 py-1.5 rounded-lg text-center transition active:scale-95 ${
-                    brainGame === g.id
-                      ? 'bg-indigo-600 text-white shadow-sm font-black'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                  }`}
-                >
-                  {g.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Active Brain Game */}
-            {brainGame === 'sudoku' && (
-              <DailyGrid
-                stats={stats}
-                onWin={handleSudokuWin}
-                onRequestAd={handleRequestAd}
-              />
-            )}
-            {brainGame === '2048' && (
-              <Game2048
-                onWinOrScore={(s) => {
-                  if (s > 100) handleGameActivity('2048');
-                  if (s >= 512 && s % 512 === 0) {
-                    handleLevelCelebration(15, '2048 RUSH ACHIEVED! ⚡', `Huge combo score of ${s}! Numerical logic master.`);
-                  }
+          {/* Brain Sub-Game Pills (Sudoku, 2048, Arrow Escape) */}
+          <div className="flex items-center justify-between gap-1 mb-2 p-0.5 rounded-xl bg-slate-200 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-[11px] font-bold overflow-x-auto w-full">
+            {[
+              { id: 'sudoku', label: 'Sudoku Master' },
+              { id: '2048', label: '2048 Rush' },
+              { id: 'arrows', label: 'Arrow Escape 🏹' },
+            ].map((g) => (
+              <button
+                key={g.id}
+                onClick={() => {
+                  sound.playTap();
+                  setBrainGame(g.id as BrainSubGame);
+                  handleGameActivity(g.id);
                 }}
-                onRequestAd={handleRequestAd}
-              />
-            )}
-            {brainGame === 'arrows' && (
-              <ArrowPuzzle
-                onWin={handleArrowWin}
-                onRequestAd={handleRequestAd}
-              />
-            )}
+                className={`flex-1 py-1.5 rounded-lg text-center transition active:scale-95 ${
+                  brainGame === g.id
+                    ? 'bg-indigo-600 text-white shadow-sm font-black'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                {g.label}
+              </button>
+            ))}
           </div>
-        )}
 
-        {/* 2. SOCIAL GENRE: SPILL IT! */}
-        {activeGenre === 'social' && (
+          {/* Preserved In-Progress Brain Games (Mounted in memory, never reset on switch) */}
+          <div className={`w-full ${brainGame === 'sudoku' ? 'block' : 'hidden'}`}>
+            <DailyGrid
+              stats={stats}
+              onWin={handleSudokuWin}
+              onRequestAd={handleRequestAd}
+            />
+          </div>
+          <div className={`w-full ${brainGame === '2048' ? 'block' : 'hidden'}`}>
+            <Game2048
+              onWinOrScore={(s) => {
+                if (s > 100) handleGameActivity('2048');
+                if (s >= 512 && s % 512 === 0) {
+                  handleLevelCelebration(15, '2048 RUSH ACHIEVED! ⚡', `Huge combo score of ${s}! Numerical logic master.`);
+                }
+              }}
+              onRequestAd={handleRequestAd}
+            />
+          </div>
+          <div className={`w-full ${brainGame === 'arrows' ? 'block' : 'hidden'}`}>
+            <ArrowPuzzle
+              onWin={handleArrowWin}
+              onRequestAd={handleRequestAd}
+            />
+          </div>
+        </div>
+
+        {/* 2. SOCIAL GENRE: SPILL IT! (Preserved In-Progress, never resets on switch) */}
+        <div className={`w-full ${activeGenre === 'social' ? 'block' : 'hidden'}`}>
           <SpillItHub
             currentIQ={stats.iq || 105}
             onActivity={() => handleGameActivity('spill-it')}
@@ -257,10 +255,10 @@ export const App: React.FC = () => {
             onOpenHowToPlay={handleOpenHowToPlay}
             onOpenStats={() => setIsStatsOpen(true)}
           />
-        )}
+        </div>
 
-        {/* 3. MYSTERY GENRE: THE CASE FILES */}
-        {activeGenre === 'mystery' && (
+        {/* 3. MYSTERY GENRE: THE CASE FILES (Preserved In-Progress, never resets on switch) */}
+        <div className={`w-full ${activeGenre === 'mystery' ? 'block' : 'hidden'}`}>
           <MysteryHub
             currentIQ={stats.iq || 105}
             onActivity={() => handleGameActivity('mystery')}
@@ -269,7 +267,7 @@ export const App: React.FC = () => {
             onOpenHowToPlay={handleOpenHowToPlay}
             onOpenStats={() => setIsStatsOpen(true)}
           />
-        )}
+        </div>
       </main>
 
       {/* Global Modals */}

@@ -10,14 +10,40 @@ interface Game2048Props {
 type Board = number[][];
 
 export const Game2048: React.FC<Game2048Props> = ({ onWinOrScore, onRequestAd }) => {
-  const [board, setBoard] = useState<Board>(() => getInitialBoard());
-  const [score, setScore] = useState<number>(0);
+  const [board, setBoard] = useState<Board>(() => {
+    try {
+      const saved = localStorage.getItem('funzo_2048_active_board');
+      return saved ? JSON.parse(saved) : getInitialBoard();
+    } catch {
+      return getInitialBoard();
+    }
+  });
+  const [score, setScore] = useState<number>(() => {
+    try {
+      const saved = localStorage.getItem('funzo_2048_active_score');
+      return saved ? parseInt(saved, 10) : 0;
+    } catch {
+      return 0;
+    }
+  });
   const [bestScore, setBestScore] = useState<number>(() => {
     return parseInt(localStorage.getItem('funzo_2048_best') || '0', 10);
   });
   const [previousState, setPreviousState] = useState<{ board: Board; score: number } | null>(null);
   const [isGameOver, setIsGameOver] = useState<boolean>(false);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+
+  // Auto-save in-progress board to localStorage so game can resume anytime
+  useEffect(() => {
+    try {
+      if (!isGameOver) {
+        localStorage.setItem('funzo_2048_active_board', JSON.stringify(board));
+        localStorage.setItem('funzo_2048_active_score', score.toString());
+      }
+    } catch {
+      // storage unavailable
+    }
+  }, [board, score, isGameOver]);
 
   function getInitialBoard(): Board {
     const b: Board = Array(4).fill(0).map(() => Array(4).fill(0));
