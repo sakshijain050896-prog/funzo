@@ -3,7 +3,7 @@ import confetti from 'canvas-confetti';
 import { Header } from './components/Header';
 import { DailyGrid } from './components/DailyGrid';
 import { Game2048 } from './components/games/Game2048';
-import { ZenTidy } from './components/games/ZenTidy';
+import { ArrowPuzzle } from './components/games/ArrowPuzzle';
 import { SpillItHub } from './components/games/SpillItHub';
 import { MysteryHub } from './components/games/MysteryHub';
 import { IQRankMeter } from './components/IQRankMeter';
@@ -26,7 +26,7 @@ import { sound } from './lib/soundEffects';
 import { GenreType, ThemeMode } from './types';
 import { Flame } from 'lucide-react';
 
-type BrainSubGame = 'sudoku' | '2048' | 'tidy';
+type BrainSubGame = 'sudoku' | '2048' | 'arrows';
 
 export const App: React.FC = () => {
   const [stats, setStats] = useState(getStoredStats);
@@ -123,9 +123,9 @@ export const App: React.FC = () => {
     handleLevelCelebration(15, 'SUDOKU MASTERED! 🧩', 'Brilliant logical grid completion across all 81 cells.');
   };
 
-  // Zen Tidy solve handler
-  const handleTidyWin = () => {
-    handleLevelCelebration(15, 'PERFECT HARMONY! ✨', 'Room clutter settled into soothing, flawless order.');
+  // Arrow Puzzle solve handler
+  const handleArrowWin = () => {
+    handleLevelCelebration(15, 'ARROWS ESCAPED! 🚀', 'Spatial trajectory mastered! All directional blocks cleared.');
   };
 
   const handleRequestAd = (rewardTitle: string, onReward: () => void) => {
@@ -176,12 +176,12 @@ export const App: React.FC = () => {
               onOpenStats={() => setIsStatsOpen(true)}
             />
 
-            {/* Brain Sub-Game Pills (Sudoku, 2048, Zen Tidy) */}
+            {/* Brain Sub-Game Pills (Sudoku, 2048, Arrow Escape) */}
             <div className="flex items-center justify-between gap-1 mb-2 p-0.5 rounded-xl bg-slate-200 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-[11px] font-bold overflow-x-auto w-full">
               {[
                 { id: 'sudoku', label: 'Sudoku Master' },
                 { id: '2048', label: '2048 Rush' },
-                { id: 'tidy', label: 'Zen Tidy ✨' },
+                { id: 'arrows', label: 'Arrow Escape 🏹' },
               ].map((g) => (
                 <button
                   key={g.id}
@@ -220,9 +220,9 @@ export const App: React.FC = () => {
                 onRequestAd={handleRequestAd}
               />
             )}
-            {brainGame === 'tidy' && (
-              <ZenTidy
-                onWin={handleTidyWin}
+            {brainGame === 'arrows' && (
+              <ArrowPuzzle
+                onWin={handleArrowWin}
                 onRequestAd={handleRequestAd}
               />
             )}
