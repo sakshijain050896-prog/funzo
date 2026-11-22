@@ -22,7 +22,7 @@ export const StatsModal: React.FC<StatsModalProps> = ({ isOpen, onClose, stats }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in">
-      <div className="relative w-full max-w-sm rounded-3xl bg-slate-900 border border-slate-700/80 p-5 shadow-2xl">
+      <div className="relative w-full max-w-sm rounded-3xl bg-[#1a2c35] border-2 border-[#2b4554] p-5 shadow-2xl">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-base font-black text-white flex items-center gap-2">
             <Trophy className="w-4 h-4 text-amber-400" />

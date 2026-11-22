@@ -31,11 +31,11 @@ export interface LevelConfig {
   arrows: { r: number; c: number; dir: Direction }[];
 }
 
-const DIR_COLORS: Record<Direction, { bg: string; text: string; glow: string }> = {
-  U: { bg: 'bg-indigo-600', text: 'text-indigo-200', glow: 'shadow-indigo-500/40' },
-  D: { bg: 'bg-rose-600', text: 'text-rose-200', glow: 'shadow-rose-500/40' },
-  L: { bg: 'bg-amber-600', text: 'text-amber-200', glow: 'shadow-amber-500/40' },
-  R: { bg: 'bg-cyan-600', text: 'text-cyan-200', glow: 'shadow-cyan-500/40' },
+const DIR_COLORS: Record<Direction, { bg: string; text: string; glow: string; border: string }> = {
+  U: { bg: 'bg-[#58cc02]', text: 'text-white', glow: 'shadow-[#58cc02]/30', border: 'border-b-4 border-[#46a302]' },
+  D: { bg: 'bg-[#ff4b4b]', text: 'text-white', glow: 'shadow-[#ff4b4b]/30', border: 'border-b-4 border-[#d33131]' },
+  L: { bg: 'bg-[#ff9600]', text: 'text-white', glow: 'shadow-[#ff9600]/30', border: 'border-b-4 border-[#cc7800]' },
+  R: { bg: 'bg-[#1cb0f6]', text: 'text-white', glow: 'shadow-[#1cb0f6]/30', border: 'border-b-4 border-[#1899d6]' },
 };
 
 // Seeded PRNG for 100% deterministic levels across devices
@@ -411,7 +411,7 @@ export const ArrowPuzzle: React.FC<ArrowPuzzleProps> = ({ onWin, onRequestAd }) 
         <div className="flex items-center gap-1.5">
           <button
             onClick={() => setIsJumpModalOpen(true)}
-            className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-white font-black text-xs hover:border-slate-300 dark:hover:border-slate-700 transition active:scale-95 shadow-sm"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-2xl btn-tactile-slate text-xs font-black shadow-sm"
             title="Jump to Level (1–10,000)"
           >
             <span>Level {levelNum}</span>
@@ -420,10 +420,10 @@ export const ArrowPuzzle: React.FC<ArrowPuzzleProps> = ({ onWin, onRequestAd }) 
 
           <button
             onClick={() => setShowHowToPlay((p) => !p)}
-            className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition"
+            className="p-1.5 rounded-xl btn-tactile-slate text-slate-400 hover:text-white transition"
             title="How to Play"
           >
-            <HelpCircle className="w-3.5 h-3.5" />
+            <HelpCircle className="w-4 h-4" />
           </button>
         </div>
 
@@ -432,7 +432,7 @@ export const ArrowPuzzle: React.FC<ArrowPuzzleProps> = ({ onWin, onRequestAd }) 
           <button
             onClick={handlePrevLevel}
             disabled={levelNum <= 1}
-            className="p-1 rounded-lg bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 disabled:opacity-30 text-slate-600 dark:text-slate-300 transition active:scale-95"
+            className="p-2 rounded-xl btn-tactile-slate disabled:opacity-30 text-slate-300 transition"
             title="Previous Level"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -440,7 +440,7 @@ export const ArrowPuzzle: React.FC<ArrowPuzzleProps> = ({ onWin, onRequestAd }) 
           <button
             onClick={handleNextLevel}
             disabled={levelNum >= 10000}
-            className="p-1 rounded-lg bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 disabled:opacity-30 text-slate-600 dark:text-slate-300 transition active:scale-95"
+            className="p-2 rounded-xl btn-tactile-slate disabled:opacity-30 text-slate-300 transition"
             title="Next Level"
           >
             <ChevronRight className="w-4 h-4" />
@@ -450,14 +450,14 @@ export const ArrowPuzzle: React.FC<ArrowPuzzleProps> = ({ onWin, onRequestAd }) 
         {/* Right: Hint Button */}
         <button
           onClick={handleHint}
-          className={`flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold transition active:scale-95 shadow-sm ${
+          className={`flex items-center gap-1 px-3 py-1.5 rounded-2xl text-xs font-black shadow-sm ${
             freeHints > 0
-              ? 'bg-amber-500/10 border border-amber-500/30 text-amber-500'
-              : 'bg-indigo-600 text-white shadow-indigo-600/20'
+              ? 'btn-tactile-amber'
+              : 'btn-tactile-green'
           }`}
           title={freeHints > 0 ? `${freeHints} Free Hints Left` : 'Watch Video for +2 Free Hints'}
         >
-          <Lightbulb className="w-3.5 h-3.5 fill-current" />
+          <Lightbulb className="w-4 h-4 fill-current" />
           <span>{freeHints > 0 ? freeHints : 'Ad'}</span>
         </button>
       </div>
@@ -507,10 +507,10 @@ export const ArrowPuzzle: React.FC<ArrowPuzzleProps> = ({ onWin, onRequestAd }) 
                 onClick={() => handleTileClick(tile)}
                 className={`rounded-2xl flex items-center justify-center font-black shadow-lg transition-all duration-300 relative ${
                   isHighlighted
-                    ? 'ring-4 ring-amber-400 bg-amber-400 text-slate-950 animate-bounce scale-110 shadow-2xl shadow-amber-400/90 z-20'
-                    : `${DIR_COLORS[tile.dir].bg} ${DIR_COLORS[tile.dir].text} ${DIR_COLORS[tile.dir].glow}`
+                    ? 'ring-4 ring-amber-400 bg-amber-400 text-slate-950 animate-bounce scale-110 shadow-2xl shadow-amber-400/90 z-20 border-b-4 border-amber-600'
+                    : `${DIR_COLORS[tile.dir].bg} ${DIR_COLORS[tile.dir].text} ${DIR_COLORS[tile.dir].border} ${DIR_COLORS[tile.dir].glow}`
                 } ${
-                  isBlocked ? 'animate-shake ring-4 ring-rose-500 scale-95' : ''
+                  isBlocked ? 'animate-shake ring-4 ring-rose-500 scale-95' : 'active:translate-y-1 active:border-b-0'
                 } ${flyTransform}`}
                 style={{
                   gridRowStart: tile.r + 1,
@@ -552,16 +552,16 @@ export const ArrowPuzzle: React.FC<ArrowPuzzleProps> = ({ onWin, onRequestAd }) 
       <div className="flex items-center justify-between w-full mt-3 px-1">
         <button
           onClick={handleRestart}
-          className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-xs font-bold flex items-center gap-1.5 transition active:scale-95 shadow-sm"
+          className="px-3.5 py-2 rounded-2xl btn-tactile-slate text-xs font-black flex items-center gap-1.5 shadow-sm"
         >
-          <RotateCcw className="w-3.5 h-3.5" /> Restart Level
+          <RotateCcw className="w-4 h-4" /> Restart Level
         </button>
 
         <button
           onClick={handleWatchAdForHints}
-          className="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold flex items-center gap-1.5 transition active:scale-95 shadow-sm shadow-indigo-600/30"
+          className="px-4 py-2 rounded-2xl btn-tactile-green text-xs font-black flex items-center gap-1.5 shadow-md"
         >
-          <Tv className="w-3.5 h-3.5" />
+          <Tv className="w-4 h-4" />
           <span>+2 Hints (Ad)</span>
         </button>
       </div>

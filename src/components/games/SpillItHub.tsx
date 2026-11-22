@@ -208,7 +208,7 @@ export const SpillItHub: React.FC<SpillItHubProps> = ({
       </div>
 
       {/* Sub-Game Tabs Navigation */}
-      <div className="w-full grid grid-cols-5 gap-1 p-1 bg-slate-100 dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl mb-3 text-[10px] sm:text-xs font-bold">
+      <div className="w-full grid grid-cols-5 gap-1.5 mb-3 text-[10px] sm:text-xs font-black">
         {[
           { id: 'truth-or-dare', label: 'T or D', icon: '🔥' },
           { id: 'two-truths', label: '2T 1L', icon: '🤥' },
@@ -223,13 +223,13 @@ export const SpillItHub: React.FC<SpillItHubProps> = ({
               setActiveTab(tab.id as SocialSubGame);
               onActivity();
             }}
-            className={`py-1.5 px-0.5 rounded-xl flex flex-col items-center justify-center transition active:scale-95 ${
+            className={`py-2 px-1 rounded-2xl flex flex-col items-center justify-center transition ${
               activeTab === tab.id
-                ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm font-extrabold border border-slate-200/60 dark:border-slate-700/60'
-                : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                ? 'btn-tactile-rose shadow-md'
+                : 'btn-tactile-slate'
             }`}
           >
-            <span className="text-xs">{tab.icon}</span>
+            <span className="text-sm">{tab.icon}</span>
             <span className="truncate">{tab.label}</span>
           </button>
         ))}
@@ -239,15 +239,15 @@ export const SpillItHub: React.FC<SpillItHubProps> = ({
       {activeTab === 'truth-or-dare' && (
         <div className="w-full flex flex-col items-center animate-fade-in text-center">
           {/* Deck Selector Pills */}
-          <div className="flex gap-1.5 mb-3 overflow-x-auto w-full pb-0.5 px-0.5">
+          <div className="flex gap-2 mb-3.5 overflow-x-auto w-full pb-0.5 px-0.5">
             {(['kitty', 'spicy', 'wild', 'deep'] as const).map((d) => (
               <button
                 key={d}
                 onClick={() => handleSelectDeck(d)}
-                className={`px-3 py-1 rounded-xl text-xs font-bold capitalize whitespace-nowrap transition shadow-sm ${
+                className={`px-3.5 py-1.5 rounded-2xl text-xs font-black capitalize whitespace-nowrap transition shadow-sm ${
                   todDeck === d
-                    ? 'bg-indigo-600 text-white shadow-indigo-600/20'
-                    : 'bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800'
+                    ? 'btn-tactile-amber'
+                    : 'btn-tactile-slate'
                 }`}
               >
                 {d === 'kitty' && '🐱 Kitty Party'}
@@ -259,47 +259,48 @@ export const SpillItHub: React.FC<SpillItHubProps> = ({
           </div>
 
           {/* Main Card */}
-          <div className="relative w-full aspect-[4/3] max-w-[340px] sm:max-w-[360px] rounded-3xl bg-slate-950 border border-slate-800/80 p-5 flex flex-col justify-between shadow-2xl">
+          <div className="relative w-full aspect-[4/3] max-w-[340px] sm:max-w-[360px] rounded-3xl bg-[#1a2c35] border-2 border-[#2b4554] p-6 flex flex-col justify-between shadow-2xl">
             <div className="flex items-center justify-between">
               <span
-                className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest ${currentTod.type === 'TRUTH'
-                  ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30'
-                  : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
-                  }`}
+                className={`px-2.5 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest ${
+                  currentTod.type === 'TRUTH'
+                    ? 'bg-[#1cb0f6]/20 border border-[#1cb0f6]/40 text-[#1cb0f6]'
+                    : 'bg-[#ff4b4b]/20 border border-[#ff4b4b]/40 text-[#ff4b4b]'
+                }`}
               >
-                {currentTod.type} · Card #{roundCounter} / 10,000+
+                {currentTod.type} · Card #{roundCounter}
               </span>
               <button
                 onClick={() => handleShareCard(currentTod.text)}
                 className="text-slate-400 hover:text-white p-1"
                 title="Share Card"
               >
-                <Share2 className="w-3.5 h-3.5" />
+                <Share2 className="w-4 h-4" />
               </button>
             </div>
 
-            <p className="text-sm sm:text-base font-bold text-white leading-snug px-1">
+            <p className="text-base sm:text-lg font-black text-white leading-snug px-1">
               &quot;{currentTod.text}&quot;
             </p>
 
-            <div className="text-[10px] text-slate-500">
+            <div className="text-[11px] font-bold text-slate-400">
               Pass phone to next player or take the dare!
             </div>
           </div>
 
-          {/* Draw Buttons */}
-          <div className="grid grid-cols-2 gap-2 w-full max-w-[340px] mt-2.5">
+          {/* Draw Buttons (Tactile 3D Buttons) */}
+          <div className="grid grid-cols-2 gap-2.5 w-full max-w-[340px] sm:max-w-[360px] mt-3">
             <button
               onClick={() => drawTod('TRUTH')}
-              className="py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs shadow-md active:scale-95 transition flex items-center justify-center gap-1.5"
+              className="py-3 rounded-2xl btn-tactile-blue font-black text-xs shadow-md flex items-center justify-center gap-1.5"
             >
-              <HelpCircle className="w-3.5 h-3.5" /> Spin Truth
+              <HelpCircle className="w-4 h-4" /> Spin Truth
             </button>
             <button
               onClick={() => drawTod('DARE')}
-              className="py-2.5 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-extrabold text-xs shadow-md active:scale-95 transition flex items-center justify-center gap-1.5"
+              className="py-3 rounded-2xl btn-tactile-rose font-black text-xs shadow-md flex items-center justify-center gap-1.5"
             >
-              <Flame className="w-3.5 h-3.5" /> Spin Dare
+              <Flame className="w-4 h-4 fill-white" /> Spin Dare
             </button>
           </div>
         </div>

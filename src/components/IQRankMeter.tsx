@@ -18,25 +18,25 @@ export const IQRankMeter: React.FC<IQRankMeterProps> = ({
   return (
     <div
       onClick={onOpenStats}
-      className="w-full mb-2.5 px-3 py-2 rounded-2xl bg-white/80 dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-800/80 backdrop-blur-sm flex items-center justify-between cursor-pointer hover:border-indigo-500/40 transition group shadow-sm"
+      className="w-full mb-3 px-3.5 py-2.5 rounded-2xl bg-[#1a2c35] border-2 border-[#2b4554] shadow-md flex items-center justify-between cursor-pointer hover:border-[#3b5a6d] transition group"
     >
       <div className="flex items-center gap-2.5">
-        <div className="w-7 h-7 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-sm shadow-sm shrink-0">
+        <div className="w-8 h-8 rounded-xl bg-[#202f36] border-b-2 border-[#142026] flex items-center justify-center text-base shrink-0 shadow-sm">
           <span>{details.badge}</span>
         </div>
         <div>
           <div className="flex items-center gap-1.5 text-xs">
-            <span className="font-black text-slate-900 dark:text-white font-mono">
+            <span className="font-black text-white font-mono">
               {currentIQ} IQ
             </span>
-            <span className="text-slate-400 dark:text-slate-600">·</span>
-            <span className={`font-bold text-[11px] ${details.color}`}>
+            <span className="text-slate-400">·</span>
+            <span className={`font-black text-[11px] ${details.color}`}>
               {details.title}
             </span>
           </div>
-          <div className="w-28 sm:w-36 bg-slate-200 dark:bg-slate-800 rounded-full h-1 mt-1 overflow-hidden">
+          <div className="w-28 sm:w-36 bg-[#131f24] rounded-full h-1.5 mt-1 overflow-hidden border border-[#2b4554]">
             <div
-              className="bg-indigo-500 h-full rounded-full transition-all duration-500"
+              className="bg-[#58cc02] h-full rounded-full transition-all duration-500"
               style={{ width: `${details.progressPercent}%` }}
             />
           </div>
@@ -44,10 +44,10 @@ export const IQRankMeter: React.FC<IQRankMeterProps> = ({
       </div>
 
       <div className="flex items-center gap-1 text-right">
-        <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+        <span className="text-[10px] text-slate-400 font-bold">
           {remaining > 0 ? `${remaining} to ${details.nextTitle}` : 'Max'}
         </span>
-        <ArrowUpRight className="w-3 h-3 text-slate-400 group-hover:text-indigo-400 transition" />
+        <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#58cc02] transition" />
       </div>
     </div>
   );

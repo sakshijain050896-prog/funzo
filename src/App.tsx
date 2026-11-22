@@ -27,6 +27,7 @@ import { syncPlayerProgress } from './lib/authService';
 import { sound } from './lib/soundEffects';
 import { GenreType, ThemeMode } from './types';
 import { Flame } from 'lucide-react';
+import { BottomDock } from './components/BottomDock';
 
 type BrainSubGame = 'sudoku' | '2048' | 'arrows';
 
@@ -153,9 +154,9 @@ export const App: React.FC = () => {
 
   return (
     <div className={`min-h-screen flex flex-col transition-colors ${
-      theme === 'dark' ? 'bg-[#0b0f19] text-slate-100' : 'bg-slate-50 text-slate-900'
+      theme === 'dark' ? 'bg-[#131f24] text-slate-100' : 'bg-[#f7f7f7] text-slate-900'
     }`}>
-      {/* Sticky Compact Header */}
+      {/* Floating Dynamic Island Top Capsule */}
       <Header
         stats={stats}
         theme={theme}
@@ -176,14 +177,14 @@ export const App: React.FC = () => {
 
       {/* Streak Notification Toast */}
       {streakToast && (
-        <div className="fixed top-14 left-1/2 -translate-x-1/2 z-40 px-3.5 py-1.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black text-xs shadow-xl shadow-amber-500/30 flex items-center gap-1.5 animate-bounce">
-          <Flame className="w-3.5 h-3.5 fill-slate-950" />
+        <div className="fixed top-14 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-2xl bg-[#ff9600] border-b-4 border-[#cc7800] text-slate-950 font-black text-xs shadow-xl flex items-center gap-1.5 animate-bounce">
+          <Flame className="w-4 h-4 fill-slate-950" />
           <span>{streakToast}</span>
         </div>
       )}
 
-      {/* Main Single-Screen Game Stage (Keep-Alive: All games stay mounted in memory when switching) */}
-      <main className="flex-1 w-full max-w-md mx-auto px-3 py-2 flex flex-col items-center justify-start">
+      {/* Main Single-Screen Game Stage with pb-28 for Floating Bottom Dock */}
+      <main className="flex-1 w-full max-w-md mx-auto px-3 pt-3 pb-28 flex flex-col items-center justify-start">
         {/* 1. BRAIN GENRE (3 CURATED GAMES) */}
         <div className={`w-full flex flex-col items-center ${activeGenre === 'brain' ? 'block' : 'hidden'}`}>
           {/* Universal IQ & Rank Progress Meter in Brain Hub */}
@@ -193,8 +194,8 @@ export const App: React.FC = () => {
             onOpenStats={() => setIsStatsOpen(true)}
           />
 
-          {/* Brain Sub-Game Pills (Sudoku, 2048, Arrow Escape) */}
-          <div className="grid grid-cols-3 gap-1 p-1 rounded-2xl bg-slate-100 dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 text-xs font-bold mb-3 w-full">
+          {/* Brain Sub-Game Pills (Tactile 3D Squircles: Sudoku, 2048, Arrow Out) */}
+          <div className="grid grid-cols-3 gap-2 mb-3.5 w-full">
             {[
               { id: 'sudoku', label: 'Sudoku' },
               { id: '2048', label: '2048' },
@@ -207,10 +208,10 @@ export const App: React.FC = () => {
                   setBrainGame(g.id as BrainSubGame);
                   handleGameActivity(g.id);
                 }}
-                className={`py-1.5 px-2 rounded-xl text-center transition active:scale-95 ${
+                className={`py-2 px-2 rounded-2xl text-center text-xs font-black transition ${
                   brainGame === g.id
-                    ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm font-extrabold border border-slate-200/60 dark:border-slate-700/60'
-                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    ? 'btn-tactile-blue shadow-md'
+                    : 'btn-tactile-slate'
                 }`}
               >
                 {g.label}
@@ -269,6 +270,17 @@ export const App: React.FC = () => {
           />
         </div>
       </main>
+
+      {/* Floating Bottom App Dock */}
+      <BottomDock
+        activeGenre={activeGenre}
+        onSelectGenre={(g) => {
+          sound.playTap();
+          setActiveGenre(g);
+          handleGameActivity(g);
+        }}
+        onOpenProfile={() => setIsProfileOpen(true)}
+      />
 
       {/* Global Modals */}
       <StatsModal

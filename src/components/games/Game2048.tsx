@@ -219,45 +219,42 @@ export const Game2048: React.FC<Game2048Props> = ({ onWinOrScore, onRequestAd })
 
   const getTileColor = (val: number) => {
     switch (val) {
-      case 2: return 'bg-slate-700 text-white';
-      case 4: return 'bg-slate-600 text-white';
-      case 8: return 'bg-amber-600 text-white font-black';
-      case 16: return 'bg-orange-500 text-white font-black';
-      case 32: return 'bg-rose-500 text-white font-black';
-      case 64: return 'bg-rose-600 text-white font-black';
-      case 128: return 'bg-yellow-500 text-slate-950 font-black shadow-lg shadow-yellow-500/20';
-      case 256: return 'bg-yellow-400 text-slate-950 font-black shadow-lg shadow-yellow-400/30';
-      case 512: return 'bg-emerald-500 text-white font-black';
-      case 1024: return 'bg-teal-500 text-white font-black text-xl';
-      case 2048: return 'bg-indigo-500 text-white font-black text-xl shadow-xl shadow-indigo-500/40 animate-pulse';
-      default: return 'bg-slate-800/60 text-slate-500';
+      case 2: return 'bg-[#202f36] border-b-4 border-[#142026] text-white font-extrabold';
+      case 4: return 'bg-[#2b4554] border-b-4 border-[#1e323d] text-white font-extrabold';
+      case 8: return 'bg-[#ff9600] border-b-4 border-[#cc7800] text-slate-950 font-black';
+      case 16: return 'bg-[#ff7900] border-b-4 border-[#d46400] text-white font-black';
+      case 32: return 'bg-[#ff4b4b] border-b-4 border-[#d33131] text-white font-black';
+      case 64: return 'bg-[#ea2b2b] border-b-4 border-[#b51d1d] text-white font-black';
+      case 128: return 'bg-[#ffd900] border-b-4 border-[#ccad00] text-slate-950 font-black shadow-lg';
+      case 256: return 'bg-[#ffc800] border-b-4 border-[#cc9f00] text-slate-950 font-black shadow-lg';
+      case 512: return 'bg-[#58cc02] border-b-4 border-[#46a302] text-white font-black shadow-lg';
+      case 1024: return 'bg-[#1cb0f6] border-b-4 border-[#1899d6] text-white font-black text-xl shadow-xl';
+      case 2048: return 'bg-[#a855f7] border-b-4 border-[#7e22ce] text-white font-black text-xl shadow-2xl animate-pulse';
+      default: return 'bg-[#1a2c35]/60 border-b-4 border-transparent text-slate-500';
     }
   };
 
   return (
     <div className="w-full max-w-sm mx-auto flex flex-col items-center select-none pb-6">
       {/* Header Info */}
-      <div className="w-full flex items-center justify-between mb-4">
+      <div className="w-full flex items-center justify-between mb-3 px-1">
         <div>
           <h2 className="text-xl font-black text-white flex items-center gap-1.5">
-            <span>2048</span>
-            <span className="text-amber-400 text-xs px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20">
-              Rush
-            </span>
+            <span>2048 Rush</span>
           </h2>
-          <p className="text-[11px] text-slate-400">Swipe or use arrow keys to merge</p>
+          <p className="text-[11px] text-slate-400">Swipe or tap arrows to merge numbers!</p>
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-center">
-            <span className="text-[10px] uppercase font-bold text-slate-400 block">Score</span>
-            <span className="text-sm font-black text-white">{score}</span>
+          <div className="px-3 py-1 rounded-2xl bg-[#1a2c35] border-2 border-[#2b4554] text-center shadow-sm">
+            <span className="text-[9px] uppercase font-black text-slate-400 block">Score</span>
+            <span className="text-sm font-black text-white font-mono">{score}</span>
           </div>
-          <div className="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-center">
-            <span className="text-[10px] uppercase font-bold text-amber-400 block flex items-center gap-0.5 justify-center">
+          <div className="px-3 py-1 rounded-2xl bg-[#1a2c35] border-2 border-[#2b4554] text-center shadow-sm">
+            <span className="text-[9px] uppercase font-black text-amber-400 block flex items-center gap-0.5 justify-center">
               <Trophy className="w-2.5 h-2.5" /> Best
             </span>
-            <span className="text-sm font-black text-amber-400">{bestScore}</span>
+            <span className="text-sm font-black text-amber-400 font-mono">{bestScore}</span>
           </div>
         </div>
       </div>
@@ -309,50 +306,50 @@ export const Game2048: React.FC<Game2048Props> = ({ onWinOrScore, onRequestAd })
         )}
       </div>
 
-      {/* Controls & Swipe Buttons (for quick thumb taps on phone) */}
-      <div className="w-full flex items-center justify-between mt-4">
+      {/* Controls & Swipe Buttons */}
+      <div className="w-full flex items-center justify-between mt-3 px-1">
         <button
           onClick={restart}
-          className="px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white text-xs font-bold flex items-center gap-1.5 transition active:scale-95"
+          className="px-3.5 py-2 rounded-2xl btn-tactile-slate text-xs font-black flex items-center gap-1.5 shadow-sm"
         >
-          <RotateCcw className="w-3.5 h-3.5" /> Restart
+          <RotateCcw className="w-4 h-4" /> Restart
         </button>
 
         <button
           onClick={undo}
           disabled={!previousState}
-          className="px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white text-xs font-bold disabled:opacity-40 transition active:scale-95"
+          className="px-4 py-2 rounded-2xl btn-tactile-blue text-xs font-black disabled:opacity-40 shadow-sm"
         >
           Undo Move
         </button>
       </div>
 
       {/* On-screen Direction D-Pad for Mobile */}
-      <div className="mt-4 flex flex-col items-center gap-1 sm:hidden">
+      <div className="mt-3 flex flex-col items-center gap-1 sm:hidden">
         <button
           onClick={() => move('up')}
-          className="w-12 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-200 active:bg-indigo-600"
+          className="w-12 h-10 rounded-2xl btn-tactile-slate active:btn-tactile-green flex items-center justify-center"
         >
-          <ArrowUp className="w-5 h-5" />
+          <ArrowUp className="w-5 h-5 stroke-[2.5]" />
         </button>
-        <div className="flex gap-3">
+        <div className="flex gap-2">
           <button
             onClick={() => move('left')}
-            className="w-12 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-200 active:bg-indigo-600"
+            className="w-12 h-10 rounded-2xl btn-tactile-slate active:btn-tactile-green flex items-center justify-center"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-5 h-5 stroke-[2.5]" />
           </button>
           <button
             onClick={() => move('down')}
-            className="w-12 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-200 active:bg-indigo-600"
+            className="w-12 h-10 rounded-2xl btn-tactile-slate active:btn-tactile-green flex items-center justify-center"
           >
-            <ArrowDown className="w-5 h-5" />
+            <ArrowDown className="w-5 h-5 stroke-[2.5]" />
           </button>
           <button
             onClick={() => move('right')}
-            className="w-12 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-200 active:bg-indigo-600"
+            className="w-12 h-10 rounded-2xl btn-tactile-slate active:btn-tactile-green flex items-center justify-center"
           >
-            <ArrowRight className="w-5 h-5" />
+            <ArrowRight className="w-5 h-5 stroke-[2.5]" />
           </button>
         </div>
       </div>

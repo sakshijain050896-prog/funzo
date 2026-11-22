@@ -184,7 +184,7 @@ export const AdminModal: React.FC<AdminModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-3 sm:p-4 animate-fade-in overflow-y-auto">
-      <div className="relative w-full max-w-xl rounded-3xl bg-slate-900 border-2 border-indigo-500/50 p-5 sm:p-6 shadow-2xl text-left my-4">
+      <div className="relative w-full max-w-xl rounded-3xl bg-[#1a2c35] border-2 border-[#2b4554] p-5 sm:p-6 shadow-2xl text-left my-4">
         
         {/* Close Button */}
         <button

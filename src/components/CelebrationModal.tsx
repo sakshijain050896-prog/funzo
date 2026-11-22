@@ -74,7 +74,7 @@ export const CelebrationModal: React.FC<CelebrationModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fade-in">
-      <div className="relative w-full max-w-sm rounded-3xl bg-slate-900/95 border border-slate-700/80 p-6 text-center shadow-2xl overflow-hidden backdrop-blur-xl">
+      <div className="relative w-full max-w-sm rounded-3xl bg-[#1a2c35] border-2 border-[#2b4554] p-6 text-center shadow-2xl overflow-hidden">
         {/* Glow backdrop behind badge */}
         <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-44 h-44 bg-amber-500/20 rounded-full blur-3xl pointer-events-none" />
 
@@ -159,10 +159,10 @@ export const CelebrationModal: React.FC<CelebrationModalProps> = ({
             if (onContinue) onContinue();
             onClose();
           }}
-          className="w-full py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:brightness-110 text-slate-950 font-black text-sm shadow-lg shadow-amber-500/30 active:scale-95 transition flex items-center justify-center gap-1.5"
+          className="w-full py-3 rounded-2xl btn-tactile-green font-black text-sm shadow-lg flex items-center justify-center gap-1.5"
         >
           <span>Continue Next Challenge</span>
-          <ArrowUpRight className="w-4 h-4" />
+          <ArrowUpRight className="w-5 h-5 stroke-[2.5]" />
         </button>
       </div>
     </div>

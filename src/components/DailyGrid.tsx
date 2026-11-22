@@ -345,21 +345,21 @@ export const DailyGrid: React.FC<DailyGridProps> = ({
   return (
     <div className="w-full max-w-sm sm:max-w-md mx-auto flex flex-col items-center select-none pb-4">
       {/* Top Header: Difficulty Tabs */}
-      <div className="w-full mb-2">
-        <div className="grid grid-cols-4 gap-1 p-1 rounded-2xl bg-slate-100 dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 text-xs font-bold mb-2">
+      <div className="w-full mb-2.5">
+        <div className="grid grid-cols-4 gap-1.5 mb-2">
           {(['daily', 'easy', 'medium', 'hard'] as Difficulty[]).map((d) => (
             <button
               key={d}
               onClick={() => setDifficulty(d)}
-              className={`py-1.5 rounded-xl capitalize transition text-center ${
+              className={`py-1.5 rounded-2xl capitalize text-xs font-black transition ${
                 difficulty === d
-                  ? 'bg-white dark:bg-indigo-600 text-slate-900 dark:text-white shadow-sm font-black'
-                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                  ? 'btn-tactile-green shadow-sm'
+                  : 'btn-tactile-slate'
               }`}
             >
               {d === 'daily' ? (
                 <span className="flex items-center justify-center gap-1">
-                  <Calendar className="w-3 h-3" /> Daily
+                  <Calendar className="w-3.5 h-3.5" /> Daily
                 </span>
               ) : (
                 d
@@ -501,56 +501,56 @@ export const DailyGrid: React.FC<DailyGridProps> = ({
         </div>
       </div>
 
-      {/* Action Toolbar: Undo, Erase, Pencil, Hint */}
-      <div className="w-full max-w-[340px] sm:max-w-[360px] flex items-center justify-between mt-2.5 mb-2 gap-1.5">
+      {/* Action Toolbar: Undo, Erase, Pencil, Hint (Tactile 3D Buttons) */}
+      <div className="w-full max-w-[340px] sm:max-w-[360px] flex items-center justify-between mt-3 mb-2 gap-2">
         <button
           onClick={handleUndo}
           disabled={history.length === 0}
-          className="flex-1 flex flex-col items-center py-1.5 px-1 rounded-xl bg-slate-200 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-800 disabled:opacity-40 transition active:scale-95 text-[10px] font-bold"
+          className="flex-1 flex flex-col items-center py-2 px-1 rounded-2xl btn-tactile-slate disabled:opacity-40 text-[10px] font-black"
         >
-          <RotateCcw className="w-3.5 h-3.5 mb-0.5 text-slate-500" />
+          <RotateCcw className="w-4 h-4 mb-0.5 text-slate-400" />
           <span>Undo</span>
         </button>
 
         <button
           onClick={handleErase}
-          className="flex-1 flex flex-col items-center py-1.5 px-1 rounded-xl bg-slate-200 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-800 transition active:scale-95 text-[10px] font-bold"
+          className="flex-1 flex flex-col items-center py-2 px-1 rounded-2xl btn-tactile-slate text-[10px] font-black"
         >
-          <Eraser className="w-3.5 h-3.5 mb-0.5 text-slate-500" />
+          <Eraser className="w-4 h-4 mb-0.5 text-slate-400" />
           <span>Erase</span>
         </button>
 
         <button
           onClick={() => setIsPencilMode((prev) => !prev)}
-          className={`flex-1 flex flex-col items-center py-1.5 px-1 rounded-xl border transition active:scale-95 text-[10px] font-bold ${
+          className={`flex-1 flex flex-col items-center py-2 px-1 rounded-2xl text-[10px] font-black transition ${
             isPencilMode
-              ? 'bg-indigo-600/30 border-indigo-500 text-indigo-400 shadow-sm'
-              : 'bg-slate-200 dark:bg-slate-900 border-slate-300 dark:border-slate-800 text-slate-700 dark:text-slate-300'
+              ? 'btn-tactile-blue shadow-sm'
+              : 'btn-tactile-slate'
           }`}
         >
-          <Edit3 className={`w-3.5 h-3.5 mb-0.5 ${isPencilMode ? 'text-indigo-400' : 'text-slate-500'}`} />
+          <Edit3 className={`w-4 h-4 mb-0.5 ${isPencilMode ? 'text-white' : 'text-slate-400'}`} />
           <span>Notes {isPencilMode ? 'ON' : 'OFF'}</span>
         </button>
 
         <button
           onClick={handleHint}
-          className="flex-1 flex flex-col items-center py-1.5 px-1 rounded-xl bg-slate-200 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-slate-700 dark:text-slate-300 transition active:scale-95 text-[10px] font-bold relative"
+          className="flex-1 flex flex-col items-center py-2 px-1 rounded-2xl btn-tactile-amber text-[10px] font-black relative"
         >
-          <Lightbulb className="w-3.5 h-3.5 mb-0.5 text-amber-500" />
-          <span>Hint</span>
-          <span className="absolute -top-1 -right-1 px-1 rounded-full bg-amber-500 text-slate-950 font-bold text-[8px]">
+          <Lightbulb className="w-4 h-4 mb-0.5 text-slate-950 fill-slate-950" />
+          <span className="text-slate-950">Hint</span>
+          <span className="absolute -top-1 -right-1 px-1.5 rounded-full bg-slate-950 text-amber-400 font-black text-[8px]">
             {freeHints > 0 ? freeHints : 'Ad'}
           </span>
         </button>
       </div>
 
-      {/* Number Pad (1-9) */}
-      <div className="w-full max-w-[340px] sm:max-w-[360px] grid grid-cols-9 gap-1">
+      {/* Number Pad (1-9) with Tactile 3D Physical Click Feel */}
+      <div className="w-full max-w-[340px] sm:max-w-[360px] grid grid-cols-9 gap-1.5 mt-1">
         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
           <button
             key={num}
             onClick={() => handleInputNumber(num)}
-            className="aspect-[4/5] rounded-xl bg-slate-200 dark:bg-slate-800/90 border border-slate-300 dark:border-slate-700 hover:bg-indigo-600 hover:text-white text-slate-900 dark:text-white font-bold text-base sm:text-lg flex items-center justify-center transition active:scale-90 shadow-sm touch-manipulation"
+            className="aspect-[4/5] rounded-2xl btn-tactile-slate active:btn-tactile-green font-black text-lg sm:text-xl flex items-center justify-center shadow-sm touch-manipulation"
           >
             {num}
           </button>
