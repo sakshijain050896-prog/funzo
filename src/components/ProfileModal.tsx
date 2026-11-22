@@ -22,6 +22,7 @@ interface ProfileModalProps {
   onClose: () => void;
   stats: PlayerStats;
   onUpdateStats: (newStats: PlayerStats) => void;
+  onOpenAdmin?: () => void;
 }
 
 type AuthTab = 'phone' | 'password' | 'google' | 'profile';
@@ -31,6 +32,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
   onClose,
   stats,
   onUpdateStats,
+  onOpenAdmin,
 }) => {
   const [currentUser, setCurrentUser] = useState<UserAccount | null>(() => getCurrentUser());
   const [activeTab, setActiveTab] = useState<AuthTab>(() => (getCurrentUser() ? 'profile' : 'phone'));
@@ -495,6 +497,22 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                   <span>Save Changes</span>
                 </>
               )}
+            </button>
+          </div>
+        )}
+
+        {/* Secret Owner Admin Panel Access */}
+        {onOpenAdmin && (
+          <div className="mt-3 pt-2.5 border-t border-slate-800 text-center">
+            <button
+              onClick={() => {
+                onClose();
+                onOpenAdmin();
+              }}
+              className="text-[10px] text-slate-500 hover:text-indigo-400 font-mono transition flex items-center justify-center gap-1 mx-auto"
+            >
+              <KeyRound className="w-3 h-3" />
+              <span>Owner &amp; Admin Panel (PIN: 8899)</span>
             </button>
           </div>
         )}

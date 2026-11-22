@@ -12,6 +12,7 @@ import { ProfileModal } from './components/ProfileModal';
 import { HowToPlayModal } from './components/HowToPlayModal';
 import { CelebrationModal } from './components/CelebrationModal';
 import { AdModal } from './components/AdModal';
+import { AdminModal } from './components/AdminModal';
 import { 
   getStoredStats, 
   recordDailyAttempt,
@@ -38,9 +39,22 @@ export const App: React.FC = () => {
 
   const [isStatsOpen, setIsStatsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isHowToPlayOpen, setIsHowToPlayOpen] = useState(false);
   const [howToPlayGameId, setHowToPlayGameId] = useState<string>('sudoku');
   const [streakToast, setStreakToast] = useState<string | null>(null);
+
+  // Keyboard shortcut for Owner Admin Panel (Ctrl+Shift+A)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+        e.preventDefault();
+        setIsAdminOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // Celebration Dopamine Modal State
   const [celebrationOpen, setCelebrationOpen] = useState(false);
@@ -157,6 +171,7 @@ export const App: React.FC = () => {
         onOpenStats={() => setIsStatsOpen(true)}
         onOpenProfile={() => setIsProfileOpen(true)}
         onOpenHowToPlay={handleOpenHowToPlay}
+        onOpenAdmin={() => setIsAdminOpen(true)}
       />
 
       {/* Streak Notification Toast */}
@@ -267,6 +282,14 @@ export const App: React.FC = () => {
       <ProfileModal
         isOpen={isProfileOpen}
         onClose={() => setIsProfileOpen(false)}
+        stats={stats}
+        onUpdateStats={(newStats) => setStats(newStats)}
+        onOpenAdmin={() => setIsAdminOpen(true)}
+      />
+
+      <AdminModal
+        isOpen={isAdminOpen}
+        onClose={() => setIsAdminOpen(false)}
         stats={stats}
         onUpdateStats={(newStats) => setStats(newStats)}
       />

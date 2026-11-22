@@ -14,6 +14,7 @@ interface HeaderProps {
   onOpenStats: () => void;
   onOpenProfile: () => void;
   onOpenHowToPlay: (gameId?: string) => void;
+  onOpenAdmin?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -27,9 +28,22 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenStats,
   onOpenProfile,
   onOpenHowToPlay,
+  onOpenAdmin,
 }) => {
   const avatar = CARTOON_AVATARS.find((a) => a.id === stats.avatarId) || CARTOON_AVATARS[0];
   const rank = getIQRank(stats.iq || 105);
+  const [logoClicks, setLogoClicks] = React.useState<number>(0);
+
+  const handleLogoClick = () => {
+    const next = logoClicks + 1;
+    if (next >= 5) {
+      setLogoClicks(0);
+      if (onOpenAdmin) onOpenAdmin();
+    } else {
+      setLogoClicks(next);
+      setTimeout(() => setLogoClicks(0), 2000);
+    }
+  };
 
   return (
     <header className="sticky top-0 z-30 w-full bg-slate-900/95 dark:bg-[#0b0f19]/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800/80 px-2.5 py-1.5 transition-colors">
@@ -49,7 +63,7 @@ export const Header: React.FC<HeaderProps> = ({
               </span>
             </button>
 
-            <div className="flex items-center gap-1 cursor-pointer" onClick={onOpenProfile}>
+            <div className="flex items-center gap-1 cursor-pointer" onClick={handleLogoClick} title="Tap 5x for Owner Panel">
               <span className="text-base font-black tracking-tight text-white leading-none">
                 FUNZO
               </span>
