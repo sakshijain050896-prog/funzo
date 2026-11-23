@@ -66,7 +66,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Main Sidebar */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-50 w-64 bg-[#161726]/95 border-r border-white/10 flex flex-col justify-between p-4 transition-transform duration-300 lg:translate-x-0 ${
+        className={`fixed top-0 bottom-0 left-0 z-50 w-64 bg-white/95 dark:bg-[#161726]/95 border-r border-slate-200/90 dark:border-white/10 flex flex-col justify-between p-4 transition-transform duration-300 shadow-lg lg:translate-x-0 ${
           isMobileOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -80,17 +80,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
             >
               {/* Crown + Controller Icon Badge */}
               <div className="relative">
-                <Crown className="w-4 h-4 text-amber-400 fill-amber-400 absolute -top-2 left-1/2 -translate-x-1/2 -rotate-12 drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
+                <Crown className="w-4 h-4 text-amber-500 fill-amber-500 absolute -top-2 left-1/2 -translate-x-1/2 -rotate-12 drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
                 <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-600 via-fuchsia-500 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-purple-600/40 group-hover:scale-105 transition">
                   <Gamepad2 className="w-6 h-6 stroke-[2.5]" />
                 </div>
               </div>
 
               <div>
-                <h1 className="text-2xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-pink-200 leading-none">
+                <h1 className="text-2xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-purple-700 via-indigo-700 to-pink-600 dark:from-white dark:via-slate-100 dark:to-pink-200 leading-none">
                   Funzo
                 </h1>
-                <span className="text-[9px] uppercase tracking-widest font-extrabold text-violet-400 block mt-0.5">
+                <span className="text-[9px] uppercase tracking-widest font-extrabold text-violet-600 dark:text-violet-400 block mt-0.5">
                   Gaming Hub
                 </span>
               </div>
@@ -100,7 +100,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             {onCloseMobile && (
               <button
                 onClick={onCloseMobile}
-                className="p-1 rounded-xl text-slate-400 hover:text-white lg:hidden"
+                className="p-1 rounded-xl text-slate-400 hover:text-slate-800 dark:hover:text-white lg:hidden"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -126,10 +126,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   className={`w-full flex items-center gap-3.5 px-4 py-2.5 rounded-2xl text-xs font-black transition-all ${
                     isActive
                       ? 'bg-gradient-to-r from-violet-600 via-indigo-600 to-fuchsia-600 text-white shadow-lg shadow-violet-600/25'
-                      : 'text-slate-300 hover:text-white hover:bg-white/5'
+                      : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5'
                   }`}
                 >
-                  <span className={isActive ? 'text-white' : 'text-slate-400'}>{item.icon}</span>
+                  <span className={isActive ? 'text-white' : 'text-slate-400 dark:text-slate-400'}>{item.icon}</span>
                   <span className="text-sm font-extrabold tracking-wide">{item.label}</span>
                 </button>
               );
@@ -140,12 +140,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Bottom Section: Promo Card & Mascot */}
         <div className="flex flex-col gap-3">
           {/* "Play More Earn More!" Card */}
-          <div className="p-3.5 rounded-3xl bg-gradient-to-br from-[#23263b] to-[#1a1c2d] border border-white/10 text-center shadow-xl relative overflow-hidden group">
-            <div className="w-10 h-10 mx-auto rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl mb-1.5 shadow-inner">
+          <div className="p-3.5 rounded-3xl bg-gradient-to-br from-amber-50 via-orange-50/60 to-yellow-50 dark:from-[#23263b] dark:to-[#1a1c2d] border border-amber-200/90 dark:border-white/10 text-center shadow-md relative overflow-hidden group">
+            <div className="w-10 h-10 mx-auto rounded-2xl bg-amber-500/20 text-amber-500 dark:text-amber-400 flex items-center justify-center text-xl mb-1.5 shadow-inner">
               🎁
             </div>
-            <h4 className="text-xs font-black text-white mb-0.5">Play More Earn More!</h4>
-            <p className="text-[10px] text-slate-300 mb-2.5">
+            <h4 className="text-xs font-black text-slate-900 dark:text-white mb-0.5">Play More Earn More!</h4>
+            <p className="text-[10px] text-slate-600 dark:text-slate-300 mb-2.5">
               Level up your rank to claim coins.
             </p>
             <button
@@ -161,13 +161,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
 
           {/* Gamer Mascot Badge */}
-          <div className="flex items-center gap-3 p-2 rounded-2xl bg-[#1c1e2f] border border-white/10">
+          <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-slate-50 dark:bg-[#1c1e2f] border border-slate-200/80 dark:border-white/10 shadow-sm">
             <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-pink-500 to-purple-600 flex items-center justify-center text-xl shadow-md shrink-0">
               {avatar.emoji}
             </div>
             <div className="overflow-hidden">
-              <span className="text-xs font-black text-white block truncate">{displayName} 👑</span>
-              <span className="text-[10px] text-pink-400 font-bold block truncate">Playing Funzo Daily</span>
+              <span className="text-xs font-black text-slate-800 dark:text-white block truncate">{displayName} 👑</span>
+              <span className="text-[10px] text-pink-600 dark:text-pink-400 font-bold block truncate">Playing Funzo Daily</span>
             </div>
           </div>
         </div>

@@ -68,49 +68,49 @@ export const StatsModal: React.FC<StatsModalProps> = ({ isOpen, onClose, stats }
 
         {/* 4 Stat Cards */}
         <div className="grid grid-cols-2 gap-2 mb-3">
-          <div className="rounded-2xl bg-slate-800/80 border border-slate-700/60 p-2.5 text-center">
-            <div className="flex items-center justify-center gap-1 text-amber-400 text-xs font-bold mb-0.5">
-              <Flame className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+          <div className="rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 p-2.5 text-center">
+            <div className="flex items-center justify-center gap-1 text-amber-500 dark:text-amber-400 text-xs font-bold mb-0.5">
+              <Flame className="w-3.5 h-3.5 fill-amber-500 dark:fill-amber-400 text-amber-500 dark:text-amber-400" />
               <span>Daily Streak</span>
             </div>
-            <div className="text-xl font-black text-white">{stats.streak}d</div>
-            <div className="text-[9px] text-slate-400">consecutive days</div>
+            <div className="text-xl font-black text-slate-900 dark:text-white">{stats.streak}d</div>
+            <div className="text-[9px] text-slate-500 dark:text-slate-400">consecutive days</div>
           </div>
 
-          <div className="rounded-2xl bg-slate-800/80 border border-slate-700/60 p-2.5 text-center">
-            <div className="flex items-center justify-center gap-1 text-yellow-400 text-xs font-bold mb-0.5">
+          <div className="rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 p-2.5 text-center">
+            <div className="flex items-center justify-center gap-1 text-yellow-500 dark:text-yellow-400 text-xs font-bold mb-0.5">
               <Coins className="w-3.5 h-3.5" />
               <span>Coins</span>
             </div>
-            <div className="text-xl font-black text-white">{stats.coins}</div>
-            <div className="text-[9px] text-slate-400">total balance</div>
+            <div className="text-xl font-black text-slate-900 dark:text-white">{stats.coins}</div>
+            <div className="text-[9px] text-slate-500 dark:text-slate-400">total balance</div>
           </div>
 
-          <div className="rounded-2xl bg-slate-800/80 border border-slate-700/60 p-2.5 text-center">
-            <div className="flex items-center justify-center gap-1 text-emerald-400 text-xs font-bold mb-0.5">
+          <div className="rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 p-2.5 text-center">
+            <div className="flex items-center justify-center gap-1 text-emerald-600 dark:text-emerald-400 text-xs font-bold mb-0.5">
               <Trophy className="w-3.5 h-3.5" />
               <span>Games Won</span>
             </div>
-            <div className="text-xl font-black text-white">{stats.totalGamesWon}</div>
-            <div className="text-[9px] text-slate-400">across all genres</div>
+            <div className="text-xl font-black text-slate-900 dark:text-white">{stats.totalGamesWon}</div>
+            <div className="text-[9px] text-slate-500 dark:text-slate-400">across all genres</div>
           </div>
 
-          <div className="rounded-2xl bg-slate-800/80 border border-slate-700/60 p-2.5 text-center">
-            <div className="flex items-center justify-center gap-1 text-indigo-400 text-xs font-bold mb-0.5">
+          <div className="rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 p-2.5 text-center">
+            <div className="flex items-center justify-center gap-1 text-indigo-500 dark:text-indigo-400 text-xs font-bold mb-0.5">
               <Clock className="w-3.5 h-3.5" />
               <span>Fastest Solve</span>
             </div>
-            <div className="text-xl font-black text-white">{formatTime(stats.bestTimeSeconds)}</div>
-            <div className="text-[9px] text-slate-400">in Sudoku Master</div>
+            <div className="text-xl font-black text-slate-900 dark:text-white">{formatTime(stats.bestTimeSeconds)}</div>
+            <div className="text-[9px] text-slate-500 dark:text-slate-400">in Sudoku Master</div>
           </div>
         </div>
 
         {/* Daily Streak Notice */}
-        <div className="p-2.5 rounded-2xl bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/30 text-xs text-amber-200">
-          <div className="font-bold flex items-center gap-1 mb-0.5 text-amber-400 text-[11px]">
+        <div className="p-2.5 rounded-2xl bg-amber-500/10 dark:bg-gradient-to-r dark:from-amber-500/10 dark:to-orange-500/10 border border-amber-500/30 text-xs">
+          <div className="font-bold flex items-center gap-1 mb-0.5 text-amber-700 dark:text-amber-400 text-[11px]">
             <Calendar className="w-3.5 h-3.5" /> Universal Daily Streak Active
           </div>
-          <p className="text-[10px] text-slate-300 leading-relaxed">
+          <p className="text-[10px] text-slate-600 dark:text-slate-300 leading-relaxed">
             Every game solved increases your IQ (+15 IQ), keeps your streak alive, and unlocks coins!
           </p>
         </div>

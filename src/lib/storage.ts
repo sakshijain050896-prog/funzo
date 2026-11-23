@@ -7,16 +7,16 @@ const THEME_KEY = 'funzo_theme_v1';
 export const getStoredStats = (): PlayerStats => {
   if (typeof window === 'undefined') {
     return {
-      username: 'LuckyGamer',
+      username: 'Player',
       avatarId: 'fox',
       level: 1,
-      xp: 120,
-      iq: 105,
+      xp: 0,
+      iq: 100,
       streak: 1,
       lastPlayedDate: null,
       totalGamesWon: 0,
       totalGamesPlayed: 0,
-      coins: 100,
+      coins: 50,
       bestTimeSeconds: null,
       gamesPlayedHistory: {},
     };
@@ -27,16 +27,16 @@ export const getStoredStats = (): PlayerStats => {
     if (raw) {
       const parsed = JSON.parse(raw);
       return {
-        username: parsed.username || 'LuckyGamer',
+        username: parsed.username || 'Player',
         avatarId: parsed.avatarId || 'fox',
         level: parsed.level || 1,
-        xp: parsed.xp || 120,
-        iq: parsed.iq ?? 105,
+        xp: parsed.xp ?? 0,
+        iq: parsed.iq ?? 100,
         streak: parsed.streak || 1,
         lastPlayedDate: parsed.lastPlayedDate || null,
-        totalGamesWon: parsed.totalGamesWon || 0,
+        totalGamesWon: parsed.totalGamesWon || (parsed.totalGamesPlayed ? Math.max(1, Math.floor(parsed.totalGamesPlayed * 0.5)) : 0),
         totalGamesPlayed: parsed.totalGamesPlayed || 0,
-        coins: parsed.coins ?? 100,
+        coins: parsed.coins ?? 50,
         bestTimeSeconds: parsed.bestTimeSeconds || null,
         gamesPlayedHistory: parsed.gamesPlayedHistory || {},
       };
@@ -46,16 +46,16 @@ export const getStoredStats = (): PlayerStats => {
   }
 
   return {
-    username: 'LuckyGamer',
+    username: 'Player',
     avatarId: 'fox',
     level: 1,
-    xp: 120,
-    iq: 105,
+    xp: 0,
+    iq: 100,
     streak: 1,
     lastPlayedDate: null,
     totalGamesWon: 0,
     totalGamesPlayed: 0,
-    coins: 100,
+    coins: 50,
     bestTimeSeconds: null,
     gamesPlayedHistory: {},
   };
@@ -158,23 +158,37 @@ export const recordDailyAttempt = (gameId: string): {
   return { stats: updated, isNewStreakDay, coinsEarned: coinsBonus };
 };
 
-export const recordGameWin = (timeTakenSeconds: number, isDaily: boolean): PlayerStats => {
+export const recordGameWin = (
+  gameId?: string,
+  timeTakenSeconds?: number,
+  isDaily: boolean = false
+): PlayerStats => {
   const current = getStoredStats();
   const coinsReward = isDaily ? 50 : 25;
   const newXP = current.xp + 50;
   const newLevel = Math.floor(newXP / 100) + 1;
-  const newIQ = current.iq + (isDaily ? 5 : 3);
+  const newIQ = (current.iq || 100) + (isDaily ? 5 : 3);
+
+  const updatedHistory = { ...current.gamesPlayedHistory };
+  if (gameId) {
+    updatedHistory[gameId] = (updatedHistory[gameId] || 0) + 1;
+  }
+
+  const newTotalWon = (current.totalGamesWon || 0) + 1;
+  const newTotalPlayed = Math.max((current.totalGamesPlayed || 0), newTotalWon);
 
   const updated: PlayerStats = {
     ...current,
-    totalGamesWon: current.totalGamesWon + 1,
-    coins: current.coins + coinsReward,
+    totalGamesWon: newTotalWon,
+    totalGamesPlayed: newTotalPlayed,
+    coins: (current.coins || 0) + coinsReward,
     xp: newXP,
     level: newLevel,
     iq: newIQ,
-    bestTimeSeconds: current.bestTimeSeconds
-      ? Math.min(current.bestTimeSeconds, timeTakenSeconds)
-      : timeTakenSeconds,
+    gamesPlayedHistory: updatedHistory,
+    bestTimeSeconds: timeTakenSeconds
+      ? (current.bestTimeSeconds ? Math.min(current.bestTimeSeconds, timeTakenSeconds) : timeTakenSeconds)
+      : current.bestTimeSeconds,
   };
 
   saveStats(updated);

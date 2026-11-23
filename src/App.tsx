@@ -32,16 +32,20 @@ import {
   recordGameWin, 
   getSoundPreference, 
   saveSoundPreference,
-  increasePlayerIQ
+  increasePlayerIQ,
+  getThemePreference,
+  saveThemePreference,
+  saveStats
 } from './lib/storage';
 import { syncPlayerProgress } from './lib/authService';
 import { sound } from './lib/soundEffects';
-import { PlayerStats } from './types';
+import { PlayerStats, ThemeMode } from './types';
 import { ArrowLeft, HelpCircle, Flame } from 'lucide-react';
 
 export const App: React.FC = () => {
   const [stats, setStats] = useState<PlayerStats>(getStoredStats);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(getSoundPreference);
+  const [theme, setTheme] = useState<ThemeMode>(getThemePreference);
   const [activeNavTab, setActiveNavTab] = useState<DashboardNavTab>('home');
   const [activeGame, setActiveGame] = useState<GameKey | null>(null);
   const [activeSubTab, setActiveSubTab] = useState<string | null>(null);
@@ -66,6 +70,21 @@ export const App: React.FC = () => {
   const [adModalOpen, setAdModalOpen] = useState(false);
   const [adRewardTitle, setAdRewardTitle] = useState('');
   const [adOnReward, setAdOnReward] = useState<() => void>(() => {});
+
+  // Sync theme with html root class
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    saveThemePreference(theme);
+  }, [theme]);
+
+  const handleToggleTheme = () => {
+    sound.playTap();
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+  };
 
   // Keyboard shortcut for Owner Admin Panel (Ctrl+Shift+A)
   useEffect(() => {
@@ -115,11 +134,19 @@ export const App: React.FC = () => {
     }
   };
 
-  // Universal Victory & Level Complete Celebration
-  const handleLevelCelebration = (iqPoints: number, title: string, subtitle: string) => {
+  // Universal Victory & Level Complete Celebration (Records real wins across all games)
+  const handleLevelCelebration = (iqPoints: number, title: string, subtitle: string, gameId?: string) => {
+    const winUpdated = recordGameWin(gameId, undefined, false);
     const { stats: updated } = increasePlayerIQ(iqPoints);
-    setStats(updated);
-    syncPlayerProgress(updated);
+    const finalStats: PlayerStats = {
+      ...updated,
+      totalGamesWon: Math.max(winUpdated.totalGamesWon, (updated.totalGamesWon || 0) + 1),
+      totalGamesPlayed: Math.max(winUpdated.totalGamesPlayed, updated.totalGamesPlayed),
+      coins: updated.coins,
+    };
+    saveStats(finalStats);
+    setStats(finalStats);
+    syncPlayerProgress(finalStats);
     setCelebrationTitle(title);
     setCelebrationSubtitle(subtitle);
     setCelebrationIQGained(iqPoints);
@@ -127,13 +154,12 @@ export const App: React.FC = () => {
   };
 
   const handleSudokuWin = (timeTakenSeconds: number, isDaily: boolean) => {
-    const updated = recordGameWin(timeTakenSeconds, isDaily);
-    setStats(updated);
-    handleLevelCelebration(15, 'SUDOKU MASTERED! 🧩', 'Brilliant logical grid completion across all 81 cells.');
+    recordGameWin('sudoku', timeTakenSeconds, isDaily);
+    handleLevelCelebration(15, 'SUDOKU MASTERED! 🧩', 'Brilliant logical grid completion across all 81 cells.', 'sudoku');
   };
 
   const handleArrowWin = () => {
-    handleLevelCelebration(15, 'ARROWS ESCAPED! 🚀', 'Spatial trajectory mastered! All directional blocks cleared.');
+    handleLevelCelebration(15, 'ARROWS ESCAPED! 🚀', 'Spatial trajectory mastered! All directional blocks cleared.', 'arrows');
   };
 
   const handleRequestAd = (rewardTitle: string, onReward: () => void) => {
@@ -165,7 +191,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-[100dvh] w-full bg-[#12131f] text-slate-100 flex overflow-x-hidden">
+    <div className="min-h-[100dvh] w-full bg-[#f4f6fb] dark:bg-[#12131f] text-slate-900 dark:text-slate-100 flex overflow-x-hidden transition-colors duration-200">
       {/* 1. Left Sidebar Navigation */}
       <Sidebar
         stats={stats}
@@ -197,6 +223,8 @@ export const App: React.FC = () => {
           onOpenMenu={() => setIsMobileSidebarOpen(true)}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
+          theme={theme}
+          onToggleTheme={handleToggleTheme}
         />
 
         {/* Streak Notification Toast */}
@@ -213,17 +241,17 @@ export const App: React.FC = () => {
           {activeGame !== null ? (
             <div className="w-full flex flex-col items-center animate-fade-in">
               {/* Back Bar & Game Navigation */}
-              <div className="w-full flex items-center justify-between mb-4 p-3 rounded-2xl bg-[#1c1e2f] border border-white/10 shadow-xl">
+              <div className="w-full flex items-center justify-between mb-4 p-3 rounded-2xl bg-white dark:bg-[#1c1e2f] border border-slate-200/90 dark:border-white/10 shadow-sm">
                 <button
                   onClick={handleBackToHub}
-                  className="px-4 py-2 rounded-xl bg-[#24273d] border border-white/10 text-xs font-black text-slate-200 hover:text-white hover:bg-violet-600 transition flex items-center gap-1.5 active:scale-95"
+                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#24273d] border border-slate-200 dark:border-white/10 text-xs font-black text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white dark:hover:bg-violet-600 transition flex items-center gap-1.5 active:scale-95"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   <span>Back to Hub</span>
                 </button>
 
                 <div className="flex items-center gap-2">
-                  <span className="text-xs sm:text-sm font-black text-white">
+                  <span className="text-xs sm:text-sm font-black text-slate-900 dark:text-white">
                     {activeGame === 'tod' && (
                       activeSubTab === 'would-you-rather' ? 'Would You Rather' :
                       activeSubTab === 'never-have-i-ever' ? 'Never Have I Ever' :
@@ -243,14 +271,14 @@ export const App: React.FC = () => {
                       'The Case Files'
                     )}
                   </span>
-                  <span className="px-2 py-0.5 rounded-full bg-violet-500/20 text-[10px] font-bold text-violet-300 uppercase border border-violet-500/30">
+                  <span className="px-2 py-0.5 rounded-full bg-violet-500/15 text-[10px] font-bold text-violet-700 dark:text-violet-300 uppercase border border-violet-500/30">
                     Playing
                   </span>
                 </div>
 
                 <button
                   onClick={() => handleOpenHowToPlay(activeGame)}
-                  className="p-2 rounded-xl bg-[#24273d] border border-white/10 text-slate-300 hover:text-white hover:bg-violet-600 transition"
+                  className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#24273d] border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white dark:hover:bg-violet-600 transition"
                   title="How to Play"
                 >
                   <HelpCircle className="w-4 h-4" />
@@ -278,7 +306,7 @@ export const App: React.FC = () => {
                   onWinOrScore={(s) => {
                     if (s > 100) handleGameActivity('2048');
                     if (s >= 512 && s % 512 === 0) {
-                      handleLevelCelebration(15, '2048 RUSH ACHIEVED! ⚡', `Huge combo score of ${s}! Numerical logic master.`);
+                      handleLevelCelebration(15, '2048 RUSH ACHIEVED! ⚡', `Huge combo score of ${s}! Numerical logic master.`, '2048');
                     }
                   }}
                   onRequestAd={handleRequestAd}
@@ -290,7 +318,7 @@ export const App: React.FC = () => {
                   currentIQ={stats.iq || 105}
                   initialTab={(activeSubTab as any) || (activeGame === '2t1l' ? 'two-truths' : 'truth-or-dare')}
                   onActivity={() => handleGameActivity('spill-it')}
-                  onWinLevel={handleLevelCelebration}
+                  onWinLevel={(iq, title, sub) => handleLevelCelebration(iq, title, sub, 'spill-it')}
                   onRequestAd={handleRequestAd}
                   onOpenHowToPlay={handleOpenHowToPlay}
                   onOpenStats={() => setIsStatsOpen(true)}
@@ -302,7 +330,7 @@ export const App: React.FC = () => {
                   currentIQ={stats.iq || 105}
                   initialTab={(activeSubTab as any) || 'crime-scene'}
                   onActivity={() => handleGameActivity('mystery')}
-                  onLevelWin={handleLevelCelebration}
+                  onLevelWin={(iq, title, sub) => handleLevelCelebration(iq, title, sub, 'mystery')}
                   onRequestAd={handleRequestAd}
                   onOpenHowToPlay={handleOpenHowToPlay}
                   onOpenStats={() => setIsStatsOpen(true)}
@@ -313,7 +341,7 @@ export const App: React.FC = () => {
                 <TicTacToe
                   onWinOrActivity={() => {
                     handleGameActivity('tictactoe');
-                    handleLevelCelebration(10, 'TICTACTOE VICTORY! 👑', '3-in-a-row domination! Strategic intellect leveled up.');
+                    handleLevelCelebration(10, 'TICTACTOE VICTORY! 👑', '3-in-a-row domination! Strategic intellect leveled up.', 'tictactoe');
                   }}
                   onRequestAd={handleRequestAd}
                 />
@@ -323,7 +351,7 @@ export const App: React.FC = () => {
                 <MemoryMatch
                   onWin={(m, s) => {
                     handleGameActivity('memory');
-                    handleLevelCelebration(15, 'MEMORY CONQUERED! 🧠', `All 8 pairs matched in ${m} moves and ${s} seconds!`);
+                    handleLevelCelebration(15, 'MEMORY CONQUERED! 🧠', `All 8 pairs matched in ${m} moves and ${s} seconds!`, 'memory');
                   }}
                 />
               </div>
@@ -332,9 +360,13 @@ export const App: React.FC = () => {
                 <DiceRoll
                   onWinBonus={(coinsWon) => {
                     handleGameActivity('dice');
-                    const updated = { ...stats, coins: stats.coins + coinsWon };
-                    setStats(updated);
-                    syncPlayerProgress(updated);
+                    if (coinsWon > 0) {
+                      handleLevelCelebration(5, 'LUCKY ROLL! 🎲', `You predicted right and won ${coinsWon} coins!`, 'dice');
+                    } else {
+                      const updated = { ...stats, coins: stats.coins + coinsWon };
+                      setStats(updated);
+                      syncPlayerProgress(updated);
+                    }
                   }}
                 />
               </div>

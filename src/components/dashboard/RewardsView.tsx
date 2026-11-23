@@ -71,15 +71,15 @@ export const RewardsView: React.FC<RewardsViewProps> = ({
       </div>
 
       {/* Daily Claim Box */}
-      <div className="p-6 rounded-3xl bg-[#1c1e2f] border border-white/10 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="p-6 rounded-3xl bg-white dark:bg-[#1c1e2f] border border-slate-200/90 dark:border-white/10 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-3xl shadow-inner shrink-0">
+          <div className="w-14 h-14 rounded-2xl bg-amber-500/20 text-amber-500 dark:text-amber-400 flex items-center justify-center text-3xl shadow-inner shrink-0">
             🎁
           </div>
           <div>
-            <h3 className="text-base font-black text-white mb-0.5">Daily Login Chest</h3>
-            <p className="text-xs text-slate-300">
-              Claim your guaranteed <strong className="text-amber-400">+150 Coins</strong> and keep your streak hot!
+            <h3 className="text-base font-black text-slate-900 dark:text-white mb-0.5">Daily Login Chest</h3>
+            <p className="text-xs text-slate-600 dark:text-slate-300">
+              Claim your guaranteed <strong className="text-amber-600 dark:text-amber-400">+150 Coins</strong> and keep your streak hot!
             </p>
           </div>
         </div>
@@ -87,9 +87,9 @@ export const RewardsView: React.FC<RewardsViewProps> = ({
         <button
           onClick={handleClaimDaily}
           disabled={claimedDaily}
-          className={`px-6 py-3 rounded-full font-black text-xs shadow-lg transition active:scale-95 shrink-0 ${
+          className={`px-6 py-3 rounded-full font-black text-xs shadow-md transition active:scale-95 shrink-0 ${
             claimedDaily
-              ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
+              ? 'bg-slate-200 dark:bg-slate-800 text-slate-500 cursor-not-allowed'
               : 'bg-gradient-to-r from-amber-400 to-yellow-400 text-slate-950 hover:scale-105'
           }`}
         >
@@ -98,22 +98,22 @@ export const RewardsView: React.FC<RewardsViewProps> = ({
       </div>
 
       {/* Sponsor Video Chest */}
-      <div className="p-6 rounded-3xl bg-[#1c1e2f] border border-white/10 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="p-6 rounded-3xl bg-white dark:bg-[#1c1e2f] border border-slate-200/90 dark:border-white/10 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-fuchsia-500/20 text-fuchsia-400 flex items-center justify-center text-3xl shadow-inner shrink-0">
+          <div className="w-14 h-14 rounded-2xl bg-fuchsia-500/20 text-fuchsia-500 dark:text-fuchsia-400 flex items-center justify-center text-3xl shadow-inner shrink-0">
             📺
           </div>
           <div>
-            <h3 className="text-base font-black text-white mb-0.5">Sponsor Video Bonus</h3>
-            <p className="text-xs text-slate-300">
-              Watch a quick 5-second sponsor video to earn <strong className="text-fuchsia-400">+250 Coins</strong>!
+            <h3 className="text-base font-black text-slate-900 dark:text-white mb-0.5">Sponsor Video Bonus</h3>
+            <p className="text-xs text-slate-600 dark:text-slate-300">
+              Watch a quick 5-second sponsor video to earn <strong className="text-fuchsia-600 dark:text-fuchsia-400">+250 Coins</strong>!
             </p>
           </div>
         </div>
 
         <button
           onClick={handleWatchAdBonus}
-          className="px-6 py-3 rounded-full bg-gradient-to-r from-fuchsia-500 to-pink-500 text-white font-black text-xs shadow-lg hover:scale-105 active:scale-95 transition shrink-0"
+          className="px-6 py-3 rounded-full bg-gradient-to-r from-fuchsia-500 to-pink-500 text-white font-black text-xs shadow-md hover:scale-105 active:scale-95 transition shrink-0"
         >
           Watch Video (+250 🪙)
         </button>
