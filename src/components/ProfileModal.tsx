@@ -67,6 +67,19 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
     }
   }, [isOpen, stats.username, stats.avatarId]);
 
+  // Escape key listener to close modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    if (isOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const currentAvatar = CARTOON_AVATARS.find((a) => a.id === selectedAvatarId) || CARTOON_AVATARS[0];
@@ -181,16 +194,31 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto animate-fade-in">
-      <div className="relative w-full max-w-sm rounded-3xl bg-[#181d2f] border-4 border-black p-5 shadow-[6px_6px_0_#000] text-center my-6 font-['Fredoka']">
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 rounded-xl text-slate-400 hover:text-white bg-white/5 transition"
-          title="Close"
-        >
-          <X className="w-5 h-5" />
-        </button>
+    <div 
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto animate-fade-in"
+    >
+      <div 
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-sm rounded-3xl bg-white dark:bg-[#181d2f] border-4 border-black p-5 shadow-[6px_6px_0_#000] text-center my-6 font-['Fredoka'] max-h-[92vh] overflow-y-auto"
+      >
+        {/* Top Header Bar with prominent Title and Red Mario Close Button */}
+        <div className="flex items-center justify-between pb-3 mb-3 border-b-2 border-slate-200 dark:border-white/10">
+          <div className="flex items-center gap-2">
+            <span className="text-xl">👤</span>
+            <h2 className="text-base font-black text-slate-900 dark:text-white font-['Fredoka']">
+              Player Profile
+            </h2>
+          </div>
+          <button
+            onClick={() => { sound.playTap(); onClose(); }}
+            className="w-9 h-9 rounded-2xl bg-[#e52521] hover:bg-[#ff3b37] border-2 border-black text-white flex items-center justify-center shadow-[2px_2px_0_#000] active:translate-y-0.5 transition cursor-pointer shrink-0"
+            title="Close (✕)"
+            aria-label="Close"
+          >
+            <X className="w-5 h-5 stroke-[3]" />
+          </button>
+        </div>
 
         {/* Feedback Alert Toast */}
         {authToast && (
@@ -237,24 +265,24 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
               </span>
             </div>
 
-            <h3 className="text-base font-black text-white">{username}</h3>
-            <span className="text-[11px] text-violet-400 font-semibold mb-2">{currentAvatar.name}</span>
+            <h3 className="text-base font-black text-slate-900 dark:text-white">{username}</h3>
+            <span className="text-[11px] text-violet-600 dark:text-violet-400 font-semibold mb-2">{currentAvatar.name}</span>
 
             {/* Level XP Progress Bar */}
-            <div className="w-full bg-[#24273d] rounded-full h-2 my-1 overflow-hidden border border-white/5">
+            <div className="w-full bg-slate-200 dark:bg-[#24273d] rounded-full h-2 my-1 overflow-hidden border border-slate-300 dark:border-white/5">
               <div
                 className="bg-gradient-to-r from-violet-500 to-pink-500 h-full transition-all duration-300"
                 style={{ width: `${(currentXPInLevel / 100) * 100}%` }}
               />
             </div>
-            <div className="w-full flex justify-between text-[10px] text-slate-400 font-mono mb-4">
+            <div className="w-full flex justify-between text-[10px] text-slate-500 dark:text-slate-400 font-mono mb-4">
               <span>{stats.xp} Total XP</span>
               <span>Next Lvl: {nextLevelXP} XP</span>
             </div>
 
             {/* Profile Nickname Edit Input */}
             <div className="w-full text-left mb-3">
-              <label className="text-[10px] font-bold text-slate-300 uppercase tracking-wider block mb-1">
+              <label className="text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider block mb-1">
                 Player Nickname
               </label>
               <input
@@ -262,14 +290,14 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                 maxLength={18}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full py-2.5 px-3 rounded-xl bg-[#12131f] border border-white/10 text-white font-bold text-xs focus:border-violet-400 focus:outline-none transition"
+                className="w-full py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#12131f] border-2 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-bold text-xs focus:border-[#e52521] focus:outline-none transition"
                 placeholder="Enter player nickname..."
               />
             </div>
 
             {/* Cartoon Avatar Picker */}
             <div className="w-full text-left mb-4">
-              <label className="text-[10px] font-bold text-slate-300 uppercase tracking-wider block mb-1.5">
+              <label className="text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider block mb-1.5">
                 Choose Avatar Caricature
               </label>
               <div className="grid grid-cols-3 gap-1.5">
@@ -282,14 +310,14 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                         sound.playTap();
                         setSelectedAvatarId(av.id);
                       }}
-                      className={`p-2 rounded-2xl flex flex-col items-center justify-center transition active:scale-95 border ${
+                      className={`p-2 rounded-2xl flex flex-col items-center justify-center transition active:scale-95 border-2 ${
                         isSelected
-                          ? 'bg-violet-600/30 border-violet-400 shadow-md ring-2 ring-violet-400'
-                          : 'bg-[#24273d] border-white/5 hover:border-white/20'
+                          ? 'bg-violet-100 dark:bg-violet-600/30 border-violet-500 shadow-md ring-2 ring-violet-400'
+                          : 'bg-slate-50 dark:bg-[#24273d] border-slate-200 dark:border-white/5 hover:border-slate-400 dark:hover:border-white/20'
                       }`}
                     >
                       <span className="text-xl mb-0.5">{av.emoji}</span>
-                      <span className="text-[9px] font-semibold text-slate-300 truncate w-full">
+                      <span className="text-[9px] font-bold text-slate-700 dark:text-slate-300 truncate w-full">
                         {av.name.split(' ')[1] || av.name}
                       </span>
                     </button>
@@ -301,7 +329,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
             {/* Save Profile Button */}
             <button
               onClick={handleSaveProfile}
-              className="w-full py-2.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-black text-xs shadow-lg shadow-emerald-500/25 active:scale-95 transition flex items-center justify-center gap-1.5"
+              className="w-full py-2.5 rounded-2xl bg-[#00a859] hover:bg-[#00c868] border-b-4 border-[#006633] text-white font-black text-xs shadow-md active:translate-y-0.5 transition flex items-center justify-center gap-1.5 font-['Fredoka']"
             >
               {isSaved ? (
                 <>
@@ -319,7 +347,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
         ) : (
           /* ---------------- STATE B: USER NOT LOGGED IN (AUTH TABS) ---------------- */
           <div className="w-full flex flex-col items-center animate-fade-in">
-            <h3 className="text-base font-black text-white mb-1">Sign In &amp; Restore Progress</h3>
+            <h3 className="text-base font-black text-slate-900 dark:text-white mb-1">Sign In &amp; Restore Progress</h3>
             <p className="text-[11px] text-slate-400 mb-3">
               Back up your 10,000+ level completions, coins, and streak across devices.
             </p>
@@ -482,6 +510,15 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
             )}
           </div>
         )}
+
+        {/* Bottom Close Button */}
+        <button
+          onClick={() => { sound.playTap(); onClose(); }}
+          className="w-full mt-4 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-slate-700 dark:text-slate-200 text-xs font-black transition flex items-center justify-center gap-1.5 active:translate-y-0.5 cursor-pointer font-['Fredoka']"
+        >
+          <X className="w-4 h-4 stroke-[2.5]" />
+          <span>Close Window</span>
+        </button>
 
         {/* Secret Owner Admin Panel Access (PIN 8899) */}
         {onOpenAdmin && (

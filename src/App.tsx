@@ -205,10 +205,10 @@ export const App: React.FC = () => {
         stats={stats}
         activeTab={activeNavTab}
         onSelectTab={(tab) => {
-          setActiveNavTab(tab);
           if (tab === 'profile') {
             setIsProfileOpen(true);
           } else {
+            setActiveNavTab(tab);
             setActiveGame(null); // Return to view
           }
         }}
