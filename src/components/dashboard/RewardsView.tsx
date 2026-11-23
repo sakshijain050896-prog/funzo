@@ -54,31 +54,31 @@ export const RewardsView: React.FC<RewardsViewProps> = ({
         <div className="relative z-10">
           <button
             onClick={() => { sound.playTap(); onBackToHome(); }}
-            className="text-[11px] font-black font-pixel text-yellow-300 hover:text-white flex items-center gap-1.5 mb-3 transition active:translate-y-0.5"
+            className="text-xs font-black text-yellow-300 hover:text-white flex items-center gap-1.5 mb-3 transition active:translate-y-0.5 font-['Fredoka']"
           >
-            <ArrowLeft className="w-4 h-4" /> ← WORLD MAP
+            <ArrowLeft className="w-4 h-4" /> ← Back to Games
           </button>
           <div className="flex items-center gap-3">
-            <span className="text-3xl filter drop-shadow">🍄</span>
+            <span className="text-3xl filter drop-shadow">🎁</span>
             <div>
-              <span className="text-[10px] font-black uppercase font-pixel tracking-widest text-yellow-300 block">
-                TOAD'S ITEM SHOP
+              <span className="text-[10px] font-black uppercase tracking-widest text-yellow-300 block font-['Fredoka']">
+                DAILY LOOT &amp; PERKS
               </span>
-              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-wide">
-                Mystery Rewards &amp; Loot
+              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-wide font-['Fredoka']">
+                Rewards &amp; Free Coins
               </h2>
             </div>
           </div>
-          <p className="text-xs text-white/90 mt-2 font-medium max-w-md">
-            Claim free daily ? block coins, power up your Super Star streak, and discover secret Warp Zone bonuses!
+          <p className="text-xs text-white/90 mt-2 font-medium max-w-md font-['Fredoka']">
+            Claim free daily bonus coins, keep your streak alive, and unlock exciting gamer perks!
           </p>
         </div>
 
         <div className="relative z-10 sm:text-right bg-black/30 px-5 py-3 rounded-2xl border-2 border-black/50 backdrop-blur-sm self-start sm:self-auto">
-          <span className="text-[9px] uppercase font-bold font-pixel text-yellow-300 block mb-1">
-            MARIO COINS
+          <span className="text-[9px] uppercase font-bold text-yellow-300 block mb-1 font-['Fredoka']">
+            TOTAL COINS
           </span>
-          <span className="text-2xl sm:text-3xl font-black text-yellow-300 font-pixel drop-shadow">
+          <span className="text-2xl sm:text-3xl font-black text-yellow-300 font-['Fredoka'] drop-shadow">
             {stats.coins} 🪙
           </span>
         </div>

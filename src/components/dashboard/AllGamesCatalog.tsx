@@ -32,40 +32,40 @@ export interface CategoryInfo {
 export const CATEGORIES_DATA: CategoryInfo[] = [
   {
     id: 'brain',
-    title: 'World 1: Mushroom Plains',
-    subtitle: 'Train deduction, math & spatial reasoning in the plains',
+    title: 'Brain & Logic Puzzles',
+    subtitle: 'Train deduction, math, Sudoku & spatial reasoning',
     icon: <Brain className="w-6 h-6 text-[#0099e6]" />,
-    emoji: '🍄',
+    emoji: '🧠',
     gradient: 'from-sky-100 via-blue-50 to-indigo-100/60 dark:from-sky-950/40 dark:via-[#1e293b] dark:to-indigo-950/40',
     borderHover: 'hover:border-[#0099e6] border-sky-300 dark:border-sky-500/30',
     gamesList: ['Sudoku Master', 'Arrow Out', '2048 Rush'],
   },
   {
     id: 'social',
-    title: "World 2: Peach's Castle",
-    subtitle: 'Spill It party decks with 10k+ questions & fire dilemmas',
+    title: 'Party & Social Games',
+    subtitle: 'Truth or Dare, 2 Truths & 1 Lie, Would You Rather & party decks',
     icon: <MessageSquare className="w-6 h-6 text-[#e52521]" />,
-    emoji: '👑',
+    emoji: '🔥',
     gradient: 'from-rose-100 via-pink-50 to-amber-100/60 dark:from-rose-950/40 dark:via-[#1e293b] dark:to-pink-950/40',
     borderHover: 'hover:border-[#e52521] border-rose-300 dark:border-rose-500/30',
     gamesList: ['Truth or Dare', '2 Truths & 1 Lie', 'Would You Rather', 'Never Have I Ever'],
   },
   {
     id: 'mystery',
-    title: "World 3: Boo's Haunted Mansion",
+    title: 'Mystery & Detective Riddles',
     subtitle: 'Crack the vault safe, inspect crime scenes & detective riddles',
     icon: <Search className="w-6 h-6 text-[#d97706]" />,
-    emoji: '👻',
+    emoji: '🔍',
     gradient: 'from-amber-100 via-yellow-50 to-orange-100/60 dark:from-amber-950/40 dark:via-[#1e293b] dark:to-yellow-950/40',
     borderHover: 'hover:border-[#d97706] border-amber-300 dark:border-amber-500/30',
     gamesList: ['The Case Files', 'Vault Safe Codebreaker', 'Detective Riddles'],
   },
   {
     id: 'arcade',
-    title: 'World 4: Warp Pipe Arcade',
-    subtitle: 'Classic fast-paced mini games vs AI, friends & Lucky Dice',
+    title: 'Classic Board & Arcade Games',
+    subtitle: 'Tic Tac Toe vs AI/friends, Memory Match & Lucky Dice',
     icon: <Dices className="w-6 h-6 text-[#00a859]" />,
-    emoji: '🟢',
+    emoji: '🎲',
     gradient: 'from-emerald-100 via-teal-50 to-cyan-100/60 dark:from-emerald-950/40 dark:via-[#1e293b] dark:to-teal-950/40',
     borderHover: 'hover:border-[#00a859] border-emerald-300 dark:border-emerald-500/30',
     gamesList: ['Tic Tac Toe', 'Memory Match', 'Dice Roll & Luck'],
@@ -76,22 +76,22 @@ export const CATEGORY_THEMES: Record<string, { tagBg: string; buttonBg: string; 
   brain: {
     tagBg: 'bg-sky-100 text-sky-900 dark:bg-sky-950/70 dark:text-sky-300 border-2 border-sky-300 dark:border-sky-500/30',
     buttonBg: 'mario-btn-blue shadow-md',
-    buttonText: 'Play Stage ▶',
+    buttonText: 'Play Game ▶',
   },
   social: {
     tagBg: 'bg-rose-100 text-rose-900 dark:bg-rose-950/70 dark:text-rose-300 border-2 border-rose-300 dark:border-rose-500/30',
     buttonBg: 'mario-btn-red shadow-md',
-    buttonText: 'Play Deck ▶',
+    buttonText: 'Play Game ▶',
   },
   mystery: {
     tagBg: 'bg-amber-100 text-amber-950 dark:bg-amber-950/70 dark:text-amber-300 border-2 border-amber-300 dark:border-amber-500/30',
     buttonBg: 'mario-btn-yellow shadow-md',
-    buttonText: 'Crack It ▶',
+    buttonText: 'Play Game ▶',
   },
   arcade: {
     tagBg: 'bg-emerald-100 text-emerald-900 dark:bg-emerald-950/70 dark:text-emerald-300 border-2 border-emerald-300 dark:border-emerald-500/30',
     buttonBg: 'mario-btn-green shadow-md',
-    buttonText: 'Insert Coin ▶',
+    buttonText: 'Play Game ▶',
   },
 };
 
@@ -407,8 +407,8 @@ export const AllGamesCatalog: React.FC<AllGamesCatalogProps> = ({
                       {gName}
                     </span>
                   ))}
-                  <span className="text-[10px] text-[#00a859] dark:text-[#43b047] font-black ml-auto flex items-center gap-0.5 font-pixel">
-                    WARP IN →
+                  <span className="text-xs text-[#00a859] dark:text-[#43b047] font-black ml-auto flex items-center gap-0.5 font-['Fredoka']">
+                    Open Category →
                   </span>
                 </div>
               </div>
@@ -425,10 +425,10 @@ export const AllGamesCatalog: React.FC<AllGamesCatalogProps> = ({
                 sound.playTap();
                 setSelectedCategory(null);
               }}
-              className="px-3.5 py-1.5 rounded-xl bg-[#00a859] border-b-4 border-[#006633] text-xs font-black text-white hover:brightness-110 flex items-center gap-1.5 transition active:translate-y-0.5"
+              className="px-3.5 py-1.5 rounded-xl bg-[#00a859] border-b-4 border-[#006633] text-xs font-black text-white hover:brightness-110 flex items-center gap-1.5 transition active:translate-y-0.5 font-['Fredoka']"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              <span>World Map</span>
+              <span>← All Categories</span>
             </button>
 
             <div className="flex items-center gap-2">
@@ -436,8 +436,8 @@ export const AllGamesCatalog: React.FC<AllGamesCatalogProps> = ({
               <h3 className="text-xs sm:text-sm font-black text-slate-900 dark:text-white font-['Fredoka']">
                 {activeCategoryInfo?.title}
               </h3>
-              <span className="text-[9px] font-black px-2 py-0.5 rounded-md bg-[#fcd116] border border-[#b89100] text-slate-950 font-pixel">
-                {currentCategoryGames.length} STAGES
+              <span className="text-[10px] font-black px-2.5 py-0.5 rounded-md bg-[#fcd116] border border-[#b89100] text-slate-950 font-['Fredoka']">
+                {currentCategoryGames.length} Games
               </span>
             </div>
           </div>

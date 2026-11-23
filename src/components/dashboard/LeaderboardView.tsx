@@ -31,18 +31,18 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({ stats, onBackT
         <div>
           <button
             onClick={() => { sound.playTap(); onBackToHome(); }}
-            className="text-xs font-black text-white hover:text-yellow-200 flex items-center gap-1.5 mb-2 transition font-pixel"
+            className="text-xs font-black text-white hover:text-yellow-200 flex items-center gap-1.5 mb-2 transition font-['Fredoka']"
           >
-            <ArrowLeft className="w-3.5 h-3.5" /> WORLD MAP
+            <ArrowLeft className="w-3.5 h-3.5" /> ← Back to Games
           </button>
           <div className="flex items-center gap-2">
             <span className="text-3xl">⭐</span>
             <h2 className="text-2xl sm:text-3xl font-black text-white font-['Fredoka'] drop-shadow">
-              Mushroom Kingdom High Scores
+              Kingdom Leaderboard &amp; High Scores
             </h2>
           </div>
           <p className="text-xs text-yellow-100 mt-1 font-['Fredoka']">
-            Clear stages and collect Mario coins to climb the World Rank!
+            Play games, win rounds, and collect coins to climb the global leaderboard!
           </p>
         </div>
       </div>
