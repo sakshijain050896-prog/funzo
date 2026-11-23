@@ -160,6 +160,7 @@ export function verifyPhoneOtp(
   accounts[accountId] = user;
   saveAllAccounts(accounts);
   setActiveSession(user);
+  syncToSupabase(user);
 
   return {
     success: true,
@@ -209,6 +210,7 @@ export function registerWithPassword(
   accounts[accountId] = user;
   saveAllAccounts(accounts);
   setActiveSession(user);
+  syncToSupabase(user);
 
   return {
     success: true,
@@ -238,6 +240,7 @@ export function loginWithPassword(
   accounts[accountId] = user;
   saveAllAccounts(accounts);
   setActiveSession(user);
+  syncToSupabase(user);
 
   return {
     success: true,
@@ -283,6 +286,7 @@ export function loginWithGoogle(
   accounts[accountId] = user;
   saveAllAccounts(accounts);
   setActiveSession(user);
+  syncToSupabase(user);
 
   return {
     success: true,
@@ -292,6 +296,61 @@ export function loginWithGoogle(
 }
 
 // ---------------- 4. CLOUD SYNC & LOGOUT ----------------
+import { supabase } from './supabase';
+
+export async function syncToSupabase(user: UserAccount) {
+  if (!supabase) return;
+  try {
+    await supabase.from('funzo_users').upsert({
+      id: user.id,
+      auth_type: user.authType,
+      phone: user.phone || null,
+      email: user.email || null,
+      username: user.username,
+      avatar_id: user.avatarId,
+      level: user.stats.level || 1,
+      xp: user.stats.xp || 0,
+      iq: user.stats.iq || 105,
+      coins: user.stats.coins || 100,
+      streak: user.stats.streak || 1,
+      arrow_level: user.arrowLevel || 1,
+      updated_at: new Date().toISOString(),
+    });
+  } catch (err) {
+    console.warn('Supabase sync skipped or failed', err);
+  }
+}
+
+export function updateCurrentUserProfile(newUsername: string, newAvatarId: string): UserAccount | null {
+  const cleanName = newUsername.trim() || 'Player';
+  const currentStats = getStoredStats();
+  const updatedStats: PlayerStats = {
+    ...currentStats,
+    username: cleanName,
+    avatarId: newAvatarId,
+  };
+  saveStats(updatedStats);
+
+  const currentUser = getCurrentUser();
+  if (currentUser) {
+    const accounts = getAllAccounts();
+    const account = accounts[currentUser.id] || currentUser;
+    account.username = cleanName;
+    account.avatarId = newAvatarId;
+    account.stats = updatedStats;
+    account.lastLoginAt = new Date().toISOString();
+    accounts[currentUser.id] = account;
+    saveAllAccounts(accounts);
+    setActiveSession(account);
+
+    // Sync to Supabase
+    syncToSupabase(account);
+
+    return account;
+  }
+  return null;
+}
+
 export function syncPlayerProgress(updatedStats: PlayerStats, arrowLevel?: number) {
   const currentUser = getCurrentUser();
   if (!currentUser) return;
@@ -309,6 +368,9 @@ export function syncPlayerProgress(updatedStats: PlayerStats, arrowLevel?: numbe
   accounts[currentUser.id] = account;
   saveAllAccounts(accounts);
   setActiveSession(account);
+
+  // Sync to Supabase in background
+  syncToSupabase(account);
 }
 
 export function logoutUser() {

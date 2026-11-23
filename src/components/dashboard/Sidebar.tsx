@@ -5,6 +5,9 @@ import {
 } from 'lucide-react';
 import { sound } from '../../lib/soundEffects';
 
+import { PlayerStats, CARTOON_AVATARS } from '../../types';
+import { getCurrentUser } from '../../lib/authService';
+
 export type DashboardNavTab = 'home' | 'leaderboard' | 'rewards' | 'profile';
 
 interface SidebarProps {
@@ -15,6 +18,7 @@ interface SidebarProps {
   onOpenRewards?: () => void;
   isMobileOpen?: boolean;
   onCloseMobile?: () => void;
+  stats?: PlayerStats;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -25,8 +29,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onOpenRewards,
   isMobileOpen = false,
   onCloseMobile,
+  stats,
 }) => {
   const [logoClicks, setLogoClicks] = useState<number>(0);
+  const currentUser = getCurrentUser();
+  const displayName = stats?.username || (currentUser ? currentUser.username : 'Player');
+  const avatar = CARTOON_AVATARS.find((a) => a.id === stats?.avatarId) || CARTOON_AVATARS[0];
 
   const handleLogoClick = () => {
     const next = logoClicks + 1;
@@ -152,13 +160,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </button>
           </div>
 
-          {/* Anime Gamer Mascot Badge */}
+          {/* Gamer Mascot Badge */}
           <div className="flex items-center gap-3 p-2 rounded-2xl bg-[#1c1e2f] border border-white/10">
             <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-pink-500 to-purple-600 flex items-center justify-center text-xl shadow-md shrink-0">
-              🎧
+              {avatar.emoji}
             </div>
             <div className="overflow-hidden">
-              <span className="text-xs font-black text-white block truncate">Sakshi Gamer 👑</span>
+              <span className="text-xs font-black text-white block truncate">{displayName} 👑</span>
               <span className="text-[10px] text-pink-400 font-bold block truncate">Playing Funzo Daily</span>
             </div>
           </div>

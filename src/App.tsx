@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { Sidebar, DashboardNavTab } from './components/dashboard/Sidebar';
 import { TopBar } from './components/dashboard/TopBar';
-import { HeroBanner } from './components/dashboard/HeroBanner';
 import { AllGamesCatalog } from './components/dashboard/AllGamesCatalog';
 import { GameKey } from './components/dashboard/PopularGames';
 import { DashboardWidgets } from './components/dashboard/DashboardWidgets';
@@ -166,9 +165,10 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#12131f] text-slate-100 flex overflow-x-hidden">
+    <div className="min-h-[100dvh] w-full bg-[#12131f] text-slate-100 flex overflow-x-hidden">
       {/* 1. Left Sidebar Navigation */}
       <Sidebar
+        stats={stats}
         activeTab={activeNavTab}
         onSelectTab={(tab) => {
           setActiveNavTab(tab);
@@ -186,7 +186,7 @@ export const App: React.FC = () => {
       />
 
       {/* 2. Main Content Wrapper */}
-      <div className="flex-1 flex flex-col min-h-screen lg:pl-64">
+      <div className="flex-1 flex flex-col min-h-[100dvh] w-full lg:pl-64">
         {/* Top Header Bar */}
         <TopBar
           stats={stats}
@@ -208,7 +208,7 @@ export const App: React.FC = () => {
         )}
 
         {/* Main Body Area */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
+        <main className="flex-1 p-2.5 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
           {/* ---------------- SCENARIO A: ACTIVE GAME PLAYER MODE ---------------- */}
           {activeGame !== null ? (
             <div className="w-full flex flex-col items-center animate-fade-in">
@@ -344,9 +344,6 @@ export const App: React.FC = () => {
             <>
               {activeNavTab === 'home' && (
                 <div className="w-full flex flex-col animate-fade-in">
-                  {/* Hero Banner: "Your Daily Gaming Hub!" */}
-                  <HeroBanner onStartPlaying={() => handleLaunchGame('sudoku')} />
-
                   {/* All Game Genres & Games Catalog with Live Search & Filter */}
                   <AllGamesCatalog
                     onSelectGame={handleLaunchGame}

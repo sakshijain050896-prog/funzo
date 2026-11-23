@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { 
-  Brain, MessageSquare, Search, Dices, Play, Sparkles, Filter
+  Brain, MessageSquare, Search, Dices, Play, ArrowLeft, ChevronRight
 } from 'lucide-react';
 import { GameKey } from './PopularGames';
 import { sound } from '../../lib/soundEffects';
@@ -17,6 +17,60 @@ export interface GameCatalogItem {
   bgGradient: string;
   accentColor: string;
 }
+
+export interface CategoryInfo {
+  id: 'brain' | 'social' | 'mystery' | 'arcade';
+  title: string;
+  subtitle: string;
+  icon: React.ReactNode;
+  emoji: string;
+  gradient: string;
+  borderHover: string;
+  gamesList: string[];
+}
+
+export const CATEGORIES_DATA: CategoryInfo[] = [
+  {
+    id: 'brain',
+    title: 'Brain & Logic Puzzles',
+    subtitle: 'Train deduction, math & spatial reasoning',
+    icon: <Brain className="w-6 h-6 text-sky-400" />,
+    emoji: '🧩',
+    gradient: 'from-sky-500/20 via-blue-500/10 to-indigo-500/20',
+    borderHover: 'hover:border-sky-400',
+    gamesList: ['Sudoku Master', 'Arrow Out', '2048 Rush'],
+  },
+  {
+    id: 'social',
+    title: 'Social & Party Decks',
+    subtitle: 'Spill It party games with 10k+ questions',
+    icon: <MessageSquare className="w-6 h-6 text-rose-400" />,
+    emoji: '🔥',
+    gradient: 'from-rose-500/20 via-pink-500/10 to-fuchsia-500/20',
+    borderHover: 'hover:border-rose-400',
+    gamesList: ['Truth or Dare', '2 Truths & 1 Lie', 'Would You Rather', 'Never Have I Ever'],
+  },
+  {
+    id: 'mystery',
+    title: 'Mystery & Forensics',
+    subtitle: 'Crack the vault safe, inspect crime scenes & riddles',
+    icon: <Search className="w-6 h-6 text-amber-400" />,
+    emoji: '🔍',
+    gradient: 'from-amber-500/20 via-yellow-500/10 to-orange-500/20',
+    borderHover: 'hover:border-amber-400',
+    gamesList: ['The Case Files', 'Vault Safe Codebreaker', 'Detective Riddles'],
+  },
+  {
+    id: 'arcade',
+    title: 'Arcade & Quick Play',
+    subtitle: 'Classic fast-paced mini games vs AI or friends',
+    icon: <Dices className="w-6 h-6 text-emerald-400" />,
+    emoji: '🎲',
+    gradient: 'from-emerald-500/20 via-teal-500/10 to-cyan-500/20',
+    borderHover: 'hover:border-emerald-400',
+    gamesList: ['Tic Tac Toe', 'Memory Match', 'Dice Roll & Luck'],
+  },
+];
 
 export const ALL_GAMES_DATA: GameCatalogItem[] = [
   // 1. BRAIN & LOGIC PUZZLES
@@ -45,10 +99,10 @@ export const ALL_GAMES_DATA: GameCatalogItem[] = [
   {
     id: '2048',
     title: '2048 Rush',
-    desc: 'Fast-paced numeric sliding tile merger. Combine matching powers of 2 to 2048',
+    desc: 'Fast numeric sliding tile merger. Combine powers of 2 to reach the 2048 tile',
     genre: 'brain',
     genreLabel: 'Brain & Logic',
-    tag: 'Number Merge',
+    tag: 'Number Rush',
     emoji: '⚡',
     bgGradient: 'from-purple-500 to-indigo-600',
     accentColor: 'text-purple-400',
@@ -71,7 +125,7 @@ export const ALL_GAMES_DATA: GameCatalogItem[] = [
     id: '2t1l',
     subTab: 'two-truths',
     title: '2 Truths & 1 Lie',
-    desc: 'Procedural science & pop trivia rounds. Test your radar and spot the deceptive lie!',
+    desc: 'Procedural science & trivia rounds. Test your radar and spot the impostor lie!',
     genre: 'social',
     genreLabel: 'Social & Party',
     tag: 'Lie Spotter',
@@ -111,7 +165,7 @@ export const ALL_GAMES_DATA: GameCatalogItem[] = [
     title: 'The Case Files',
     desc: 'Inspect crime scene hotspots, forensic clues, interrogate suspects & arrest the killer',
     genre: 'mystery',
-    genreLabel: 'Mystery & Detective',
+    genreLabel: 'Mystery & Forensics',
     tag: 'Forensics',
     emoji: '🔍',
     bgGradient: 'from-amber-600 to-yellow-600',
@@ -121,9 +175,9 @@ export const ALL_GAMES_DATA: GameCatalogItem[] = [
     id: 'mystery',
     subTab: 'safe-code',
     title: 'Vault Safe Codebreaker',
-    desc: '4-digit deduction keypad safe. Crack the secret code using exact & misplaced hints',
+    desc: '4-digit deduction keypad safe. Crack the secret code using exact & misplaced clues',
     genre: 'mystery',
-    genreLabel: 'Mystery & Detective',
+    genreLabel: 'Mystery & Forensics',
     tag: 'Vault Safe',
     emoji: '🔐',
     bgGradient: 'from-yellow-500 to-amber-700',
@@ -135,7 +189,7 @@ export const ALL_GAMES_DATA: GameCatalogItem[] = [
     title: 'Detective Riddles',
     desc: '10,000+ detective stories with Clue 1 & 2 + 4 interactive choices before explanation',
     genre: 'mystery',
-    genreLabel: 'Mystery & Detective',
+    genreLabel: 'Mystery & Forensics',
     tag: '10k Riddles',
     emoji: '📜',
     bgGradient: 'from-violet-600 to-indigo-600',
@@ -146,7 +200,7 @@ export const ALL_GAMES_DATA: GameCatalogItem[] = [
   {
     id: 'tictactoe',
     title: 'Tic Tac Toe',
-    desc: 'Classic 3x3 grid battle against intelligent AI or pass-and-play 2-player friend mode',
+    desc: 'Classic 3x3 battle against adaptive Smart AI or 2-player pass mode',
     genre: 'arcade',
     genreLabel: 'Arcade Classics',
     tag: 'Smart AI',
@@ -187,133 +241,220 @@ export const AllGamesCatalog: React.FC<AllGamesCatalogProps> = ({
   onSelectGame,
   searchQuery = '',
 }) => {
-  const [selectedGenre, setSelectedGenre] = useState<string>('all');
+  // Navigation State: null = Categories View; or 'brain' | 'social' | 'mystery' | 'arcade' = Games in that Category
+  const [selectedCategory, setSelectedCategory] = useState<'brain' | 'social' | 'mystery' | 'arcade' | null>(null);
 
-  const genres = [
-    { id: 'all', label: 'All Games', icon: <Sparkles className="w-3.5 h-3.5" /> },
-    { id: 'brain', label: 'Brain & Logic', icon: <Brain className="w-3.5 h-3.5 text-sky-400" /> },
-    { id: 'social', label: 'Social & Party', icon: <MessageSquare className="w-3.5 h-3.5 text-rose-400" /> },
-    { id: 'mystery', label: 'Mystery & Forensics', icon: <Search className="w-3.5 h-3.5 text-amber-400" /> },
-    { id: 'arcade', label: 'Arcade Classics', icon: <Dices className="w-3.5 h-3.5 text-emerald-400" /> },
-  ];
+  // If user is actively searching, show search results across all games
+  const isSearching = searchQuery.trim().length > 0;
 
-  // Filter games based on search query and genre filter
-  const filteredGames = useMemo(() => {
-    return ALL_GAMES_DATA.filter((game) => {
-      const matchesGenre = selectedGenre === 'all' || game.genre === selectedGenre;
-      const q = searchQuery.trim().toLowerCase();
-      if (!q) return matchesGenre;
-      const matchesQuery = 
-        game.title.toLowerCase().includes(q) ||
-        game.desc.toLowerCase().includes(q) ||
-        game.genreLabel.toLowerCase().includes(q) ||
-        game.tag.toLowerCase().includes(q);
-      return matchesGenre && matchesQuery;
-    });
-  }, [selectedGenre, searchQuery]);
+  const searchResults = useMemo(() => {
+    if (!isSearching) return [];
+    const q = searchQuery.trim().toLowerCase();
+    return ALL_GAMES_DATA.filter((game) => 
+      game.title.toLowerCase().includes(q) ||
+      game.desc.toLowerCase().includes(q) ||
+      game.genreLabel.toLowerCase().includes(q) ||
+      game.tag.toLowerCase().includes(q)
+    );
+  }, [searchQuery, isSearching]);
+
+  // Current category games
+  const currentCategoryGames = useMemo(() => {
+    if (!selectedCategory) return [];
+    return ALL_GAMES_DATA.filter((g) => g.genre === selectedCategory);
+  }, [selectedCategory]);
+
+  const activeCategoryInfo = CATEGORIES_DATA.find((c) => c.id === selectedCategory);
 
   return (
-    <section className="w-full flex flex-col gap-4 mb-8">
-      {/* Section Header & Genre Filter Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="text-xl">🎮</span>
-            <h2 className="text-xl sm:text-2xl font-black text-white tracking-wide">
-              All Game Genres
-            </h2>
-            <span className="text-xs px-2.5 py-0.5 rounded-full bg-violet-500/20 text-violet-300 font-extrabold border border-violet-500/30">
-              {filteredGames.length} Available
+    <section className="w-full flex flex-col gap-3 mb-6 animate-fade-in">
+      {/* ---------------- SCENARIO 1: SEARCH ACTIVE ---------------- */}
+      {isSearching ? (
+        <div className="w-full flex flex-col gap-2.5">
+          <div className="flex items-center justify-between px-1">
+            <span className="text-xs font-black text-slate-300">
+              Search Results for &ldquo;{searchQuery}&rdquo; ({searchResults.length})
             </span>
           </div>
-          <p className="text-xs text-slate-300 mt-0.5">
-            Instant browser play with zero download. All progress autosaves!
-          </p>
-        </div>
 
-        {/* Genre Filter Pills (Horizontal Scrollable on Mobile) */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 scrollbar-none max-w-full">
-          {genres.map((g) => {
-            const isActive = selectedGenre === g.id;
-            return (
-              <button
-                key={g.id}
+          {searchResults.length > 0 ? (
+            <div className="flex flex-col gap-2">
+              {searchResults.map((game, idx) => (
+                <div
+                  key={`${game.id}-${game.subTab || idx}`}
+                  onClick={() => {
+                    sound.playTap();
+                    onSelectGame(game.id, game.subTab);
+                  }}
+                  className="w-full p-2.5 sm:p-3 rounded-2xl bg-[#1c1e2f] border border-white/10 hover:border-violet-400 hover:bg-[#22253a] shadow-md flex items-center justify-between gap-3 cursor-pointer group active:scale-[0.99] transition"
+                >
+                  <div className="flex items-center gap-3 overflow-hidden">
+                    <div className={`w-11 h-11 rounded-xl bg-gradient-to-tr ${game.bgGradient} flex items-center justify-center text-xl shadow-md shrink-0`}>
+                      {game.emoji}
+                    </div>
+                    <div className="overflow-hidden">
+                      <div className="flex items-center gap-1.5">
+                        <h4 className="text-xs sm:text-sm font-black text-white group-hover:text-violet-300 transition-colors truncate">
+                          {game.title}
+                        </h4>
+                        <span className="text-[9px] font-bold px-1.5 py-0.2 rounded-full bg-white/5 border border-white/10 text-slate-300">
+                          {game.tag}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-slate-400 truncate mt-0.5">{game.desc}</p>
+                    </div>
+                  </div>
+
+                  <button className="px-3 py-1.5 rounded-xl bg-violet-600 group-hover:bg-violet-500 text-white font-black text-xs flex items-center gap-1 shrink-0 shadow-md transition">
+                    <span>Play</span>
+                    <Play className="w-3 h-3 fill-current" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="p-8 rounded-2xl bg-[#1c1e2f] border border-white/10 text-center">
+              <p className="text-xs text-slate-400">No games matched your search.</p>
+            </div>
+          )}
+        </div>
+      ) : selectedCategory === null ? (
+        /* ---------------- SCENARIO 2: CATEGORIES FIRST (HOME VIEW) ---------------- */
+        <div className="w-full flex flex-col gap-3">
+          <div className="flex items-center justify-between px-1">
+            <div>
+              <h2 className="text-lg sm:text-xl font-black text-white tracking-wide flex items-center gap-2">
+                <span>🎮</span>
+                <span>Game Categories</span>
+              </h2>
+              <p className="text-xs text-slate-400">
+                Choose a category to explore games &amp; play instantly
+              </p>
+            </div>
+          </div>
+
+          {/* 4 Interactive Category Tiles */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {CATEGORIES_DATA.map((cat) => (
+              <div
+                key={cat.id}
                 onClick={() => {
                   sound.playTap();
-                  setSelectedGenre(g.id);
+                  setSelectedCategory(cat.id);
                 }}
-                className={`px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 whitespace-nowrap transition active:scale-95 ${
-                  isActive
-                    ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md shadow-violet-600/30 ring-1 ring-violet-400'
-                    : 'bg-[#1c1e2f] border border-white/10 text-slate-300 hover:text-white hover:bg-[#25283f]'
-                }`}
+                className={`p-4 rounded-3xl bg-gradient-to-br ${cat.gradient} bg-[#1c1e2f] border border-white/10 ${cat.borderHover} shadow-lg hover:shadow-xl hover:scale-[1.01] active:scale-[0.98] transition-all cursor-pointer flex flex-col justify-between gap-3 group`}
               >
-                {g.icon}
-                <span>{g.label}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-2xl bg-[#161726] border border-white/10 flex items-center justify-center text-2xl shadow-inner group-hover:scale-105 transition-transform">
+                      {cat.emoji}
+                    </div>
+                    <div>
+                      <h3 className="text-sm sm:text-base font-black text-white group-hover:text-white transition-colors">
+                        {cat.title}
+                      </h3>
+                      <p className="text-xs text-slate-300 line-clamp-1 mt-0.5">
+                        {cat.subtitle}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-slate-300 group-hover:text-white group-hover:translate-x-0.5 transition-transform shrink-0">
+                    <ChevronRight className="w-4 h-4" />
+                  </div>
+                </div>
 
-      {/* Games Responsive Grid */}
-      {filteredGames.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5">
-          {filteredGames.map((game, idx) => (
-            <div
-              key={`${game.id}-${game.subTab || idx}`}
+                {/* Sub-Games Pills Preview */}
+                <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-white/5">
+                  {cat.gamesList.map((gName, gIdx) => (
+                    <span
+                      key={gIdx}
+                      className="px-2 py-0.5 rounded-full bg-[#12131f]/70 border border-white/10 text-[10px] font-bold text-slate-300"
+                    >
+                      {gName}
+                    </span>
+                  ))}
+                  <span className="text-[10px] text-violet-400 font-bold ml-auto flex items-center gap-0.5">
+                    Browse →
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        /* ---------------- SCENARIO 3: GAMES IN SELECTED CATEGORY (COMPACT ROWS) ---------------- */
+        <div className="w-full flex flex-col gap-3 animate-fade-in">
+          {/* Category Top Bar */}
+          <div className="flex items-center justify-between p-3 rounded-2xl bg-[#1c1e2f] border border-white/10 shadow-md">
+            <button
               onClick={() => {
                 sound.playTap();
-                onSelectGame(game.id, game.subTab);
+                setSelectedCategory(null);
               }}
-              className="group p-4 rounded-3xl bg-[#1c1e2f] border border-white/10 hover:border-violet-400/80 hover:bg-[#22253a] shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer flex flex-col justify-between gap-3 relative overflow-hidden"
+              className="px-3 py-1.5 rounded-xl bg-[#24273d] hover:bg-[#2d304d] text-xs font-black text-slate-200 hover:text-white flex items-center gap-1.5 transition active:scale-95"
             >
-              {/* Top Row: Icon + Genre Badge + Play Indicator */}
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex items-center gap-3">
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>All Categories</span>
+            </button>
+
+            <div className="flex items-center gap-2">
+              <span className="text-base">{activeCategoryInfo?.emoji}</span>
+              <h3 className="text-xs sm:text-sm font-black text-white">
+                {activeCategoryInfo?.title}
+              </h3>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-violet-500/20 text-violet-300 border border-violet-500/30">
+                {currentCategoryGames.length} Games
+              </span>
+            </div>
+          </div>
+
+          {/* Compact Games List (Not broad bulky boxes!) */}
+          <div className="flex flex-col gap-2">
+            {currentCategoryGames.map((game, idx) => (
+              <div
+                key={`${game.id}-${game.subTab || idx}`}
+                onClick={() => {
+                  sound.playTap();
+                  onSelectGame(game.id, game.subTab);
+                }}
+                className="w-full p-3 sm:p-3.5 rounded-2xl bg-[#1c1e2f] border border-white/10 hover:border-violet-400 hover:bg-[#22253a] shadow-md flex items-center justify-between gap-3 cursor-pointer group active:scale-[0.99] transition duration-150"
+              >
+                {/* Left: Icon & Details */}
+                <div className="flex items-center gap-3.5 overflow-hidden">
                   <div className={`w-12 h-12 rounded-2xl bg-gradient-to-tr ${game.bgGradient} flex items-center justify-center text-2xl shadow-md group-hover:scale-105 transition-transform shrink-0`}>
                     {game.emoji}
                   </div>
-                  <div>
-                    <h3 className="text-sm font-black text-white group-hover:text-violet-300 transition-colors leading-tight">
-                      {game.title}
-                    </h3>
-                    <span className="text-[10px] font-bold text-slate-400 block mt-0.5">
-                      {game.genreLabel}
-                    </span>
+
+                  <div className="overflow-hidden">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <h4 className="text-xs sm:text-sm font-black text-white group-hover:text-violet-300 transition-colors truncate">
+                        {game.title}
+                      </h4>
+                      <span className="text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-slate-300 shrink-0">
+                        {game.tag}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-300 line-clamp-1">
+                      {game.desc}
+                    </p>
                   </div>
                 </div>
 
-                <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-slate-300 uppercase shrink-0">
-                  {game.tag}
-                </span>
-              </div>
-
-              {/* Game Description */}
-              <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed">
-                {game.desc}
-              </p>
-
-              {/* Action Button: Play Now */}
-              <div className="w-full pt-1 flex items-center justify-between">
-                <span className={`text-[11px] font-black ${game.accentColor} flex items-center gap-1 group-hover:translate-x-0.5 transition-transform`}>
-                  <span>Play Instant</span>
-                  <span>→</span>
-                </span>
-                <div className="w-7 h-7 rounded-xl bg-violet-600/20 group-hover:bg-violet-600 text-violet-300 group-hover:text-white flex items-center justify-center transition-colors">
+                {/* Right: Play Action Button */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    sound.playTap();
+                    onSelectGame(game.id, game.subTab);
+                  }}
+                  className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:brightness-110 text-white font-black text-xs flex items-center gap-1.5 shrink-0 shadow-md active:scale-95 transition"
+                >
+                  <span>Play</span>
                   <Play className="w-3.5 h-3.5 fill-current" />
-                </div>
+                </button>
               </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="w-full py-12 rounded-3xl bg-[#1c1e2f] border border-white/10 text-center flex flex-col items-center justify-center">
-          <Filter className="w-8 h-8 text-slate-500 mb-2" />
-          <h4 className="text-sm font-black text-white mb-1">No Games Found</h4>
-          <p className="text-xs text-slate-400">
-            No games match &ldquo;{searchQuery}&rdquo;. Try another search keyword or clear the filter.
-          </p>
+            ))}
+          </div>
         </div>
       )}
     </section>

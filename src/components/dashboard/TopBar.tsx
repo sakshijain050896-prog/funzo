@@ -26,7 +26,7 @@ export const TopBar: React.FC<TopBarProps> = ({
 }) => {
   const avatar = CARTOON_AVATARS.find((a) => a.id === stats.avatarId) || CARTOON_AVATARS[0];
   const currentUser = getCurrentUser();
-  const displayName = currentUser ? currentUser.username : stats.username || 'Sakshi';
+  const displayName = stats.username || (currentUser ? currentUser.username : 'Player');
 
   return (
     <header className="w-full h-16 bg-[#161726]/85 backdrop-blur-xl border-b border-white/10 px-4 sm:px-6 flex items-center justify-between gap-4 sticky top-0 z-30">
