@@ -378,47 +378,265 @@ export const BELIEVABLE_MYTHS: LieMyth[] = [
   }
 ];
 
-// Dynamic Two Truths & One Lie round generator
+// ---------------- 2. TWO TRUTHS & 1 LIE: GENERAL CONVERSATIONAL ICEBREAKERS ----------------
+// Relatable personal and everyday questions that one person asks or tells another person in a party game
+export interface GeneralTwoTruthsItem {
+  statements: [string, string, string];
+  lieIndex: number;
+  explanation: string;
+}
+
+export const GENERAL_TWO_TRUTHS_ROUNDS: GeneralTwoTruthsItem[] = [
+  {
+    statements: [
+      'I can cook 5 different pasta dishes completely from scratch.',
+      'I have never watched an episode of Game of Thrones.',
+      'I have never eaten a slice of pizza in my entire life.',
+    ],
+    lieIndex: 2,
+    explanation: 'Lie! Who hasn’t eaten pizza? I love eating pizza on Friday nights!',
+  },
+  {
+    statements: [
+      'I have never broken any bone in my body.',
+      'I can speak 3 different languages fluently.',
+      'I have never learned how to ride a bicycle.',
+    ],
+    lieIndex: 2,
+    explanation: 'Lie! I learned to ride a bicycle when I was 7 years old and still ride on weekends.',
+  },
+  {
+    statements: [
+      'I always need at least 3 alarms set on my phone to wake up.',
+      'I have never owned a smartphone in my life.',
+      'I once accidentally wore two mismatched shoes to work/school.',
+    ],
+    lieIndex: 1,
+    explanation: 'Lie! I have used a smartphone every single day for years!',
+  },
+  {
+    statements: [
+      'I can touch my tongue to my nose.',
+      'I drink at least 3 cups of coffee or tea every single day.',
+      'I have never used Google Maps to navigate anywhere.',
+    ],
+    lieIndex: 2,
+    explanation: 'Lie! I have zero sense of direction and rely on Google Maps almost daily.',
+  },
+  {
+    statements: [
+      'I have binge-watched an entire TV series in one weekend.',
+      'I don’t know how to swim.',
+      'I can hold my breath underwater for 10 full minutes.',
+    ],
+    lieIndex: 2,
+    explanation: 'Lie! 10 minutes is an Olympic freediver record; I can barely last 45 seconds!',
+  },
+  {
+    statements: [
+      'I have never traveled on an airplane.',
+      'I actually enjoy putting pineapple on my pizza.',
+      'I have never sung in front of anyone at karaoke.',
+    ],
+    lieIndex: 0,
+    explanation: 'Lie! I have flown on airplanes multiple times for vacations.',
+  },
+  {
+    statements: [
+      'I can solve a 3x3 Rubik’s cube in under 3 minutes.',
+      'I have never had a cavity at the dentist.',
+      'I have never tasted chocolate ice cream.',
+    ],
+    lieIndex: 2,
+    explanation: 'Lie! Chocolate is one of the most popular ice cream flavors and a favorite of mine.',
+  },
+  {
+    statements: [
+      'I have never played a single video game in my life.',
+      'I am left-handed when writing with a pen.',
+      'I have a scar from falling off a playground swing as a kid.',
+    ],
+    lieIndex: 0,
+    explanation: 'Lie! I love casual and mobile video games and play them all the time.',
+  },
+  {
+    statements: [
+      'I once fell asleep in a movie theater during a noisy action movie.',
+      'I have never dropped my phone in water or a puddle.',
+      'I know all the lyrics to Bohemian Rhapsody by Queen.',
+    ],
+    lieIndex: 1,
+    explanation: 'Lie! I dropped my phone in water once and panicked trying to dry it in rice!',
+  },
+  {
+    statements: [
+      'I prefer savory snacks like chips over sweet desserts.',
+      'I have read all 7 Harry Potter books.',
+      'I have never stayed awake for 24 hours straight.',
+    ],
+    lieIndex: 2,
+    explanation: 'Lie! I pulled an all-nighter cramming for college exams.',
+  },
+  {
+    statements: [
+      'I have never eaten at McDonald’s or Burger King.',
+      'I am terrified of spiders and insects.',
+      'I can whistle loudly using my fingers.',
+    ],
+    lieIndex: 0,
+    explanation: 'Lie! I have grabbed burgers and fries from McDonald’s many times.',
+  },
+  {
+    statements: [
+      'I can write with both my left and right hands (ambidextrous).',
+      'I have never bought anything online during Black Friday.',
+      'I can easily run 10 kilometers without stopping to walk.',
+    ],
+    lieIndex: 2,
+    explanation: 'Lie! I get out of breath after climbing 3 flights of stairs!',
+  },
+  {
+    statements: [
+      'I have an identical twin sibling.',
+      'I have never seen snow falling in real life.',
+      'I can sleep through a loud thunderstorm without waking up.',
+    ],
+    lieIndex: 0,
+    explanation: 'Lie! I do not have a twin sibling at all!',
+  },
+  {
+    statements: [
+      'I have never dyed or colored my hair.',
+      'I can type faster than 70 words per minute on a keyboard.',
+      'I have never eaten noodles or pasta in my life.',
+    ],
+    lieIndex: 2,
+    explanation: 'Lie! Noodles and pasta are my go-to comfort foods!',
+  },
+  {
+    statements: [
+      'I know how to play chords on an acoustic guitar.',
+      'I have never been stung by a bee or wasp.',
+      'I have never watched a movie on Netflix.',
+    ],
+    lieIndex: 2,
+    explanation: 'Lie! I spend way too many hours scrolling through Netflix movies!',
+  },
+  {
+    statements: [
+      'I have a habit of talking out loud to myself when I am alone.',
+      'I have never lost a set of house or car keys.',
+      'I can name all 50 US states from memory.',
+    ],
+    lieIndex: 1,
+    explanation: 'Lie! I lose my keys regularly and spend 20 minutes tearing up the couch to find them.',
+  },
+  {
+    statements: [
+      'I have never eaten sushi or raw fish.',
+      'I once won a school or college talent show competition.',
+      'I have never accidentally texted the wrong person.',
+    ],
+    lieIndex: 2,
+    explanation: 'Lie! I sent an embarrassing text meant for a close friend directly to my boss!',
+  },
+  {
+    statements: [
+      'I can crack all 10 knuckles on my hands at once.',
+      'I have never watched a horror movie from start to finish.',
+      'I never drink any water, only energy drinks and soda.',
+    ],
+    lieIndex: 2,
+    explanation: 'Lie! Staying hydrated is crucial; I drink plenty of fresh water every day.',
+  },
+  {
+    statements: [
+      'I have never had braces on my teeth.',
+      'I can name the capital cities of at least 20 countries.',
+      'I have never taken a selfie photo on my phone.',
+    ],
+    lieIndex: 2,
+    explanation: 'Lie! My camera roll has plenty of fun selfies with friends.',
+  },
+  {
+    statements: [
+      'I once walked directly into a clean glass door in public.',
+      'I have never eaten breakfast in bed.',
+      'I can speak with a convincing British accent.',
+    ],
+    lieIndex: 1,
+    explanation: 'Lie! Having breakfast in bed on a lazy Sunday morning is the absolute best.',
+  },
+  {
+    statements: [
+      'I love waking up early before 6:00 AM every single day.',
+      'I have never broken my phone screen.',
+      'I know how to bake chocolate chip cookies from scratch.',
+    ],
+    lieIndex: 0,
+    explanation: 'Lie! I am NOT a morning person; I hit snooze at least 4 times!',
+  },
+  {
+    statements: [
+      'I have never traveled outside my home country.',
+      'I can wiggle my ears without touching them.',
+      'I have never watched the movie Titanic.',
+    ],
+    lieIndex: 2,
+    explanation: 'Lie! I have watched Titanic and cried when Jack didn’t fit on the door.',
+  },
+  {
+    statements: [
+      'I have never had a speeding ticket while driving.',
+      'I can recite the Greek alphabet from Alpha to Omega.',
+      'I have never eaten French fries or potato chips.',
+    ],
+    lieIndex: 2,
+    explanation: 'Lie! Crispy French fries are one of my all-time favorite guilty pleasures.',
+  },
+  {
+    statements: [
+      'I have never ordered food delivery using a mobile app.',
+      'I can juggle 3 tennis balls without dropping them.',
+      'I am a night owl who is most active after midnight.',
+    ],
+    lieIndex: 0,
+    explanation: 'Lie! I order food delivery on lazy weekends all the time.',
+  },
+  {
+    statements: [
+      'I have never tried pineapple on pizza.',
+      'I can do a clean cartwheel on the grass.',
+      'I have never forgotten a friend’s birthday.',
+    ],
+    lieIndex: 2,
+    explanation: 'Lie! I have definitely forgotten a friend’s birthday and texted a panicked late wish!',
+  },
+];
+
+// Dynamic Two Truths & One Lie round generator (Relatable general conversational format)
 export function generateTwoTruthsRound(roundNum: number, usedLieIndices: Set<number>): TwoTruthsRound {
-  // Find an unused lie index
-  let lieIdx = roundNum % BELIEVABLE_MYTHS.length;
-  if (usedLieIndices.has(lieIdx)) {
-    for (let i = 0; i < BELIEVABLE_MYTHS.length; i++) {
+  const totalRounds = GENERAL_TWO_TRUTHS_ROUNDS.length;
+  let idx = (roundNum - 1) % totalRounds;
+
+  // If already used in this session and we have unused ones, pick next
+  if (usedLieIndices.has(idx) && usedLieIndices.size < totalRounds) {
+    for (let i = 0; i < totalRounds; i++) {
       if (!usedLieIndices.has(i)) {
-        lieIdx = i;
+        idx = i;
         break;
       }
     }
   }
-  usedLieIndices.add(lieIdx);
+  usedLieIndices.add(idx);
 
-  const selectedMyth = BELIEVABLE_MYTHS[lieIdx];
-
-  // Pick 2 random true facts
-  const truePool = [...VERIFIED_TRUE_FACTS];
-  const fact1Idx = (roundNum * 7 + 3) % truePool.length;
-  const fact1 = truePool[fact1Idx];
-  truePool.splice(fact1Idx, 1);
-  const fact2Idx = (roundNum * 13 + 5) % truePool.length;
-  const fact2 = truePool[fact2Idx];
-
-  // Randomize lie position among 0, 1, 2
-  const liePos = (roundNum * 3 + 1) % 3;
-  const statements: string[] = [];
-
-  if (liePos === 0) {
-    statements.push(selectedMyth.statement, fact1, fact2);
-  } else if (liePos === 1) {
-    statements.push(fact1, selectedMyth.statement, fact2);
-  } else {
-    statements.push(fact1, fact2, selectedMyth.statement);
-  }
+  const selected = GENERAL_TWO_TRUTHS_ROUNDS[idx];
 
   return {
     id: `2t1l-round-${roundNum}`,
-    statements,
-    lieIndex: liePos,
-    explanation: selectedMyth.explanation,
+    statements: [...selected.statements],
+    lieIndex: selected.lieIndex,
+    explanation: selected.explanation,
   };
 }
 

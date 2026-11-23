@@ -155,7 +155,7 @@ export const App: React.FC = () => {
 
   const handleSudokuWin = (timeTakenSeconds: number, isDaily: boolean) => {
     recordGameWin('sudoku', timeTakenSeconds, isDaily);
-    handleLevelCelebration(15, 'SUDOKU MASTERED! 🧩', 'Brilliant logical grid completion across all 81 cells.', 'sudoku');
+    handleLevelCelebration(15, 'MEOWDOKU MASTERED! 🐱', 'Purr-fect logical deduction across all 81 cells.', 'sudoku');
   };
 
   const handleArrowWin = () => {
@@ -267,7 +267,7 @@ export const App: React.FC = () => {
                       activeSubTab === 'most-likely-to' ? 'Most Likely To' :
                       'Truth or Dare'
                     )}
-                    {activeGame === 'sudoku' && 'Sudoku Master'}
+                    {activeGame === 'sudoku' && 'Meowdoku 🐱'}
                     {activeGame === '2t1l' && '2 Truths & 1 Lie'}
                     {activeGame === 'tictactoe' && 'Tic Tac Toe'}
                     {activeGame === 'memory' && 'Memory Match'}

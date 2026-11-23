@@ -101,7 +101,7 @@ export const StatsModal: React.FC<StatsModalProps> = ({ isOpen, onClose, stats }
               <span>Fastest Solve</span>
             </div>
             <div className="text-xl font-black text-slate-900 dark:text-white">{formatTime(stats.bestTimeSeconds)}</div>
-            <div className="text-[9px] text-slate-500 dark:text-slate-400">in Sudoku Master</div>
+            <div className="text-[9px] text-slate-500 dark:text-slate-400">in Meowdoku 🐱</div>
           </div>
         </div>
 

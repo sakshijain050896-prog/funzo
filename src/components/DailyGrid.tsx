@@ -404,7 +404,7 @@ export const DailyGrid: React.FC<DailyGridProps> = ({
         {showInstructions && (
           <div className="mt-2 p-3 rounded-2xl bg-indigo-50 dark:bg-slate-900 border border-indigo-200 dark:border-indigo-500/30 text-xs text-left text-slate-700 dark:text-slate-300 space-y-1.5 animate-fade-in shadow-md">
             <strong className="block text-indigo-600 dark:text-indigo-400 font-black text-xs">
-              🎯 How to Play Sudoku Master:
+              🐱 How to Play Meowdoku:
             </strong>
             <p className="text-[11px] leading-relaxed">
               1. <strong>Goal:</strong> Fill the 9x9 board with numbers 1 to 9 so that no digit repeats in any row, column, or 3x3 quadrant.

@@ -315,17 +315,17 @@ export const SpillItHub: React.FC<SpillItHubProps> = ({
       {activeTab === 'two-truths' && (
         <div className="w-full flex flex-col items-center animate-fade-in text-left">
           <div className="w-full flex items-center justify-between mb-2 text-xs text-slate-500 dark:text-slate-400 font-bold px-1">
-            <span className="text-indigo-400">Round {twoTruthsRoundNum} of 10,000+</span>
+            <span className="text-indigo-400 font-black">Round {twoTruthsRoundNum}</span>
             <span className="text-yellow-500 dark:text-yellow-400 font-mono">Score: {twoTruthsScore} ⭐️</span>
           </div>
 
           {/* Instructions banner */}
           <div className="w-full p-2.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-500/30 mb-2 text-center shadow-sm">
             <p className="text-xs font-black text-slate-800 dark:text-white">
-              🤥 2 Statements are Real Science Facts. 1 is a <span className="text-rose-500 underline uppercase">Myth/Lie</span>!
+              🤥 2 Statements are TRUE. 1 is a <span className="text-rose-500 underline uppercase">LIE</span>!
             </p>
             <p className="text-[10px] text-slate-600 dark:text-slate-400 mt-0.5">
-              Tap the statement you believe is completely FALSE to earn +10 IQ!
+              Read what the person says and tap the statement that is a LIE!
             </p>
           </div>
 

@@ -5,14 +5,14 @@ import {
 import { GameKey } from './PopularGames';
 import { sound } from '../../lib/soundEffects';
 
-export type CategoryFilter = 'all' | 'brain' | 'social' | 'mystery' | 'arcade';
+export type CategoryFilter = 'all' | 'brain' | 'social' | 'mystery';
 
 export interface GameCatalogItem {
   id: GameKey;
   subTab?: string;
   title: string;
   desc: string;
-  genre: 'brain' | 'social' | 'mystery' | 'arcade';
+  genre: 'brain' | 'social' | 'mystery';
   genreLabel: string;
   tag: string;
   emoji: string;
@@ -32,23 +32,19 @@ export const CATEGORY_THEMES: Record<string, { tagBg: string; buttonBg: string }
     tagBg: 'bg-amber-100 text-amber-950 dark:bg-amber-950/80 dark:text-amber-300 border border-amber-300 dark:border-amber-700/50',
     buttonBg: 'mario-btn-yellow',
   },
-  arcade: {
-    tagBg: 'bg-emerald-100 text-emerald-900 dark:bg-emerald-950/80 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700/50',
-    buttonBg: 'mario-btn-green',
-  },
 };
 
 export const ALL_GAMES_DATA: GameCatalogItem[] = [
   // 1. BRAIN & LOGIC PUZZLES
   {
     id: 'sudoku',
-    title: 'Sudoku Master',
-    desc: 'Classic 9x9 deduction grid with Easy, Medium & Hard modes and Daily Challenge.',
+    title: 'Meowdoku',
+    desc: 'Cute cat-themed 9x9 logic puzzle. Fill rows, columns & 3x3 grids with numbers 1 to 9!',
     genre: 'brain',
     genreLabel: 'Brain & Logic',
-    tag: 'Daily Grid',
-    emoji: '🧩',
-    bgGradient: 'from-sky-500 to-blue-600',
+    tag: 'Cat Logic',
+    emoji: '🐱',
+    bgGradient: 'from-amber-400 via-orange-400 to-amber-500',
   },
   {
     id: 'arrows',
@@ -87,10 +83,10 @@ export const ALL_GAMES_DATA: GameCatalogItem[] = [
     id: '2t1l',
     subTab: 'two-truths',
     title: '2 Truths & 1 Lie',
-    desc: 'Science & general trivia rounds. Test your radar and spot the clever lie among two facts.',
+    desc: 'Relatable icebreaker statements between friends and groups. Spot the clever lie!',
     genre: 'social',
     genreLabel: 'Party & Social',
-    tag: 'Lie Spotter',
+    tag: 'Spot the Lie',
     emoji: '🤥',
     bgGradient: 'from-lime-500 to-green-600',
   },
@@ -151,38 +147,6 @@ export const ALL_GAMES_DATA: GameCatalogItem[] = [
     emoji: '📜',
     bgGradient: 'from-violet-600 to-indigo-600',
   },
-
-  // 4. ARCADE CLASSICS & QUICK PLAY
-  {
-    id: 'tictactoe',
-    title: 'Tic Tac Toe',
-    desc: 'Classic 3x3 strategy game against adaptive AI or 2-player pass mode with friends.',
-    genre: 'arcade',
-    genreLabel: 'Classic Arcade',
-    tag: '2 Players / AI',
-    emoji: '❌⭕',
-    bgGradient: 'from-amber-500 to-orange-600',
-  },
-  {
-    id: 'memory',
-    title: 'Memory Match',
-    desc: '16-card brain card flipping challenge. Match all 8 pairs with timer and move tracker.',
-    genre: 'arcade',
-    genreLabel: 'Classic Arcade',
-    tag: 'Memory Gym',
-    emoji: '🧠',
-    bgGradient: 'from-purple-500 to-fuchsia-600',
-  },
-  {
-    id: 'dice',
-    title: 'Dice Roll & Luck',
-    desc: '3D rolling dice with physics. Predict Under 7, Lucky 7 or Over 7 to test your luck.',
-    genre: 'arcade',
-    genreLabel: 'Classic Arcade',
-    tag: 'Roll & Win',
-    emoji: '🎲',
-    bgGradient: 'from-teal-500 to-cyan-600',
-  },
 ];
 
 const CATEGORY_TABS: { id: CategoryFilter; label: string; emoji: string }[] = [
@@ -190,7 +154,6 @@ const CATEGORY_TABS: { id: CategoryFilter; label: string; emoji: string }[] = [
   { id: 'brain', label: 'Brain & Logic', emoji: '🧩' },
   { id: 'social', label: 'Party & Social', emoji: '🔥' },
   { id: 'mystery', label: 'Mystery Riddles', emoji: '🔍' },
-  { id: 'arcade', label: 'Classic Arcade', emoji: '🎲' },
 ];
 
 interface AllGamesCatalogProps {

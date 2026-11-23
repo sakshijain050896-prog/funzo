@@ -24,10 +24,10 @@ interface GameInstruction {
 const INSTRUCTIONS_DATA: GameInstruction[] = [
   {
     id: 'sudoku',
-    title: 'Sudoku Master',
+    title: 'Meowdoku',
     genre: 'Brain Grid',
-    icon: '🧩',
-    tagline: 'Classic 9x9 logic grid challenge',
+    icon: '🐱',
+    tagline: 'Cute cat-themed 9x9 logic grid challenge',
     objective: 'Fill the 9x9 grid with numbers from 1 to 9 so that every row, every column, and every 3x3 box contains each digit without repetition.',
     mobileControls: 'Tap any empty grid cell to highlight it. Then tap a number (1–9) from the on-screen keypad below. Toggle "Notes ON" to jot candidate numbers.',
     desktopControls: 'Click any cell or use Arrow Keys (↑ ↓ ← →) to navigate. Type numbers 1–9 on your keyboard. Press Backspace or Delete to erase. Press "N" to toggle Notes.',
