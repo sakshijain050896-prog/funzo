@@ -249,17 +249,18 @@ export const App: React.FC = () => {
           {activeGame !== null ? (
             <div className="w-full flex flex-col items-center animate-fade-in">
               {/* Back Bar & Game Navigation */}
-              <div className="w-full flex items-center justify-between mb-4 p-3 rounded-2xl bg-white dark:bg-[#161a29] border-3 border-black dark:border-[#2f3752] shadow-[4px_4px_0_#000]">
+              <div className="w-full flex items-center justify-between gap-2 mb-4 p-2.5 sm:p-3 rounded-2xl bg-white dark:bg-[#161a29] border-3 border-black dark:border-[#2f3752] shadow-[4px_4px_0_#000]">
                 <button
                   onClick={handleBackToHub}
-                  className="px-4 py-2.5 rounded-xl bg-[#00a859] hover:bg-[#00c868] border-2 border-black border-b-4 border-b-[#006633] text-xs font-black text-white transition flex items-center gap-1.5 active:translate-y-0.5 shadow-sm font-['Fredoka']"
+                  className="px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-[#00a859] hover:bg-[#00c868] border-2 border-black border-b-4 border-b-[#006633] text-xs font-black text-white transition flex items-center gap-1 active:translate-y-0.5 shadow-sm font-['Fredoka'] shrink-0"
                 >
                   <ArrowLeft className="w-4 h-4" />
-                  <span>← Back to Games</span>
+                  <span className="hidden sm:inline">← Back to Games</span>
+                  <span className="sm:hidden">Back</span>
                 </button>
 
-                <div className="flex items-center gap-2">
-                  <span className="text-xs sm:text-sm font-black text-slate-900 dark:text-white font-['Fredoka']">
+                <div className="flex items-center gap-1.5 sm:gap-2 text-center overflow-hidden">
+                  <span className="text-xs sm:text-sm font-black text-slate-900 dark:text-white font-['Fredoka'] leading-tight break-words">
                     {activeGame === 'tod' && (
                       activeSubTab === 'would-you-rather' ? 'Would You Rather' :
                       activeSubTab === 'never-have-i-ever' ? 'Never Have I Ever' :
@@ -279,14 +280,14 @@ export const App: React.FC = () => {
                       'The Case Files'
                     )}
                   </span>
-                  <span className="px-2.5 py-1 rounded-full bg-[#e52521] text-[9px] font-black text-white uppercase border-2 border-black font-['Fredoka']">
+                  <span className="hidden sm:inline-block px-2 py-0.5 rounded-md bg-[#e52521] text-[9px] font-black text-white uppercase border border-black font-['Fredoka'] shrink-0">
                     PLAYING
                   </span>
                 </div>
 
                 <button
                   onClick={() => handleOpenHowToPlay(activeGame)}
-                  className="p-2.5 rounded-xl bg-[#fbd000] hover:bg-[#ffe34d] border-2 border-black text-slate-950 transition active:translate-y-0.5 shadow-sm"
+                  className="p-2 sm:p-2.5 rounded-xl bg-[#fbd000] hover:bg-[#ffe34d] border-2 border-black text-slate-950 transition active:translate-y-0.5 shadow-sm shrink-0"
                   title="How to Play"
                 >
                   <HelpCircle className="w-4 h-4" />

@@ -423,10 +423,9 @@ export const ArrowPuzzle: React.FC<ArrowPuzzleProps> = ({ onWin, onRequestAd }) 
         <div className="flex items-center gap-1.5">
           <div
             className="flex items-center gap-1 px-3 py-1.5 rounded-2xl btn-tactile-slate text-xs font-black shadow-sm cursor-default"
-            title={`Level ${levelNum} of 10,000 (Sequential Progress)`}
+            title={`Level ${levelNum}`}
           >
             <span>Level {levelNum}</span>
-            <span className="text-[10px] text-slate-400 font-normal">/ 10k</span>
           </div>
 
           <button

@@ -349,7 +349,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
           <div className="w-full flex flex-col items-center animate-fade-in">
             <h3 className="text-base font-black text-slate-900 dark:text-white mb-1">Sign In &amp; Restore Progress</h3>
             <p className="text-[11px] text-slate-400 mb-3">
-              Back up your 10,000+ level completions, coins, and streak across devices.
+              Back up your game progress, coins, and streak across devices.
             </p>
 
             {/* Login Navigation Tabs */}

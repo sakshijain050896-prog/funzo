@@ -455,7 +455,7 @@ export const AdminModal: React.FC<AdminModalProps> = ({
                     <span className="text-sm font-black text-white">Owner God Mode</span>
                   </div>
                   <p className="text-xs text-slate-300 mb-3 leading-relaxed">
-                    Instantly sets your device to <strong>Arrow Escape Level 10,000</strong>, unlocks <strong>200 IQ (Cosmic Deity)</strong>, and grants <strong>+50,000 Coins</strong> for immediate testing.
+                    Instantly sets your device to <strong>Arrow Escape Max Level</strong>, unlocks <strong>200 IQ (Cosmic Deity)</strong>, and grants <strong>+50,000 Coins</strong> for immediate testing.
                   </p>
                   <button
                     onClick={handleGodMode}
