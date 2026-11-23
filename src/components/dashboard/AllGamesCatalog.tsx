@@ -38,7 +38,7 @@ export const ALL_GAMES_DATA: GameCatalogItem[] = [
     title: 'Maths Puzzle',
     genre: 'brain',
     genreLabel: 'Brain & Logic',
-    tag: 'Math',
+    tag: 'Math & Logic',
     emoji: '🧮',
     bgGradient: 'from-sky-500 to-blue-600',
   },
@@ -170,9 +170,11 @@ export const AllGamesCatalog: React.FC<AllGamesCatalogProps> = ({
     return ALL_GAMES_DATA.filter((game) => game.genre === selectedCategory);
   }, [searchQuery, selectedCategory]);
 
+  const activeTabInfo = CATEGORY_TABS.find((t) => t.id === selectedCategory);
+
   return (
     <section className="w-full flex flex-col gap-3 mb-5 animate-fade-in">
-      {/* ---------------- COMPACT CATEGORY FILTER TABS ---------------- */}
+      {/* ---------------- CATEGORY FILTER TABS ---------------- */}
       <div className="w-full flex items-center justify-between gap-1.5">
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 w-full">
           {CATEGORY_TABS.map((tab) => {
@@ -190,7 +192,7 @@ export const AllGamesCatalog: React.FC<AllGamesCatalogProps> = ({
                 }}
                 className={`px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 shrink-0 transition-all font-['Fredoka'] ${
                   isSelected
-                    ? 'bg-[#e52521] text-white border-2 border-[#9e100e] shadow-[2px_2px_0_#9e100e]'
+                    ? 'bg-[#e52521] text-white border-2 border-[#9e100e] shadow-[2px_2px_0_#9e100e] scale-[1.02]'
                     : 'bg-white dark:bg-[#161a29] text-slate-700 dark:text-slate-300 border-2 border-slate-300 dark:border-[#2f3752] hover:border-slate-400 dark:hover:border-slate-500 shadow-sm'
                 }`}
               >
@@ -209,17 +211,27 @@ export const AllGamesCatalog: React.FC<AllGamesCatalogProps> = ({
         </div>
       </div>
 
-      {/* Active Search Notification */}
-      {searchQuery.trim().length > 0 && (
+      {/* Active Category / Search Banner */}
+      {searchQuery.trim().length > 0 ? (
         <div className="flex items-center gap-1.5 px-1 text-xs font-black text-slate-700 dark:text-slate-300 font-['Fredoka']">
           <Sparkles className="w-3.5 h-3.5 text-amber-500" />
           <span>Search Results for &ldquo;{searchQuery}&rdquo; ({filteredGames.length} games)</span>
         </div>
+      ) : selectedCategory !== 'all' && (
+        <div className="flex items-center justify-between px-1 text-xs font-black text-slate-700 dark:text-slate-300 font-['Fredoka']">
+          <div className="flex items-center gap-1.5">
+            <span>{activeTabInfo?.emoji}</span>
+            <span>{activeTabInfo?.label} Games</span>
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-200 dark:bg-white/10 text-slate-700 dark:text-slate-300">
+              {filteredGames.length}
+            </span>
+          </div>
+        </div>
       )}
 
-      {/* ---------------- PARALLEL BROAD LINES (GAME ICON + NAME + SMALL PLAY BUTTON) ---------------- */}
+      {/* ---------------- GAMES PARALLELLY LINED UP (PARALLEL BROAD HORIZONTAL LINES) ---------------- */}
       {filteredGames.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-2.5">
+        <div className="flex flex-col gap-2 sm:gap-2.5 w-full">
           {filteredGames.map((game, idx) => {
             const theme = CATEGORY_THEMES[game.genre] || CATEGORY_THEMES.brain;
             return (
@@ -232,7 +244,7 @@ export const AllGamesCatalog: React.FC<AllGamesCatalogProps> = ({
                 className="w-full p-2.5 sm:p-3 rounded-2xl bg-white dark:bg-[#161a29] border-2 border-black dark:border-[#2f3752] shadow-[2px_2px_0_#000] dark:shadow-[2px_2px_0_#1e293b] hover:border-[#e52521] hover:shadow-[3px_3px_0_#000] hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-between gap-3 group"
               >
                 {/* Left: Game Icon & Title */}
-                <div className="flex items-center gap-2.5 sm:gap-3 overflow-hidden min-w-0">
+                <div className="flex items-center gap-3 overflow-hidden min-w-0">
                   <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-tr ${game.bgGradient} border-2 border-white dark:border-slate-700 flex items-center justify-center text-xl sm:text-2xl shadow-sm shrink-0 group-hover:scale-105 transition-transform`}>
                     {game.emoji}
                   </div>
