@@ -191,7 +191,15 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-[100dvh] w-full bg-[#f4f6fb] dark:bg-[#12131f] text-slate-900 dark:text-slate-100 flex overflow-x-hidden transition-colors duration-200">
+    <div className="min-h-[100dvh] w-full bg-[#5c94fc] dark:bg-[#0c101c] text-slate-900 dark:text-slate-100 flex overflow-x-hidden transition-colors duration-200 relative font-['Fredoka']">
+      {/* Mario Overworld Retro Floating Clouds */}
+      <div className="fixed inset-0 pointer-events-none opacity-20 dark:opacity-5 overflow-hidden z-0 select-none">
+        <div className="absolute top-12 left-[8%] text-5xl">☁️</div>
+        <div className="absolute top-28 left-[58%] text-6xl">☁️</div>
+        <div className="absolute top-52 left-[32%] text-4xl">☁️</div>
+        <div className="absolute top-80 left-[82%] text-5xl">☁️</div>
+      </div>
+
       {/* 1. Left Sidebar Navigation */}
       <Sidebar
         stats={stats}
@@ -240,18 +248,18 @@ export const App: React.FC = () => {
           {/* ---------------- SCENARIO A: ACTIVE GAME PLAYER MODE ---------------- */}
           {activeGame !== null ? (
             <div className="w-full flex flex-col items-center animate-fade-in">
-              {/* Back Bar & Game Navigation */}
-              <div className="w-full flex items-center justify-between mb-4 p-3 rounded-2xl bg-white dark:bg-[#1c1e2f] border border-slate-200/90 dark:border-white/10 shadow-sm">
+              {/* Back Bar & Game Navigation - Mario Warp Pipe Exit */}
+              <div className="w-full flex items-center justify-between mb-4 p-3 rounded-2xl bg-white dark:bg-[#161a29] border-3 border-black dark:border-[#2f3752] shadow-[4px_4px_0_#000]">
                 <button
                   onClick={handleBackToHub}
-                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#24273d] border border-slate-200 dark:border-white/10 text-xs font-black text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white dark:hover:bg-violet-600 transition flex items-center gap-1.5 active:scale-95"
+                  className="px-4 py-2.5 rounded-xl bg-[#00a859] hover:bg-[#00c868] border-2 border-black border-b-4 border-b-[#006633] text-xs font-black text-white transition flex items-center gap-1.5 active:translate-y-0.5 shadow-sm font-pixel"
                 >
                   <ArrowLeft className="w-4 h-4" />
-                  <span>Back to Hub</span>
+                  <span>← World Map</span>
                 </button>
 
                 <div className="flex items-center gap-2">
-                  <span className="text-xs sm:text-sm font-black text-slate-900 dark:text-white">
+                  <span className="text-xs sm:text-sm font-black text-slate-900 dark:text-white font-pixel">
                     {activeGame === 'tod' && (
                       activeSubTab === 'would-you-rather' ? 'Would You Rather' :
                       activeSubTab === 'never-have-i-ever' ? 'Never Have I Ever' :
@@ -271,14 +279,14 @@ export const App: React.FC = () => {
                       'The Case Files'
                     )}
                   </span>
-                  <span className="px-2 py-0.5 rounded-full bg-violet-500/15 text-[10px] font-bold text-violet-700 dark:text-violet-300 uppercase border border-violet-500/30">
-                    Playing
+                  <span className="px-2.5 py-1 rounded-full bg-[#e52521] text-[9px] font-black text-white uppercase border-2 border-black font-pixel">
+                    STAGE ACTIVE
                   </span>
                 </div>
 
                 <button
                   onClick={() => handleOpenHowToPlay(activeGame)}
-                  className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#24273d] border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white dark:hover:bg-violet-600 transition"
+                  className="p-2.5 rounded-xl bg-[#fbd000] hover:bg-[#ffe34d] border-2 border-black text-slate-950 transition active:translate-y-0.5 shadow-sm"
                   title="How to Play"
                 >
                   <HelpCircle className="w-4 h-4" />

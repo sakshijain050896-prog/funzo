@@ -36,15 +36,18 @@ export interface AvatarOption {
 }
 
 export const CARTOON_AVATARS: AvatarOption[] = [
+  { id: 'mario', name: 'Super Mario', emoji: '🍄', bgColor: 'bg-red-500' },
+  { id: 'luigi', name: 'Super Luigi', emoji: '🟢', bgColor: 'bg-emerald-500' },
+  { id: 'peach', name: 'Princess Peach', emoji: '👑', bgColor: 'bg-pink-400' },
+  { id: 'yoshi', name: 'Dino Yoshi', emoji: '🦖', bgColor: 'bg-green-500' },
+  { id: 'toad', name: 'Speedy Toad', emoji: '🎈', bgColor: 'bg-blue-500' },
+  { id: 'star', name: 'Super Star', emoji: '⭐', bgColor: 'bg-yellow-400' },
+  { id: 'boo', name: 'Mischief Boo', emoji: '👻', bgColor: 'bg-indigo-400' },
   { id: 'fox', name: 'Brainy Fox', emoji: '🦊', bgColor: 'bg-orange-500' },
   { id: 'lion', name: 'Cool Lion', emoji: '🦁', bgColor: 'bg-amber-500' },
   { id: 'panda', name: 'Chill Panda', emoji: '🐼', bgColor: 'bg-emerald-500' },
-  { id: 'cat', name: 'Ninja Cat', emoji: '🐱', bgColor: 'bg-rose-500' },
-  { id: 'bot', name: 'Cyber Bot', emoji: '🤖', bgColor: 'bg-cyan-500' },
-  { id: 'unicorn', name: 'Magic Pony', emoji: '🦄', bgColor: 'bg-purple-500' },
-  { id: 'owl', name: 'Wise Owl', emoji: '🦉', bgColor: 'bg-indigo-500' },
-  { id: 'alien', name: 'Cosmic Alien', emoji: '👽', bgColor: 'bg-teal-500' },
-  { id: 'monkey', name: 'Party Monkey', emoji: '🐵', bgColor: 'bg-yellow-500' },
+  { id: 'cat', name: 'Cat Mario', emoji: '🐱', bgColor: 'bg-rose-500' },
+  { id: 'bot', name: 'Mecha Koopa', emoji: '🤖', bgColor: 'bg-cyan-500' },
 ];
 
 export interface IQRankDetails {

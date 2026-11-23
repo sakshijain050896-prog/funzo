@@ -22,11 +22,11 @@ export const StatsModal: React.FC<StatsModalProps> = ({ isOpen, onClose, stats }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in">
-      <div className="relative w-full max-w-sm rounded-3xl bg-white dark:bg-[#1a2c35] border-2 border-slate-200 dark:border-[#2b4554] p-5 shadow-2xl">
+      <div className="relative w-full max-w-sm rounded-3xl bg-white dark:bg-[#181d2f] border-4 border-black p-5 shadow-[6px_6px_0_#000] font-['Fredoka']">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
+          <h2 className="text-sm sm:text-base font-black text-slate-900 dark:text-white flex items-center gap-2 font-pixel">
             <Trophy className="w-4 h-4 text-amber-500" />
-            Player Ranking &amp; Stats
+            MUSHROOM RANKING
           </h2>
           <button
             onClick={onClose}

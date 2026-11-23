@@ -182,7 +182,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto animate-fade-in">
-      <div className="relative w-full max-w-sm rounded-3xl bg-[#1c1e2f] border border-white/10 p-5 shadow-2xl text-center my-6">
+      <div className="relative w-full max-w-sm rounded-3xl bg-[#181d2f] border-4 border-black p-5 shadow-[6px_6px_0_#000] text-center my-6 font-['Fredoka']">
         {/* Close Button */}
         <button
           onClick={onClose}

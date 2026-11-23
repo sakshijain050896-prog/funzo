@@ -13,7 +13,7 @@
   }
 
   body {
-    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    font-family: 'Fredoka', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
   }
@@ -24,8 +24,118 @@
   h4,
   h5,
   h6 {
-    font-family: 'Outfit', system-ui, sans-serif;
+    font-family: 'Fredoka', 'Outfit', system-ui, sans-serif;
+    letter-spacing: -0.01em;
   }
+}
+
+/* Authentic Classic Super Mario Game CSS Utilities */
+
+/* 1. Classic Question Mark Block [?] */
+.mario-q-block {
+  background: linear-gradient(135deg, #ffe04d 0%, #fcb000 50%, #e08b00 100%);
+  border: 3px solid #854400;
+  box-shadow: inset 2px 2px 0 #fff8b3, inset -2px -2px 0 #854400, 0 4px 0 #522a00;
+  position: relative;
+}
+.mario-q-block::before,
+.mario-q-block::after {
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background-color: #522a00;
+  border-radius: 1px;
+}
+.mario-q-block::before {
+  top: 4px;
+  left: 4px;
+  box-shadow: calc(100% - 16px) 0 0 #522a00;
+}
+.mario-q-block::after {
+  bottom: 4px;
+  left: 4px;
+  box-shadow: calc(100% - 16px) 0 0 #522a00;
+}
+
+/* 2. Classic Brick Block */
+.mario-brick-block {
+  background: linear-gradient(135deg, #d35422 0%, #b84010 100%);
+  border: 3px solid #662200;
+  box-shadow: inset 2px 2px 0 #f07b46, inset -2px -2px 0 #662200, 0 4px 0 #3d1400;
+}
+
+/* 3. Classic Green Warp Pipe */
+.mario-pipe-card {
+  background: linear-gradient(90deg, #008800 0%, #00cc00 25%, #88ff88 40%, #00cc00 65%, #006600 100%);
+  border: 3px solid #004400;
+  box-shadow: 0 4px 0 #003300, inset 0 2px 0 #99ff99;
+}
+.mario-pipe-rim {
+  background: linear-gradient(90deg, #007700 0%, #00bb00 20%, #77ee77 35%, #00bb00 60%, #005500 100%);
+  border: 3px solid #003300;
+  box-shadow: 0 3px 0 #002200;
+}
+
+/* 4. Mario Overworld Blue Sky */
+.mario-sky-canvas {
+  background: #5c94fc;
+}
+.mario-underground-canvas {
+  background: #0d1322;
+}
+
+/* 5. Mario Ground Grass-Soil strip */
+.mario-ground-border {
+  border-top: 5px solid #00a800;
+  background-color: #c84c0c;
+}
+.mario-btn-red {
+  background-color: #e52521;
+  border-bottom: 4px solid #9e100e;
+  color: white;
+  transition: all 0.08s ease-in-out;
+}
+.mario-btn-red:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+.mario-btn-green {
+  background-color: #00a859;
+  border-bottom: 4px solid #006633;
+  color: white;
+  transition: all 0.08s ease-in-out;
+}
+.mario-btn-green:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+.mario-btn-yellow {
+  background-color: #fcd116;
+  border-bottom: 4px solid #b89100;
+  color: #1a1a1a;
+  transition: all 0.08s ease-in-out;
+}
+.mario-btn-yellow:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+.mario-btn-blue {
+  background-color: #0099e6;
+  border-bottom: 4px solid #005f99;
+  color: white;
+  transition: all 0.08s ease-in-out;
+}
+.mario-btn-blue:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+.font-pixel {
+  font-family: 'Press Start 2P', monospace;
 }
 
 /* Duolingo / Neo-Pop Tactile 3D Depth Classes */

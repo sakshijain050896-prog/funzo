@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Bell, Menu, Flame, Coins, ChevronDown, Volume2, VolumeX, Sun, Moon } from 'lucide-react';
+import { Search, Bell, Menu, ChevronDown, Volume2, VolumeX } from 'lucide-react';
 import { PlayerStats, CARTOON_AVATARS, ThemeMode } from '../../types';
 import { getCurrentUser } from '../../lib/authService';
 
@@ -31,100 +31,107 @@ export const TopBar: React.FC<TopBarProps> = ({
   const avatar = CARTOON_AVATARS.find((a) => a.id === stats.avatarId) || CARTOON_AVATARS[0];
   const currentUser = getCurrentUser();
   const displayName = stats.username || (currentUser ? currentUser.username : 'Player');
+  const marioScore = String((stats.totalGamesWon * 1000) + (stats.coins * 50)).padStart(6, '0');
 
   return (
-    <header className="w-full h-16 bg-white/90 dark:bg-[#161726]/85 backdrop-blur-xl border-b border-slate-200/90 dark:border-white/10 px-3 sm:px-6 flex items-center justify-between gap-3 sticky top-0 z-30 transition-colors">
-      {/* Left: Mobile Menu Toggle & Search Bar */}
+    <header className="w-full h-16 bg-[#101010] border-b-4 border-black text-white px-3 sm:px-6 flex items-center justify-between gap-3 sticky top-0 z-30 shadow-md">
+      {/* Left: Mobile Menu Toggle & Mario Pipe Search Bar */}
       <div className="flex items-center gap-2.5 flex-1 max-w-md">
         <button
           onClick={onOpenMenu}
-          className="p-2 rounded-xl bg-slate-100 dark:bg-[#222538] border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white lg:hidden transition active:scale-95"
+          className="p-2 rounded-xl bg-[#222] border-2 border-[#444] text-white hover:bg-[#333] lg:hidden transition active:translate-y-0.5"
           title="Open Menu"
         >
           <Menu className="w-5 h-5" />
         </button>
 
-        {/* Search Games Pill */}
+        {/* Search Games Pill with Mario Cloud Feel */}
         <div className="relative w-full max-w-sm">
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
             type="text"
-            placeholder="Search games..."
+            placeholder="Search Mario World games..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full py-2 pl-10 pr-4 rounded-full bg-slate-100 dark:bg-[#222538] border border-slate-200 dark:border-white/10 text-xs font-bold text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition"
+            className="w-full py-2 pl-10 pr-4 rounded-full bg-[#1c1c1c] border-2 border-[#333] text-xs font-bold text-white placeholder-slate-400 focus:outline-none focus:border-[#e52521] focus:ring-2 focus:ring-red-500/20 transition font-['Fredoka']"
           />
         </div>
       </div>
 
-      {/* Right: Quick Stats, Theme Toggle, Sound, Notifications & User Profile */}
+      {/* Center: Authentic NES Super Mario HUD */}
+      <div className="hidden md:flex items-center gap-6 font-pixel text-xs text-white">
+        <div className="flex flex-col items-center">
+          <span className="text-[10px] text-[#fcd116] tracking-wider leading-none mb-0.5">MARIO</span>
+          <span className="font-bold tracking-widest text-white leading-none">{marioScore}</span>
+        </div>
+        <div className="flex items-center gap-1.5 text-[#fcd116]">
+          <span className="animate-spin text-sm" style={{ animationDuration: '4s' }}>🪙</span>
+          <span className="font-bold">x{String(stats.coins).padStart(2, '0')}</span>
+        </div>
+        <div className="flex flex-col items-center">
+          <span className="text-[10px] text-[#00a859] tracking-wider leading-none mb-0.5">WORLD</span>
+          <span className="font-bold text-white leading-none">1-1</span>
+        </div>
+      </div>
+
+      {/* Right: Quick Controls (Coins, Stars, Sound, Theme, Profile) */}
       <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
-        {/* Streak Pill */}
+        {/* Mario Star Streak HUD */}
         <button
           onClick={onOpenStats}
-          className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 font-black text-xs hover:bg-amber-500/20 transition"
-          title="Daily Streak"
+          className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full bg-[#fcd116] border-2 border-[#b89100] text-slate-950 font-black text-xs shadow-sm hover:brightness-105 transition active:translate-y-0.5"
+          title="Super Star Streak"
         >
-          <Flame className="w-3.5 h-3.5 fill-amber-500 dark:fill-amber-400" />
-          <span>{stats.streak}d</span>
+          <span className="text-xs">⭐</span>
+          <span className="font-pixel text-[10px]">x{stats.streak}</span>
         </button>
 
-        {/* Coins Pill */}
-        <button
-          onClick={onOpenStats}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/30 text-yellow-600 dark:text-yellow-400 font-black text-xs hover:bg-yellow-500/20 transition"
-          title="Coins Balance"
-        >
-          <Coins className="w-3.5 h-3.5" />
-          <span>{stats.coins}</span>
-        </button>
-
-        {/* Sound Toggle */}
+        {/* 8-Bit Sound Toggle */}
         <button
           onClick={onToggleSound}
-          className="p-2 rounded-xl bg-slate-100 dark:bg-[#222538] border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition active:scale-95"
-          title={soundEnabled ? 'Mute' : 'Enable Sound'}
+          className="p-2 rounded-xl bg-[#222] border-2 border-[#444] text-white hover:bg-[#333] transition active:translate-y-0.5"
+          title={soundEnabled ? 'Mute 8-Bit Audio' : 'Enable 8-Bit Audio'}
         >
-          {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4 text-rose-500" />}
+          {soundEnabled ? <Volume2 className="w-4 h-4 text-[#00a859]" /> : <VolumeX className="w-4 h-4 text-[#e52521]" />}
         </button>
 
-        {/* Theme Toggle Button (Light by default, converts to dark mode) */}
+        {/* Theme Toggle Button (Overworld ☀️ vs Underground Cave 🌙) */}
         <button
           onClick={onToggleTheme}
-          className="p-2 rounded-xl bg-slate-100 dark:bg-[#222538] border border-slate-200 dark:border-white/10 text-slate-700 dark:text-amber-300 hover:text-slate-900 dark:hover:text-amber-200 transition active:scale-95 shadow-sm"
-          title={theme === 'dark' ? 'Switch to Light Mode ☀️' : 'Switch to Dark Mode 🌙'}
+          className="p-2 rounded-xl bg-[#222] border-2 border-[#444] text-white hover:bg-[#333] transition active:translate-y-0.5 shadow-sm"
+          title={theme === 'dark' ? 'Switch to Overworld ☀️' : 'Switch to Underground Cave 🌙'}
         >
           {theme === 'dark' ? (
-            <Sun className="w-4 h-4 text-amber-400" />
+            <span className="text-base leading-none select-none" title="Overworld Day ☀️">☀️</span>
           ) : (
-            <Moon className="w-4 h-4 text-slate-700" />
+            <span className="text-base leading-none select-none" title="Underground World 1-2 🌙">🌙</span>
           )}
         </button>
 
-        {/* Notifications Bell with Badge */}
+        {/* Mail Notifications with Red Mushroom Badge */}
         <div className="relative">
           <button
             onClick={onOpenStats}
-            className="p-2 rounded-xl bg-slate-100 dark:bg-[#222538] border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition active:scale-95"
-            title="Notifications"
+            className="p-2 rounded-xl bg-[#222] border-2 border-[#444] text-white hover:bg-[#333] transition active:translate-y-0.5"
+            title="Peach Mail"
           >
             <Bell className="w-4 h-4" />
           </button>
-          <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-500 text-white font-black text-[9px] flex items-center justify-center ring-2 ring-white dark:ring-[#161726]">
+          <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#e52521] border border-white text-white font-black text-[9px] flex items-center justify-center font-pixel">
             3
           </span>
         </div>
 
-        {/* User Profile Chip (Avatar + Name + Dropdown) */}
+        {/* Player 1 Profile Chip */}
         <button
           onClick={onOpenProfile}
-          className="flex items-center gap-2 pl-1 pr-2.5 py-1 rounded-full bg-slate-100 dark:bg-[#222538] border border-slate-200 dark:border-white/10 hover:border-violet-500 transition active:scale-95"
-          title="User Account"
+          className="flex items-center gap-2 pl-1 pr-2.5 py-1 rounded-full bg-[#222] border-2 border-[#444] hover:border-[#e52521] transition active:scale-95"
+          title="Player 1 Profile"
         >
-          <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-pink-500 to-purple-600 flex items-center justify-center text-sm shadow-md">
+          <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#e52521] to-[#fcd116] border border-white flex items-center justify-center text-sm shadow-sm">
             <span>{avatar.emoji}</span>
           </div>
-          <span className="text-xs font-black text-slate-800 dark:text-white hidden md:block max-w-[90px] truncate">
+          <span className="text-xs font-black text-white hidden md:block max-w-[85px] truncate font-['Fredoka']">
             {displayName}
           </span>
           <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
