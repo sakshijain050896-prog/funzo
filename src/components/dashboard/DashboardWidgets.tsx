@@ -96,14 +96,14 @@ export const DashboardWidgets: React.FC<DashboardWidgetsProps> = ({
           <div className="flex items-center justify-between gap-3 mb-2">
             <div>
               <p className="text-xs font-black text-amber-950 leading-snug mb-1 font-['Fredoka']">
-                Clear Meowdoku to claim <span className="text-[#e52521] font-black">+100 Bonus Coins!</span>
+                Clear Maths Puzzle to claim <span className="text-[#e52521] font-black">+100 Bonus Coins!</span>
               </p>
               <span className="text-xs text-amber-900 font-black font-['Fredoka']">
                 {stats.totalGamesWon > 0 ? 'Status: Completed ✓' : 'Status: Ready to Play'}
               </span>
             </div>
             <div className="text-3xl select-none animate-bounce shrink-0 drop-shadow">
-              🐱
+              🧮
             </div>
           </div>
 

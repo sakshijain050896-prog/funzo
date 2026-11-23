@@ -9,7 +9,7 @@ import { LeaderboardView } from './components/dashboard/LeaderboardView';
 import { RewardsView } from './components/dashboard/RewardsView';
 
 // Game Components
-import { DailyGrid } from './components/DailyGrid';
+import { MathPuzzle } from './components/games/MathPuzzle';
 import { Game2048 } from './components/games/Game2048';
 import { ArrowPuzzle } from './components/games/ArrowPuzzle';
 import { SpillItHub } from './components/games/SpillItHub';
@@ -153,9 +153,9 @@ export const App: React.FC = () => {
     setCelebrationOpen(true);
   };
 
-  const handleSudokuWin = (timeTakenSeconds: number, isDaily: boolean) => {
-    recordGameWin('sudoku', timeTakenSeconds, isDaily);
-    handleLevelCelebration(15, 'MEOWDOKU MASTERED! 🐱', 'Purr-fect logical deduction across all 81 cells.', 'sudoku');
+  const handleMathWin = (score: number) => {
+    recordGameWin('sudoku', score, false);
+    handleLevelCelebration(15, 'MATH GENIUS! 🧮', 'Outstanding arithmetic calculation and speed!', 'sudoku');
   };
 
   const handleArrowWin = () => {
@@ -267,7 +267,7 @@ export const App: React.FC = () => {
                       activeSubTab === 'most-likely-to' ? 'Most Likely To' :
                       'Truth or Dare'
                     )}
-                    {activeGame === 'sudoku' && 'Meowdoku 🐱'}
+                    {activeGame === 'sudoku' && 'Maths Puzzle'}
                     {activeGame === '2t1l' && '2 Truths & 1 Lie'}
                     {activeGame === 'tictactoe' && 'Tic Tac Toe'}
                     {activeGame === 'memory' && 'Memory Match'}
@@ -296,9 +296,9 @@ export const App: React.FC = () => {
 
               {/* Mounted Active Game Stages (Kept alive in memory) */}
               <div className={`w-full ${activeGame === 'sudoku' ? 'block' : 'hidden'}`}>
-                <DailyGrid
+                <MathPuzzle
                   stats={stats}
-                  onWin={handleSudokuWin}
+                  onWin={handleMathWin}
                   onRequestAd={handleRequestAd}
                 />
               </div>

@@ -1,7 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { 
-  Play, Sparkles
-} from 'lucide-react';
+import { Play, Sparkles } from 'lucide-react';
 import { GameKey } from './PopularGames';
 import { sound } from '../../lib/soundEffects';
 
@@ -11,26 +9,21 @@ export interface GameCatalogItem {
   id: GameKey;
   subTab?: string;
   title: string;
-  desc: string;
   genre: 'brain' | 'social' | 'mystery';
   genreLabel: string;
   tag: string;
-  emoji: string;
-  bgGradient: string;
+  imageComponent: React.ReactNode;
 }
 
-export const CATEGORY_THEMES: Record<string, { tagBg: string; buttonBg: string }> = {
+export const CATEGORY_THEMES: Record<string, { buttonBg: string }> = {
   brain: {
-    tagBg: 'bg-sky-100 text-sky-900 dark:bg-sky-950/80 dark:text-sky-300 border border-sky-300 dark:border-sky-700/50',
     buttonBg: 'mario-btn-blue',
   },
   social: {
-    tagBg: 'bg-rose-100 text-rose-900 dark:bg-rose-950/80 dark:text-rose-300 border border-rose-300 dark:border-rose-700/50',
     buttonBg: 'mario-btn-red',
   },
   mystery: {
-    tagBg: 'bg-amber-100 text-amber-950 dark:bg-amber-950/80 dark:text-amber-300 border border-amber-300 dark:border-amber-700/50',
-    buttonBg: 'mario-btn-yellow',
+    buttonBg: 'mario-btn-yellow text-slate-950',
   },
 };
 
@@ -38,33 +31,66 @@ export const ALL_GAMES_DATA: GameCatalogItem[] = [
   // 1. BRAIN & LOGIC PUZZLES
   {
     id: 'sudoku',
-    title: 'Meowdoku',
-    desc: 'Cute cat-themed 9x9 logic puzzle. Fill rows, columns & 3x3 grids with numbers 1 to 9!',
+    title: 'Maths Puzzle',
     genre: 'brain',
     genreLabel: 'Brain & Logic',
-    tag: 'Cat Logic',
-    emoji: '🐱',
-    bgGradient: 'from-amber-400 via-orange-400 to-amber-500',
+    tag: 'Math & Logic',
+    imageComponent: (
+      <div className="w-full h-full bg-gradient-to-tr from-sky-600 via-indigo-600 to-blue-500 relative flex items-center justify-center overflow-hidden">
+        {/* Floating math symbols in background */}
+        <span className="absolute top-2 left-3 text-white/20 text-xs font-pixel select-none">+ - × ÷</span>
+        <span className="absolute bottom-2 right-3 text-white/20 text-xs font-pixel select-none">= ? %</span>
+        <div className="relative flex flex-col items-center">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/15 backdrop-blur-sm border-2 border-white/40 flex items-center justify-center text-3xl sm:text-4xl shadow-lg group-hover:scale-110 transition-transform">
+            🧮
+          </div>
+          <div className="flex items-center gap-1 mt-1.5 px-2 py-0.5 rounded-full bg-black/40 border border-white/20 text-[9px] font-black text-yellow-300 font-pixel">
+            <span>24 + 18 = 42</span>
+          </div>
+        </div>
+      </div>
+    ),
   },
   {
     id: 'arrows',
     title: 'Arrow Out',
-    desc: 'Sequential spatial puzzle. Clear intersecting paths and escape the grid without colliding.',
     genre: 'brain',
     genreLabel: 'Brain & Logic',
-    tag: 'Spatial Logic',
-    emoji: '🚀',
-    bgGradient: 'from-teal-500 to-emerald-600',
+    tag: 'Spatial Maze',
+    imageComponent: (
+      <div className="w-full h-full bg-gradient-to-tr from-teal-600 via-emerald-600 to-cyan-500 relative flex items-center justify-center overflow-hidden">
+        <span className="absolute top-2 right-3 text-white/20 text-lg font-bold select-none">↗ ↘ ↖</span>
+        <div className="relative flex flex-col items-center">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/15 backdrop-blur-sm border-2 border-white/40 flex items-center justify-center text-3xl sm:text-4xl shadow-lg group-hover:scale-110 transition-transform">
+            🚀
+          </div>
+          <div className="flex items-center gap-1 mt-1.5 px-2 py-0.5 rounded-full bg-black/40 border border-white/20 text-[9px] font-black text-emerald-300 font-pixel">
+            <span>ESCAPE GRID</span>
+          </div>
+        </div>
+      </div>
+    ),
   },
   {
     id: '2048',
     title: '2048 Rush',
-    desc: 'Fast numeric sliding tile merger. Combine powers of 2 to reach the 2048 tile.',
     genre: 'brain',
     genreLabel: 'Brain & Logic',
-    tag: 'Number Rush',
-    emoji: '⚡',
-    bgGradient: 'from-purple-500 to-indigo-600',
+    tag: 'Number Merge',
+    imageComponent: (
+      <div className="w-full h-full bg-gradient-to-tr from-purple-700 via-indigo-600 to-fuchsia-600 relative flex items-center justify-center overflow-hidden">
+        <div className="relative flex flex-col items-center">
+          <div className="flex items-center gap-1.5">
+            <span className="w-8 h-8 rounded-lg bg-amber-400 text-slate-950 font-black text-xs flex items-center justify-center shadow-md border border-white/40">512</span>
+            <span className="w-10 h-10 rounded-xl bg-orange-500 text-white font-black text-sm flex items-center justify-center shadow-lg border-2 border-white/60 scale-110">1024</span>
+            <span className="w-12 h-12 rounded-xl bg-[#e52521] text-white font-black text-base flex items-center justify-center shadow-xl border-2 border-yellow-300 scale-125">2048</span>
+          </div>
+          <div className="mt-2 px-2 py-0.5 rounded-full bg-black/40 border border-white/20 text-[9px] font-black text-yellow-300 font-pixel">
+            <span>SLIDE &amp; MERGE</span>
+          </div>
+        </div>
+      </div>
+    ),
   },
 
   // 2. SOCIAL & PARTY (SPILL IT)
@@ -72,45 +98,81 @@ export const ALL_GAMES_DATA: GameCatalogItem[] = [
     id: 'tod',
     subTab: 'truth-or-dare',
     title: 'Truth or Dare',
-    desc: 'Fun and wild confessional questions across Kitty, Spicy, Wild & Deep party decks.',
     genre: 'social',
     genreLabel: 'Party & Social',
     tag: 'Party Favorite',
-    emoji: '🔥',
-    bgGradient: 'from-rose-500 to-pink-600',
+    imageComponent: (
+      <div className="w-full h-full bg-gradient-to-tr from-rose-600 via-pink-600 to-red-500 relative flex items-center justify-center overflow-hidden">
+        <div className="relative flex flex-col items-center">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/15 backdrop-blur-sm border-2 border-white/40 flex items-center justify-center text-3xl sm:text-4xl shadow-lg group-hover:scale-110 transition-transform">
+            🔥
+          </div>
+          <div className="flex items-center gap-1 mt-1.5 px-2 py-0.5 rounded-full bg-black/40 border border-white/20 text-[9px] font-black text-pink-300 font-pixel">
+            <span>TRUTH OR DARE</span>
+          </div>
+        </div>
+      </div>
+    ),
   },
   {
     id: '2t1l',
     subTab: 'two-truths',
     title: '2 Truths & 1 Lie',
-    desc: 'Relatable icebreaker statements between friends and groups. Spot the clever lie!',
     genre: 'social',
     genreLabel: 'Party & Social',
     tag: 'Spot the Lie',
-    emoji: '🤥',
-    bgGradient: 'from-lime-500 to-green-600',
+    imageComponent: (
+      <div className="w-full h-full bg-gradient-to-tr from-emerald-600 via-teal-600 to-green-500 relative flex items-center justify-center overflow-hidden">
+        <div className="relative flex flex-col items-center">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/15 backdrop-blur-sm border-2 border-white/40 flex items-center justify-center text-3xl sm:text-4xl shadow-lg group-hover:scale-110 transition-transform">
+            🤥
+          </div>
+          <div className="flex items-center gap-1 mt-1.5 px-2 py-0.5 rounded-full bg-black/40 border border-white/20 text-[9px] font-black text-lime-300 font-pixel">
+            <span>FIND THE FAKE</span>
+          </div>
+        </div>
+      </div>
+    ),
   },
   {
     id: 'tod',
     subTab: 'would-you-rather',
     title: 'Would You Rather',
-    desc: 'Wild moral & hilarious dilemmas with live % community vote breakdown.',
     genre: 'social',
     genreLabel: 'Party & Social',
-    tag: 'Social Vote',
-    emoji: '⚖️',
-    bgGradient: 'from-amber-500 to-orange-600',
+    tag: 'Party Vote',
+    imageComponent: (
+      <div className="w-full h-full bg-gradient-to-tr from-amber-600 via-orange-500 to-yellow-500 relative flex items-center justify-center overflow-hidden">
+        <div className="relative flex flex-col items-center">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/15 backdrop-blur-sm border-2 border-white/40 flex items-center justify-center text-3xl sm:text-4xl shadow-lg group-hover:scale-110 transition-transform">
+            ⚖️
+          </div>
+          <div className="flex items-center gap-1 mt-1.5 px-2 py-0.5 rounded-full bg-black/40 border border-white/20 text-[9px] font-black text-yellow-300 font-pixel">
+            <span>OPTION A OR B</span>
+          </div>
+        </div>
+      </div>
+    ),
   },
   {
     id: 'tod',
     subTab: 'never-have-i-ever',
     title: 'Never Have I Ever',
-    desc: 'Secret party confessions and guilty admits. Put a finger down if you did it!',
     genre: 'social',
     genreLabel: 'Party & Social',
     tag: 'Confessions',
-    emoji: '🙈',
-    bgGradient: 'from-fuchsia-500 to-purple-600',
+    imageComponent: (
+      <div className="w-full h-full bg-gradient-to-tr from-fuchsia-600 via-purple-600 to-pink-500 relative flex items-center justify-center overflow-hidden">
+        <div className="relative flex flex-col items-center">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/15 backdrop-blur-sm border-2 border-white/40 flex items-center justify-center text-3xl sm:text-4xl shadow-lg group-hover:scale-110 transition-transform">
+            🙈
+          </div>
+          <div className="flex items-center gap-1 mt-1.5 px-2 py-0.5 rounded-full bg-black/40 border border-white/20 text-[9px] font-black text-fuchsia-300 font-pixel">
+            <span>PUT A FINGER DOWN</span>
+          </div>
+        </div>
+      </div>
+    ),
   },
 
   // 3. MYSTERY & DETECTIVE FORENSICS
@@ -118,34 +180,61 @@ export const ALL_GAMES_DATA: GameCatalogItem[] = [
     id: 'mystery',
     subTab: 'crime-scene',
     title: 'The Case Files',
-    desc: 'Inspect crime scene hotspots, gather forensic clues, interrogate suspects & find the culprit.',
     genre: 'mystery',
     genreLabel: 'Mystery Riddles',
-    tag: 'Forensics',
-    emoji: '🔍',
-    bgGradient: 'from-amber-600 to-yellow-600',
+    tag: 'Crime Scene',
+    imageComponent: (
+      <div className="w-full h-full bg-gradient-to-tr from-amber-700 via-orange-700 to-yellow-600 relative flex items-center justify-center overflow-hidden">
+        <div className="relative flex flex-col items-center">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/15 backdrop-blur-sm border-2 border-white/40 flex items-center justify-center text-3xl sm:text-4xl shadow-lg group-hover:scale-110 transition-transform">
+            🔍
+          </div>
+          <div className="flex items-center gap-1 mt-1.5 px-2 py-0.5 rounded-full bg-black/40 border border-white/20 text-[9px] font-black text-amber-300 font-pixel">
+            <span>FORENSIC CLUES</span>
+          </div>
+        </div>
+      </div>
+    ),
   },
   {
     id: 'mystery',
     subTab: 'safe-code',
     title: 'Vault Safe Codebreaker',
-    desc: '4-digit deduction keypad safe. Crack the secret code using exact & misplaced clues.',
     genre: 'mystery',
     genreLabel: 'Mystery Riddles',
-    tag: 'Codebreaker',
-    emoji: '🔐',
-    bgGradient: 'from-yellow-500 to-amber-700',
+    tag: 'Vault Safe',
+    imageComponent: (
+      <div className="w-full h-full bg-gradient-to-tr from-yellow-600 via-amber-600 to-stone-700 relative flex items-center justify-center overflow-hidden">
+        <div className="relative flex flex-col items-center">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/15 backdrop-blur-sm border-2 border-white/40 flex items-center justify-center text-3xl sm:text-4xl shadow-lg group-hover:scale-110 transition-transform">
+            🔐
+          </div>
+          <div className="flex items-center gap-1 mt-1.5 px-2 py-0.5 rounded-full bg-black/40 border border-white/20 text-[9px] font-black text-yellow-300 font-pixel">
+            <span>CRACK 4-DIGIT CODE</span>
+          </div>
+        </div>
+      </div>
+    ),
   },
   {
     id: 'mystery',
     subTab: 'daily-riddles',
     title: 'Detective Riddles',
-    desc: 'Interactive mystery stories with forensic clues and choices before revealing the solution.',
     genre: 'mystery',
     genreLabel: 'Mystery Riddles',
-    tag: 'Riddles',
-    emoji: '📜',
-    bgGradient: 'from-violet-600 to-indigo-600',
+    tag: 'Story Riddles',
+    imageComponent: (
+      <div className="w-full h-full bg-gradient-to-tr from-violet-700 via-indigo-700 to-purple-600 relative flex items-center justify-center overflow-hidden">
+        <div className="relative flex flex-col items-center">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/15 backdrop-blur-sm border-2 border-white/40 flex items-center justify-center text-3xl sm:text-4xl shadow-lg group-hover:scale-110 transition-transform">
+            📜
+          </div>
+          <div className="flex items-center gap-1 mt-1.5 px-2 py-0.5 rounded-full bg-black/40 border border-white/20 text-[9px] font-black text-violet-300 font-pixel">
+            <span>SOLVE MYSTERY</span>
+          </div>
+        </div>
+      </div>
+    ),
   },
 ];
 
@@ -173,7 +262,6 @@ export const AllGamesCatalog: React.FC<AllGamesCatalogProps> = ({
     if (q.length > 0) {
       return ALL_GAMES_DATA.filter((game) => 
         game.title.toLowerCase().includes(q) ||
-        game.desc.toLowerCase().includes(q) ||
         game.genreLabel.toLowerCase().includes(q) ||
         game.tag.toLowerCase().includes(q)
       );
@@ -223,7 +311,7 @@ export const AllGamesCatalog: React.FC<AllGamesCatalogProps> = ({
         </div>
       </div>
 
-      {/* Active Search Notification if searching */}
+      {/* Active Search Notification */}
       {searchQuery.trim().length > 0 && (
         <div className="flex items-center gap-1.5 px-1 text-xs font-black text-slate-700 dark:text-slate-300 font-['Fredoka']">
           <Sparkles className="w-3.5 h-3.5 text-amber-500" />
@@ -231,9 +319,9 @@ export const AllGamesCatalog: React.FC<AllGamesCatalogProps> = ({
         </div>
       )}
 
-      {/* ---------------- HIGH-DENSITY RESPONSIVE GAMES GRID ---------------- */}
+      {/* ---------------- HIGH-DENSITY RESPONSIVE GAMES GRID: IMAGES + TITLE + SMALL PLAY BUTTON ONLY ---------------- */}
       {filteredGames.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-3.5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
           {filteredGames.map((game, idx) => {
             const theme = CATEGORY_THEMES[game.genre] || CATEGORY_THEMES.brain;
             return (
@@ -243,42 +331,35 @@ export const AllGamesCatalog: React.FC<AllGamesCatalogProps> = ({
                   sound.playTap();
                   onSelectGame(game.id, game.subTab);
                 }}
-                className="p-3 sm:p-4 rounded-2xl sm:rounded-3xl bg-white dark:bg-[#161a29] border-3 border-black dark:border-[#2f3752] shadow-[3px_3px_0_#000] dark:shadow-[3px_3px_0_#1e293b] hover:shadow-[5px_5px_0_#000] hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer flex flex-col justify-between group overflow-hidden"
+                className="rounded-2xl sm:rounded-3xl bg-white dark:bg-[#161a29] border-3 border-black dark:border-[#2f3752] shadow-[3px_3px_0_#000] dark:shadow-[3px_3px_0_#1e293b] hover:shadow-[5px_5px_0_#000] hover:-translate-y-1 active:translate-y-0.5 transition-all cursor-pointer flex flex-col justify-between group overflow-hidden"
               >
-                <div>
-                  {/* Card Header: Emoji Badge + Tag */}
-                  <div className="flex items-center justify-between gap-1.5 mb-2">
-                    <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-tr ${game.bgGradient} border-2 border-white dark:border-slate-700 flex items-center justify-center text-xl sm:text-2xl shadow-md group-hover:scale-105 transition-transform shrink-0`}>
-                      {game.emoji}
-                    </div>
-                    <span className={`text-[9px] sm:text-[10px] font-black px-2 py-0.5 rounded-md font-['Fredoka'] shrink-0 ${theme.tagBg}`}>
-                      {game.tag}
-                    </span>
-                  </div>
+                {/* 1. VISUAL GAME IMAGE THUMBNAIL (No instruction text) */}
+                <div className="w-full aspect-[16/10] sm:aspect-[16/9] relative overflow-hidden border-b-3 border-black dark:border-[#2f3752]">
+                  {game.imageComponent}
+                  {/* Subtle category badge on image corner */}
+                  <span className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-sm text-[9px] font-black text-white font-['Fredoka'] border border-white/20">
+                    {game.tag}
+                  </span>
+                </div>
 
-                  {/* FULL GAME TITLE: No single-line truncate so entire title displays on mobile! */}
-                  <h4 className="text-xs sm:text-sm font-black text-slate-900 dark:text-white leading-snug mb-1 group-hover:text-[#e52521] dark:group-hover:text-[#ff4a47] transition-colors font-['Fredoka'] break-words">
+                {/* 2. GAME NAME + SMALL PLAY BUTTON ONLY */}
+                <div className="p-2.5 sm:p-3 flex items-center justify-between gap-1.5 bg-white dark:bg-[#161a29]">
+                  {/* Full Game Title (No single-line truncate) */}
+                  <h4 className="text-xs sm:text-sm font-black text-slate-900 dark:text-white leading-tight group-hover:text-[#e52521] dark:group-hover:text-[#ff4a47] transition-colors font-['Fredoka'] break-words">
                     {game.title}
                   </h4>
 
-                  {/* Short Description */}
-                  <p className="text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-400 line-clamp-2 leading-tight">
-                    {game.desc}
-                  </p>
-                </div>
-
-                {/* Tactile Play Button */}
-                <div className="mt-3">
+                  {/* Small Play Button */}
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       sound.playTap();
                       onSelectGame(game.id, game.subTab);
                     }}
-                    className={`w-full py-1.5 sm:py-2 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 transition font-['Fredoka'] ${theme.buttonBg}`}
+                    className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl text-[11px] sm:text-xs font-black flex items-center gap-1 shrink-0 transition font-['Fredoka'] ${theme.buttonBg}`}
                   >
-                    <span>Play Game</span>
-                    <Play className="w-3 h-3 fill-current" />
+                    <span>Play</span>
+                    <Play className="w-2.5 h-2.5 sm:w-3 sm:h-3 fill-current" />
                   </button>
                 </div>
               </div>
