@@ -3,13 +3,13 @@ import { Play, Sparkles } from 'lucide-react';
 import { GameKey } from './PopularGames';
 import { sound } from '../../lib/soundEffects';
 
-export type CategoryFilter = 'all' | 'brain' | 'social' | 'kids';
+export type CategoryFilter = 'quiz' | 'all' | 'brain' | 'social' | 'kids';
 
 export interface GameCatalogItem {
   id: GameKey;
   subTab?: string;
   title: string;
-  genre: 'brain' | 'social' | 'kids';
+  genre: 'quiz' | 'brain' | 'social' | 'kids';
   genreLabel: string;
   tag: string;
   emoji: string;
@@ -17,6 +17,10 @@ export interface GameCatalogItem {
 }
 
 export const CATEGORY_THEMES: Record<string, { tagBg: string; buttonBg: string }> = {
+  quiz: {
+    tagBg: 'bg-[#fef9c3] text-[#854d0e] dark:bg-amber-950/70 dark:text-amber-300 border border-[#fef08a] dark:border-amber-800/40',
+    buttonBg: 'bg-[#fef08a] hover:bg-[#fde047] text-[#854d0e] border-b-3 border-[#eab308] shadow-sm active:translate-y-0.5',
+  },
   brain: {
     tagBg: 'bg-[#e0f2fe] text-[#0369a1] dark:bg-sky-950/70 dark:text-sky-300 border border-[#bae6fd] dark:border-sky-800/40',
     buttonBg: 'bg-[#bae6fd] hover:bg-[#7dd3fc] text-[#0369a1] border-b-3 border-[#38bdf8] shadow-sm active:translate-y-0.5',
@@ -32,6 +36,68 @@ export const CATEGORY_THEMES: Record<string, { tagBg: string; buttonBg: string }
 };
 
 export const ALL_GAMES_DATA: GameCatalogItem[] = [
+  // 0. QUIZ UP (10,000+ TRIVIA)
+  {
+    id: 'quizup',
+    subTab: 'all',
+    title: 'Quiz Up (10,000+ Qs)',
+    genre: 'quiz',
+    genreLabel: 'Quiz Up',
+    tag: '10k+ GK Trivia',
+    emoji: '💡',
+    bgGradient: 'from-[#fef08a] to-[#fde047]',
+  },
+  {
+    id: 'quizup',
+    subTab: 'science',
+    title: 'Quiz Up: Science',
+    genre: 'quiz',
+    genreLabel: 'Quiz Up',
+    tag: 'Biology & Space',
+    emoji: '🔬',
+    bgGradient: 'from-[#a7f3d0] to-[#6ee7b7]',
+  },
+  {
+    id: 'quizup',
+    subTab: 'physics',
+    title: 'Quiz Up: Physics',
+    genre: 'quiz',
+    genreLabel: 'Quiz Up',
+    tag: 'Forces & Energy',
+    emoji: '⚡',
+    bgGradient: 'from-[#bae6fd] to-[#7dd3fc]',
+  },
+  {
+    id: 'quizup',
+    subTab: 'chemistry',
+    title: 'Quiz Up: Chemistry',
+    genre: 'quiz',
+    genreLabel: 'Quiz Up',
+    tag: 'Elements & Reactions',
+    emoji: '🧪',
+    bgGradient: 'from-[#ddd6fe] to-[#c4b5fd]',
+  },
+  {
+    id: 'quizup',
+    subTab: 'history',
+    title: 'Quiz Up: History',
+    genre: 'quiz',
+    genreLabel: 'Quiz Up',
+    tag: 'World Events & Civs',
+    emoji: '🏛️',
+    bgGradient: 'from-[#fed7aa] to-[#fdba74]',
+  },
+  {
+    id: 'quizup',
+    subTab: 'math',
+    title: 'Quiz Up: Math',
+    genre: 'quiz',
+    genreLabel: 'Quiz Up',
+    tag: 'Geometry & Numbers',
+    emoji: '🧮',
+    bgGradient: 'from-[#fecdd3] to-[#fda4af]',
+  },
+
   // 1. BRAIN & LOGIC PUZZLES
   {
     id: 'sudoku',
@@ -134,6 +200,7 @@ export const ALL_GAMES_DATA: GameCatalogItem[] = [
 ];
 
 const CATEGORY_TABS: { id: CategoryFilter; label: string; emoji: string }[] = [
+  { id: 'quiz', label: 'Quiz Up', emoji: '💡' },
   { id: 'all', label: 'All Games', emoji: '⭐' },
   { id: 'brain', label: 'Brain & Logic', emoji: '🧩' },
   { id: 'social', label: 'Party & Social', emoji: '🔥' },
@@ -187,6 +254,7 @@ export const AllGamesCatalog: React.FC<AllGamesCatalogProps> = ({
               : ALL_GAMES_DATA.filter((g) => g.genre === tab.id).length;
 
             let tabActiveStyle = 'bg-[#c7d2fe] text-[#312e81] border-2 border-[#a5b4fc] shadow-sm';
+            if (tab.id === 'quiz') tabActiveStyle = 'bg-[#fef08a] text-[#854d0e] border-2 border-[#fde047] shadow-sm';
             if (tab.id === 'all') tabActiveStyle = 'bg-[#fef3c7] text-[#92400e] border-2 border-[#fde68a] shadow-sm';
             if (tab.id === 'brain') tabActiveStyle = 'bg-[#bae6fd] text-[#0369a1] border-2 border-[#7dd3fc] shadow-sm';
             if (tab.id === 'social') tabActiveStyle = 'bg-[#fecdd3] text-[#9f1239] border-2 border-[#fda4af] shadow-sm';

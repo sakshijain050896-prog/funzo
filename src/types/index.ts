@@ -25,7 +25,7 @@ export type PlayerStats = {
   gamesPlayedHistory: Record<string, number>;
 };
 
-export type GenreType = 'brain' | 'social' | 'kids' | 'mystery';
+export type GenreType = 'quiz' | 'brain' | 'social' | 'kids' | 'mystery';
 export type ThemeMode = 'dark' | 'light';
 
 export interface AvatarOption {

@@ -2,7 +2,7 @@ import React from 'react';
 import { Play, Flame, ArrowRight } from 'lucide-react';
 import { sound } from '../../lib/soundEffects';
 
-export type GameKey = 'tod' | 'sudoku' | '2t1l' | 'tictactoe' | 'memory' | 'arrows' | '2048' | 'balloon' | 'mystery';
+export type GameKey = 'quizup' | 'tod' | 'sudoku' | '2t1l' | 'tictactoe' | 'memory' | 'arrows' | '2048' | 'balloon' | 'mystery';
 
 interface PopularGamesProps {
   onSelectGame: (gameKey: GameKey) => void;
@@ -20,6 +20,17 @@ export const PopularGames: React.FC<PopularGamesProps> = ({
     bgGradient: string;
     icon: React.ReactNode;
   }[] = [
+    {
+      id: 'quizup',
+      title: 'Quiz Up 10k+',
+      subtitle: 'Timed GK Trivia',
+      bgGradient: 'from-[#fef08a] via-[#fde047] to-[#eab308]',
+      icon: (
+        <div className="text-3xl filter drop-shadow-md animate-bounce">
+          💡
+        </div>
+      ),
+    },
     {
       id: 'tod',
       title: 'Truth or Dare',

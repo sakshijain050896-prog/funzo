@@ -23,6 +23,28 @@ interface GameInstruction {
 
 const INSTRUCTIONS_DATA: GameInstruction[] = [
   {
+    id: 'quizup',
+    title: 'Quiz Up (10,000+ Qs)',
+    genre: 'Trivia & GK',
+    icon: '💡',
+    tagline: '10,000+ timed general knowledge questions across all disciplines',
+    objective: 'Answer timed general knowledge questions across Science, Physics, Chemistry, History, and Math to earn points, build streaks, and boost your IQ.',
+    mobileControls: 'Tap any of the 4 answer choice cards (A, B, C, D) before the 15s timer runs out.',
+    desktopControls: 'Click any answer choice card with your mouse.',
+    rules: [
+      'Each question has a 15-second countdown timer.',
+      'Answering faster awards massive bonus points (+10 pts per second remaining).',
+      'Correct answers increase your streak multiplier up to 2.0x!',
+      'Use coin power-ups: ✂️ 50:50 (10🪙), ⏳ +10s Time (10🪙), or ⚡ Auto-Solve (20🪙).',
+      'Complete 10-question rounds to earn bonus coins, IQ points, and celebratory trophies.',
+    ],
+    proTips: [
+      'Use the 50:50 booster on difficult questions to eliminate two wrong answers.',
+      'If time is running low (<= 4s), hit the +10s booster to save your streak!',
+      'Practice individual topics (Science, Physics, Chemistry, History, Math) to master specific categories.',
+    ],
+  },
+  {
     id: 'balloon',
     title: 'Balloon Pop',
     genre: 'Kids Fun',

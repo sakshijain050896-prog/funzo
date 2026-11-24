@@ -17,6 +17,7 @@ import { MysteryHub } from './components/games/MysteryHub';
 import { TicTacToe } from './components/games/TicTacToe';
 import { MemoryMatch } from './components/games/MemoryMatch';
 import { BalloonPop } from './components/games/BalloonPop';
+import { QuizUp } from './components/games/QuizUp';
 
 // Modals
 import { StatsModal } from './components/StatsModal';
@@ -314,7 +315,9 @@ export const App: React.FC = () => {
   const handleLaunchGame = (gameKey: GameKey, subTab?: string) => {
     sound.playTap();
     setActiveGame(gameKey);
-    if (gameKey === 'balloon' || gameKey === 'memory' || gameKey === 'tictactoe') {
+    if (gameKey === 'quizup') {
+      setActiveCategory('quiz');
+    } else if (gameKey === 'balloon' || gameKey === 'memory' || gameKey === 'tictactoe') {
       setActiveCategory('kids');
     } else if (gameKey === 'sudoku' || gameKey === 'arrows' || gameKey === '2048') {
       setActiveCategory('brain');
@@ -338,7 +341,9 @@ export const App: React.FC = () => {
 
   const handleBackToHub = () => {
     sound.playTap();
-    if (activeGame === 'balloon' || activeGame === 'memory' || activeGame === 'tictactoe') {
+    if (activeGame === 'quizup') {
+      setActiveCategory('quiz');
+    } else if (activeGame === 'balloon' || activeGame === 'memory' || activeGame === 'tictactoe') {
       setActiveCategory('kids');
     }
     setActiveGame(null);
@@ -432,6 +437,7 @@ export const App: React.FC = () => {
                       activeSubTab === 'most-likely-to' ? 'Most Likely To' :
                       'Truth or Dare'
                     )}
+                    {activeGame === 'quizup' && 'Quiz Up (10,000+ Qs)'}
                     {activeGame === 'sudoku' && 'Maths Puzzle'}
                     {activeGame === '2t1l' && '2 Truths & 1 Lie'}
                     {activeGame === 'tictactoe' && 'Tic Tac Toe'}
@@ -541,6 +547,20 @@ export const App: React.FC = () => {
                     handleGameActivity('balloon');
                   }}
                   onBackToKids={handleBackToKids}
+                />
+              </div>
+
+              <div className={`w-full ${activeGame === 'quizup' ? 'block' : 'hidden'}`}>
+                <QuizUp
+                  coins={stats.coins}
+                  onSpendCoins={handleSpendCoins}
+                  onWin={(score, accuracy) => {
+                    handleGameActivity('quizup');
+                    recordGameWin('quizup', score, false);
+                    handleLevelCelebration(25, 'TRIVIA GENIUS! 💡', `Scored ${score} pts with ${accuracy}% accuracy in Quiz Up!`, 'quizup');
+                  }}
+                  initialTopic={(activeSubTab as any) || 'all'}
+                  stats={stats}
                 />
               </div>
             </div>
