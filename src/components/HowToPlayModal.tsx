@@ -27,7 +27,7 @@ const INSTRUCTIONS_DATA: GameInstruction[] = [
     title: 'Balloon Pop',
     genre: 'Kids Fun',
     icon: '🎈',
-    tagline: 'Vibrant & fast floating balloon popping game (Ages 3-10)',
+    tagline: 'Vibrant & fast floating balloon popping game',
     objective: 'Pop rising colorful balloons with cute emojis, build popping streaks, and score points!',
     mobileControls: 'Tap any floating balloon with your finger to pop it with funny sound effects.',
     desktopControls: 'Click balloons with your mouse cursor.',

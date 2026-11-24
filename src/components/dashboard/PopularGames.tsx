@@ -80,13 +80,13 @@ export const PopularGames: React.FC<PopularGamesProps> = ({
       ),
     },
     {
-      id: 'dice',
-      title: 'Dice Roll',
-      subtitle: 'Roll & Win',
-      bgGradient: 'from-[#14b8a6] via-[#0d9488] to-[#0f766e]',
+      id: 'balloon',
+      title: 'Balloon Pop',
+      subtitle: 'Pop & Fun',
+      bgGradient: 'from-[#ec4899] via-[#f43f5e] to-[#e11d48]',
       icon: (
-        <div className="text-3xl filter drop-shadow-md">
-          🎲
+        <div className="text-3xl filter drop-shadow-md animate-bounce">
+          🎈
         </div>
       ),
     },

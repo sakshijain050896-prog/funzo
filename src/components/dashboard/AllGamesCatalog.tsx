@@ -103,13 +103,13 @@ export const ALL_GAMES_DATA: GameCatalogItem[] = [
     bgGradient: 'from-fuchsia-500 to-purple-600',
   },
 
-  // 3. KIDS FUN (AGES 3 - 10)
+  // 3. KIDS FUN
   {
     id: 'balloon',
     title: 'Balloon Pop',
     genre: 'kids',
     genreLabel: 'Kids Fun',
-    tag: 'Ages 3-10',
+    tag: 'Balloon Fun',
     emoji: '🎈',
     bgGradient: 'from-pink-500 to-rose-600',
   },
@@ -118,7 +118,7 @@ export const ALL_GAMES_DATA: GameCatalogItem[] = [
     title: 'Animal Memory Match',
     genre: 'kids',
     genreLabel: 'Kids Fun',
-    tag: 'Ages 3-10',
+    tag: 'Animal Match',
     emoji: '🐶',
     bgGradient: 'from-amber-400 to-yellow-600',
   },
@@ -127,18 +127,9 @@ export const ALL_GAMES_DATA: GameCatalogItem[] = [
     title: 'Tic Tac Toe',
     genre: 'kids',
     genreLabel: 'Kids Fun',
-    tag: 'Ages 3-10',
+    tag: '3-in-a-Row',
     emoji: '❌⭕',
     bgGradient: 'from-emerald-500 to-teal-600',
-  },
-  {
-    id: 'dice',
-    title: 'Lucky Dice Roll',
-    genre: 'kids',
-    genreLabel: 'Kids Fun',
-    tag: 'Ages 3-10',
-    emoji: '🎲',
-    bgGradient: 'from-indigo-500 to-purple-600',
   },
 ];
 
@@ -146,19 +137,25 @@ const CATEGORY_TABS: { id: CategoryFilter; label: string; emoji: string }[] = [
   { id: 'all', label: 'All Games', emoji: '⭐' },
   { id: 'brain', label: 'Brain & Logic', emoji: '🧩' },
   { id: 'social', label: 'Party & Social', emoji: '🔥' },
-  { id: 'kids', label: 'Kids Games (Ages 3-10)', emoji: '🎈' },
+  { id: 'kids', label: 'Kids Games', emoji: '🎈' },
 ];
 
 interface AllGamesCatalogProps {
   onSelectGame: (gameKey: GameKey, subTab?: string) => void;
   searchQuery?: string;
+  selectedCategory?: CategoryFilter;
+  onSelectCategory?: (category: CategoryFilter) => void;
 }
 
 export const AllGamesCatalog: React.FC<AllGamesCatalogProps> = ({
   onSelectGame,
   searchQuery = '',
+  selectedCategory: propCategory,
+  onSelectCategory: propOnSelectCategory,
 }) => {
-  const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>('all');
+  const [internalCategory, setInternalCategory] = useState<CategoryFilter>('all');
+  const selectedCategory = propCategory !== undefined ? propCategory : internalCategory;
+  const setSelectedCategory = propOnSelectCategory !== undefined ? propOnSelectCategory : setInternalCategory;
 
   // Filter games based on search query or selected category
   const filteredGames = useMemo(() => {

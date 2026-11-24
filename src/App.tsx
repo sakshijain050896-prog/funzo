@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { Sidebar, DashboardNavTab } from './components/dashboard/Sidebar';
 import { TopBar } from './components/dashboard/TopBar';
-import { AllGamesCatalog } from './components/dashboard/AllGamesCatalog';
+import { AllGamesCatalog, CategoryFilter } from './components/dashboard/AllGamesCatalog';
 import { GameKey } from './components/dashboard/PopularGames';
 import { DashboardWidgets } from './components/dashboard/DashboardWidgets';
 import { LeaderboardView } from './components/dashboard/LeaderboardView';
@@ -16,7 +16,6 @@ import { SpillItHub } from './components/games/SpillItHub';
 import { MysteryHub } from './components/games/MysteryHub';
 import { TicTacToe } from './components/games/TicTacToe';
 import { MemoryMatch } from './components/games/MemoryMatch';
-import { DiceRoll } from './components/games/DiceRoll';
 import { BalloonPop } from './components/games/BalloonPop';
 
 // Modals
@@ -48,6 +47,7 @@ export const App: React.FC = () => {
   const [soundEnabled, setSoundEnabled] = useState<boolean>(getSoundPreference);
   const [theme, setTheme] = useState<ThemeMode>(getThemePreference);
   const [activeNavTab, setActiveNavTab] = useState<DashboardNavTab>('home');
+  const [activeCategory, setActiveCategory] = useState<CategoryFilter>('kids');
   const [activeGame, setActiveGame] = useState<GameKey | null>(null);
   const [activeSubTab, setActiveSubTab] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -172,6 +172,14 @@ export const App: React.FC = () => {
   const handleLaunchGame = (gameKey: GameKey, subTab?: string) => {
     sound.playTap();
     setActiveGame(gameKey);
+    if (gameKey === 'balloon' || gameKey === 'memory' || gameKey === 'tictactoe') {
+      setActiveCategory('kids');
+    } else if (gameKey === 'sudoku' || gameKey === 'arrows' || gameKey === '2048') {
+      setActiveCategory('brain');
+    } else if (gameKey === 'tod' || gameKey === '2t1l') {
+      setActiveCategory('social');
+    }
+
     if (subTab) {
       setActiveSubTab(subTab);
     } else if (gameKey === '2t1l') {
@@ -188,6 +196,15 @@ export const App: React.FC = () => {
 
   const handleBackToHub = () => {
     sound.playTap();
+    if (activeGame === 'balloon' || activeGame === 'memory' || activeGame === 'tictactoe') {
+      setActiveCategory('kids');
+    }
+    setActiveGame(null);
+  };
+
+  const handleBackToKids = () => {
+    sound.playTap();
+    setActiveCategory('kids');
     setActiveGame(null);
   };
 
@@ -272,7 +289,6 @@ export const App: React.FC = () => {
                     {activeGame === '2t1l' && '2 Truths & 1 Lie'}
                     {activeGame === 'tictactoe' && 'Tic Tac Toe'}
                     {activeGame === 'memory' && 'Memory Match'}
-                    {activeGame === 'dice' && 'Dice Roll'}
                     {activeGame === 'balloon' && 'Balloon Pop'}
                     {activeGame === 'arrows' && 'Arrow Out'}
                     {activeGame === '2048' && '2048 Rush'}
@@ -360,34 +376,19 @@ export const App: React.FC = () => {
 
               <div className={`w-full ${activeGame === 'memory' ? 'block' : 'hidden'}`}>
                 <MemoryMatch
-                  onWin={(m, s) => {
+                  onWin={() => {
                     handleGameActivity('memory');
-                    handleLevelCelebration(15, 'MEMORY CONQUERED! 🧠', `All 8 pairs matched in ${m} moves and ${s} seconds!`, 'memory');
                   }}
-                />
-              </div>
-
-              <div className={`w-full ${activeGame === 'dice' ? 'block' : 'hidden'}`}>
-                <DiceRoll
-                  onWinBonus={(coinsWon) => {
-                    handleGameActivity('dice');
-                    if (coinsWon > 0) {
-                      handleLevelCelebration(5, 'LUCKY ROLL! 🎲', `You predicted right and won ${coinsWon} coins!`, 'dice');
-                    } else {
-                      const updated = { ...stats, coins: stats.coins + coinsWon };
-                      setStats(updated);
-                      syncPlayerProgress(updated);
-                    }
-                  }}
+                  onBackToKids={handleBackToKids}
                 />
               </div>
 
               <div className={`w-full ${activeGame === 'balloon' ? 'block' : 'hidden'}`}>
                 <BalloonPop
-                  onWin={(score) => {
+                  onWin={() => {
                     handleGameActivity('balloon');
-                    handleLevelCelebration(10, 'BALLOON POP CHAMPION! 🎈', `Popped like a superstar! Score: ${score}`, 'balloon');
                   }}
+                  onBackToKids={handleBackToKids}
                 />
               </div>
             </div>
@@ -398,6 +399,8 @@ export const App: React.FC = () => {
                 <div className="w-full flex flex-col animate-fade-in">
                   {/* All Game Genres & Games Catalog with Live Search & Filter */}
                   <AllGamesCatalog
+                    selectedCategory={activeCategory}
+                    onSelectCategory={setActiveCategory}
                     onSelectGame={handleLaunchGame}
                     searchQuery={searchQuery}
                   />
