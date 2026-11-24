@@ -255,7 +255,7 @@ export const App: React.FC = () => {
 
         {/* Streak Notification Toast */}
         {streakToast && (
-          <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-2xl bg-[#ff9600] border-b-4 border-[#cc7800] text-slate-950 font-black text-xs shadow-xl flex items-center gap-1.5 animate-bounce">
+          <div className="fixed top-24 sm:top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-2xl bg-[#ff9600] border-b-4 border-[#cc7800] text-slate-950 font-black text-xs shadow-xl flex items-center gap-1.5 animate-bounce">
             <Flame className="w-4 h-4 fill-slate-950" />
             <span>{streakToast}</span>
           </div>
