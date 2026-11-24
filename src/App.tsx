@@ -524,6 +524,8 @@ export const App: React.FC = () => {
 
               <div className={`w-full ${activeGame === 'memory' ? 'block' : 'hidden'}`}>
                 <MemoryMatch
+                  coins={stats.coins}
+                  onSpendCoins={handleSpendCoins}
                   onWin={() => {
                     handleGameActivity('memory');
                   }}

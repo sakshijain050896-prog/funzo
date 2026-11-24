@@ -45,69 +45,60 @@ export const RewardsView: React.FC<RewardsViewProps> = ({
   };
 
   return (
-    <div className="w-full flex flex-col gap-6 animate-fade-in pb-12 font-['Fredoka']">
-      {/* Header Banner - Mario 1-Up Mushroom & Coin Shop */}
-      <div className="p-6 rounded-3xl bg-[#e52521] border-4 border-black shadow-[6px_6px_0_#000] flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-white relative overflow-hidden">
-        {/* Subtle decorative dot pattern */}
-        <div className="absolute right-0 top-0 bottom-0 w-32 opacity-15 bg-[radial-gradient(#fff_2px,transparent_2px)] [background-size:12px_12px] pointer-events-none" />
-
+    <div className="w-full flex flex-col gap-4 sm:gap-6 animate-fade-in pb-12 font-['Fredoka']">
+      {/* Header Banner - Pastel Warm Sunset */}
+      <div className="p-5 sm:p-6 rounded-3xl bg-gradient-to-r from-[#fecdd3] via-[#fed7aa] to-[#fef08a] border-2 border-[#fde68a] shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-slate-900 relative overflow-hidden">
         <div className="relative z-10">
           <button
             onClick={() => { sound.playTap(); onBackToHome(); }}
-            className="text-xs font-black text-yellow-300 hover:text-white flex items-center gap-1.5 mb-3 transition active:translate-y-0.5 font-['Fredoka']"
+            className="text-xs font-black text-[#9f1239] hover:underline flex items-center gap-1.5 mb-2.5 transition active:translate-y-0.5 font-['Fredoka']"
           >
             <ArrowLeft className="w-4 h-4" /> ← Back to Games
           </button>
           <div className="flex items-center gap-3">
-            <span className="text-3xl filter drop-shadow">🎁</span>
+            <span className="text-3xl filter drop-shadow-sm">🎁</span>
             <div>
-              <span className="text-[10px] font-black uppercase tracking-widest text-yellow-300 block font-['Fredoka']">
+              <span className="text-[10px] font-black uppercase tracking-widest text-[#9a3412] block">
                 DAILY LOOT &amp; PERKS
               </span>
-              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-wide font-['Fredoka']">
+              <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-wide">
                 Rewards &amp; Free Coins
               </h2>
             </div>
           </div>
-          <p className="text-xs text-white/90 mt-2 font-medium max-w-md font-['Fredoka']">
-            Claim free daily bonus coins, keep your streak alive, and unlock exciting gamer perks!
+          <p className="text-xs text-slate-700 mt-1.5 font-medium max-w-md">
+            Claim free daily bonus coins, keep your streak alive, and power up your games!
           </p>
         </div>
 
-        <div className="relative z-10 sm:text-right bg-black/30 px-5 py-3 rounded-2xl border-2 border-black/50 backdrop-blur-sm self-start sm:self-auto">
-          <span className="text-[9px] uppercase font-bold text-yellow-300 block mb-1 font-['Fredoka']">
-            TOTAL COINS
+        <div className="relative z-10 sm:text-right bg-white/70 dark:bg-black/30 px-4 py-2.5 rounded-2xl border border-amber-300 backdrop-blur-sm self-start sm:self-auto shadow-xs">
+          <span className="text-[9px] uppercase font-bold text-[#854d0e] dark:text-yellow-300 block mb-0.5">
+            YOUR COINS
           </span>
-          <span className="text-2xl sm:text-3xl font-black text-yellow-300 font-['Fredoka'] drop-shadow">
+          <span className="text-xl sm:text-2xl font-black text-[#854d0e] dark:text-yellow-300 font-pixel">
             {stats.coins} 🪙
           </span>
         </div>
       </div>
 
-      {/* Daily Claim Box - Classic Mario [ ? ] Question Block */}
-      <div className="p-6 rounded-3xl bg-[#fbd000] border-4 border-black shadow-[6px_6px_0_#000] flex flex-col sm:flex-row items-center justify-between gap-5 relative overflow-hidden">
-        {/* 4 Corner Rivets */}
-        <span className="absolute top-2.5 left-2.5 w-3 h-3 rounded-full bg-[#996b00] border-2 border-black opacity-80" />
-        <span className="absolute top-2.5 right-2.5 w-3 h-3 rounded-full bg-[#996b00] border-2 border-black opacity-80" />
-        <span className="absolute bottom-2.5 left-2.5 w-3 h-3 rounded-full bg-[#996b00] border-2 border-black opacity-80" />
-        <span className="absolute bottom-2.5 right-2.5 w-3 h-3 rounded-full bg-[#996b00] border-2 border-black opacity-80" />
-
-        <div className="flex items-center gap-4 w-full sm:w-auto">
+      {/* Daily Claim Box - Pastel Sunshine */}
+      <div className="p-5 sm:p-6 rounded-3xl bg-[#fef9c3] dark:bg-[#1f2638] border-2 border-[#fef08a] dark:border-slate-700 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 relative overflow-hidden">
+        <div className="flex items-center gap-3.5 w-full sm:w-auto">
           {/* Question mark block badge */}
-          <div className="w-16 h-16 rounded-2xl bg-amber-600 border-3 border-black text-yellow-200 flex items-center justify-center text-2xl font-black font-pixel shadow-[3px_3px_0_#000] shrink-0">
-            ?
+          <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-[#fef08a] dark:bg-[#78350f]/40 border-2 border-[#facc15] text-[#854d0e] dark:text-[#fef08a] flex items-center justify-center text-2xl font-black shadow-xs shrink-0">
+            🎁
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-lg font-black text-slate-950 font-pixel tracking-tight">
-                Daily ? Block
+              <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white tracking-tight">
+                Daily Bonus Gift
               </h3>
-              <span className="px-2 py-0.5 rounded-full bg-black text-yellow-300 text-[10px] font-black font-pixel">
-                +1-UP
+              <span className="px-2 py-0.5 rounded-full bg-[#fef08a] text-[#854d0e] text-[10px] font-black">
+                FREE
               </span>
             </div>
-            <p className="text-xs text-amber-950 font-semibold mt-1">
-              Punch the ? block to claim <strong className="text-slate-950 underline decoration-black decoration-2 font-black">+150 Coins</strong> &amp; extend your streak!
+            <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
+              Claim <strong className="text-[#854d0e] dark:text-amber-300 font-black">+150 Coins</strong> and maintain your login streak!
             </p>
           </div>
         </div>
@@ -115,45 +106,42 @@ export const RewardsView: React.FC<RewardsViewProps> = ({
         <button
           onClick={handleClaimDaily}
           disabled={claimedDaily}
-          className={`w-full sm:w-auto px-6 py-3.5 rounded-2xl font-black text-xs font-pixel shadow-[3px_3px_0_#000] transition active:translate-y-1 shrink-0 ${
+          className={`w-full sm:w-auto px-5 py-3 rounded-2xl font-black text-xs shadow-xs transition active:translate-y-0.5 shrink-0 ${
             claimedDaily
-              ? 'bg-amber-700/60 text-amber-200 border-2 border-black cursor-not-allowed'
-              : 'bg-[#e52521] hover:bg-[#ff3b37] text-white border-2 border-black hover:scale-105'
+              ? 'bg-slate-200 dark:bg-slate-800 text-slate-500 cursor-not-allowed'
+              : 'bg-[#a7f3d0] hover:bg-[#6ee7b7] border-b-4 border-[#059669] text-[#064e3b]'
           }`}
         >
-          {claimedDaily ? 'BLOCK EMPTIED ✓' : 'HIT BLOCK! (+150 🪙)'}
+          {claimedDaily ? 'GIFT CLAIMED ✓' : 'CLAIM +150 COINS 🪙'}
         </button>
       </div>
 
-      {/* Sponsor Video Chest - Mario Green Warp Pipe Chamber */}
-      <div className="p-6 rounded-3xl bg-[#00a859] border-4 border-black shadow-[6px_6px_0_#000] flex flex-col sm:flex-row items-center justify-between gap-5 relative overflow-hidden">
-        {/* Warp Pipe Highlight Stripe */}
-        <div className="absolute top-0 bottom-0 left-8 w-12 bg-white/20 skew-x-[-20deg] pointer-events-none" />
-
-        <div className="flex items-center gap-4 w-full sm:w-auto relative z-10">
-          <div className="w-16 h-16 rounded-2xl bg-[#006633] border-3 border-black text-emerald-200 flex items-center justify-center text-3xl shadow-[3px_3px_0_#000] shrink-0">
-            🟢
+      {/* Sponsor Video Chest - Pastel Mint */}
+      <div className="p-5 sm:p-6 rounded-3xl bg-[#dcfce7] dark:bg-[#162529] border-2 border-[#bbf7d0] dark:border-slate-700 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 relative overflow-hidden">
+        <div className="flex items-center gap-3.5 w-full sm:w-auto relative z-10">
+          <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-[#bbf7d0] dark:bg-[#064e3b]/50 border-2 border-[#86efac] text-emerald-800 dark:text-emerald-300 flex items-center justify-center text-2xl shadow-xs shrink-0">
+            ⚡
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-lg font-black text-white font-pixel tracking-tight">
-                Secret Warp Zone
+              <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white tracking-tight">
+                Bonus Stage Chest
               </h3>
-              <span className="px-2 py-0.5 rounded-full bg-black text-emerald-300 text-[10px] font-black font-pixel">
-                BONUS STAGE
+              <span className="px-2 py-0.5 rounded-full bg-[#bbf7d0] text-[#065f46] text-[10px] font-black">
+                EXTRA
               </span>
             </div>
-            <p className="text-xs text-emerald-100 font-semibold mt-1">
-              Travel down the Warp Pipe to collect a massive stash of <strong className="text-yellow-300 font-black">+250 Coins</strong>!
+            <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
+              Unlock a treasure chest filled with <strong className="text-[#065f46] dark:text-emerald-300 font-black">+250 Coins</strong>!
             </p>
           </div>
         </div>
 
         <button
           onClick={handleWatchAdBonus}
-          className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-[#fbd000] hover:bg-[#ffe34d] text-slate-950 font-black text-xs font-pixel border-2 border-black shadow-[3px_3px_0_#000] hover:scale-105 active:translate-y-1 transition shrink-0 relative z-10"
+          className="w-full sm:w-auto px-5 py-3 rounded-2xl bg-[#fef9c3] hover:bg-[#fef08a] border-b-4 border-[#ca8a04] text-[#854d0e] font-black text-xs shadow-xs active:translate-y-0.5 transition shrink-0 relative z-10"
         >
-          ENTER WARP ZONE (+250 🪙)
+          CLAIM +250 COINS 🪙
         </button>
       </div>
     </div>

@@ -4,6 +4,8 @@ import { sound } from '../../lib/soundEffects';
 import confetti from 'canvas-confetti';
 
 interface MemoryMatchProps {
+  coins?: number;
+  onSpendCoins?: (amount: number) => boolean;
   onWin?: (moves: number, timeSeconds: number) => void;
   onBackToKids?: () => void;
 }
@@ -62,7 +64,12 @@ const LEVEL_DECKS: Record<number, { title: string; themeName: string; pairs: { e
   },
 };
 
-export const MemoryMatch: React.FC<MemoryMatchProps> = ({ onWin, onBackToKids }) => {
+export const MemoryMatch: React.FC<MemoryMatchProps> = ({
+  coins = 0,
+  onSpendCoins,
+  onWin,
+  onBackToKids
+}) => {
   const [level, setLevel] = useState<number>(1);
 
   const getDeckForLevel = useCallback((lvl: number): CardItem[] => {
@@ -153,6 +160,48 @@ export const MemoryMatch: React.FC<MemoryMatchProps> = ({ onWin, onBackToKids })
     setIsWon(false);
   };
 
+  // Coin Booster 1: X-Ray Peek (10 Coins) - Flips all cards face-up for 1.5s
+  const handleXRayPeek = () => {
+    if (!onSpendCoins || isWon) return;
+    if (!onSpendCoins(10)) return;
+
+    sound.playTap();
+    const backup = cards.map((c) => ({ ...c }));
+    setCards((prev) => prev.map((c) => ({ ...c, isFlipped: true })));
+
+    setTimeout(() => {
+      setCards((prev) =>
+        prev.map((c, idx) => ({
+          ...c,
+          isFlipped: backup[idx].isMatched ? true : false,
+        }))
+      );
+    }, 1500);
+  };
+
+  // Coin Booster 2: Auto Match Pair (15 Coins) - Finds and matches 1 pair immediately
+  const handleAutoMatchPair = () => {
+    if (!onSpendCoins || isWon) return;
+    const unmatched = cards.filter((c) => !c.isMatched);
+    if (unmatched.length < 2) return;
+    if (!onSpendCoins(15)) return;
+
+    sound.playVictory();
+    confetti({ particleCount: 40, spread: 60, origin: { y: 0.5 } });
+
+    const targetEmoji = unmatched[0].emoji;
+    const updated = cards.map((c) =>
+      c.emoji === targetEmoji ? { ...c, isMatched: true, isFlipped: true } : c
+    );
+    setCards(updated);
+    setMoves((m) => m + 1);
+
+    if (updated.every((c) => c.isMatched)) {
+      setIsWon(true);
+      if (onWin) onWin(moves + 1, seconds);
+    }
+  };
+
   const formatTime = (sec: number) => {
     const mins = Math.floor(sec / 60);
     const s = sec % 60;
@@ -209,6 +258,40 @@ export const MemoryMatch: React.FC<MemoryMatchProps> = ({ onWin, onBackToKids })
         <span className="text-xs font-black text-slate-600 dark:text-slate-300">
           {currentConfig.title} — Find all matching {currentConfig.pairs.length} pairs!
         </span>
+      </div>
+
+      {/* Coin Boosters Bar */}
+      <div className="w-full flex items-center justify-between gap-1.5 mb-2.5 p-2 rounded-2xl bg-white/95 dark:bg-[#181d2f]/95 border-2 border-slate-200 dark:border-slate-800 shadow-xs">
+        <div className="flex items-center gap-1 pl-1">
+          <span className="text-sm">🪙</span>
+          <span className="text-xs font-black text-slate-800 dark:text-slate-200">
+            {coins}
+          </span>
+        </div>
+
+        <div className="flex items-center gap-1.5">
+          {/* Booster 1: X-Ray Peek */}
+          <button
+            onClick={handleXRayPeek}
+            disabled={isWon}
+            className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-[#e0e7ff] hover:bg-[#c7d2fe] border border-[#c7d2fe] text-[#4338ca] font-black text-xs shadow-xs active:scale-95 transition disabled:opacity-40"
+            title="Peek at all cards for 1.5 seconds (Costs 10 Coins)"
+          >
+            <span>👁️ X-Ray Peek</span>
+            <span className="px-1.5 py-0.5 rounded-md bg-[#c7d2fe] dark:bg-[#312e81]/40 text-[10px]">10🪙</span>
+          </button>
+
+          {/* Booster 2: Auto Match Pair */}
+          <button
+            onClick={handleAutoMatchPair}
+            disabled={isWon}
+            className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-[#fef9c3] hover:bg-[#fef08a] border border-[#fef08a] text-[#854d0e] font-black text-xs shadow-xs active:scale-95 transition disabled:opacity-40"
+            title="Auto-match 1 pair instantly (Costs 15 Coins)"
+          >
+            <span>🎯 Auto-Match</span>
+            <span className="px-1.5 py-0.5 rounded-md bg-[#fef08a] dark:bg-[#713f12]/40 text-[10px]">15🪙</span>
+          </button>
+        </div>
       </div>
 
       {/* Memory Card Grid - Pastel Soft Container */}

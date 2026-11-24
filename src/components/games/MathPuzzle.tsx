@@ -347,11 +347,10 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
         <div className="flex items-center gap-1 bg-white/80 dark:bg-[#181d2f] p-1 rounded-2xl border-2 border-slate-200 dark:border-slate-700 shadow-sm">
           <button
             onClick={() => { sound.playTap(); setMode('speed'); resetGame(); }}
-            className={`px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1 transition font-['Fredoka'] ${
-              mode === 'speed'
-                ? 'bg-[#fecdd3] text-[#9f1239] border border-[#fda4af] shadow-sm'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-            }`}
+            className={`px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1 transition font-['Fredoka'] ${mode === 'speed'
+              ? 'bg-[#fecdd3] text-[#9f1239] border border-[#fda4af] shadow-sm'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
           >
             <Timer className="w-3.5 h-3.5" />
             <span>Speed Run (60s)</span>
@@ -359,11 +358,10 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
 
           <button
             onClick={() => { sound.playTap(); setMode('operator'); resetGame(); }}
-            className={`px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1 transition font-['Fredoka'] ${
-              mode === 'operator'
-                ? 'bg-[#a7f3d0] text-[#065f46] border border-[#6ee7b7] shadow-sm'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-            }`}
+            className={`px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1 transition font-['Fredoka'] ${mode === 'operator'
+              ? 'bg-[#a7f3d0] text-[#065f46] border border-[#6ee7b7] shadow-sm'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
           >
             <Zap className="w-3.5 h-3.5" />
             <span>Operators</span>

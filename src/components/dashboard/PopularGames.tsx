@@ -2,7 +2,7 @@ import React from 'react';
 import { Play, Flame, ArrowRight } from 'lucide-react';
 import { sound } from '../../lib/soundEffects';
 
-export type GameKey = 'tod' | 'sudoku' | '2t1l' | 'tictactoe' | 'memory' | 'dice' | 'arrows' | '2048' | 'balloon' | 'mystery';
+export type GameKey = 'tod' | 'sudoku' | '2t1l' | 'tictactoe' | 'memory' | 'arrows' | '2048' | 'balloon' | 'mystery';
 
 interface PopularGamesProps {
   onSelectGame: (gameKey: GameKey) => void;
@@ -33,7 +33,7 @@ export const PopularGames: React.FC<PopularGamesProps> = ({
     },
     {
       id: 'sudoku',
-      title: 'Sudoku',
+      title: 'Maths Puzzle',
       subtitle: 'Train Your Brain',
       bgGradient: 'from-[#bae6fd] via-[#7dd3fc] to-[#60a5fa]',
       icon: (

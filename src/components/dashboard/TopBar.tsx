@@ -41,7 +41,7 @@ export const TopBar: React.FC<TopBarProps> = ({
       {/* Top Row: Search & Profile Controls */}
       <div className="w-full h-14 sm:h-16 px-2.5 sm:px-6 flex items-center justify-between gap-1.5 sm:gap-3">
         {/* Left: Mobile Menu Toggle & Search Bar */}
-        <div className="flex items-center gap-1.5 sm:gap-2.5 flex-1 min-w-0 max-w-[130px] xs:max-w-[180px] sm:max-w-xs md:max-w-md">
+        <div className="flex items-center gap-1.5 sm:gap-2.5 flex-1 min-w-0 max-w-xs md:max-w-md">
           <button
             onClick={onOpenMenu}
             className="p-1.5 sm:p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#22283a] border-2 border-slate-200 dark:border-[#444] text-slate-800 dark:text-white lg:hidden transition active:translate-y-0.5 shrink-0"
