@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import confetti from 'canvas-confetti';
 import { 
-  Play, RotateCcw, Award, Zap, Timer, Flame, Lightbulb, CheckCircle2
+  Play, RotateCcw, Zap, Timer, Flame, Lightbulb, CheckCircle2
 } from 'lucide-react';
 import { PlayerStats } from '../../types';
 import { sound } from '../../lib/soundEffects';
@@ -12,7 +12,7 @@ interface MathPuzzleProps {
   onRequestAd: (rewardTitle: string, onReward: () => void) => void;
 }
 
-type MathMode = 'speed' | 'operator' | 'levels';
+type MathMode = 'speed' | 'operator';
 
 interface Problem {
   question: string;
@@ -27,6 +27,8 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
 }) => {
   const [mode, setMode] = useState<MathMode>('speed');
   const [level, setLevel] = useState<number>(1);
+  const [operatorSolvedCount, setOperatorSolvedCount] = useState<number>(0);
+  const [levelToast, setLevelToast] = useState<string | null>(null);
   const [score, setScore] = useState<number>(0);
   const [streak, setStreak] = useState<number>(0);
   const [bestScore, setBestScore] = useState<number>(() => {
@@ -59,24 +61,28 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
   const generateProblem = useCallback((currentMode: MathMode, currentLevel: number): Problem => {
     if (currentMode === 'operator') {
       // Missing Operator: e.g. 8 [ ? ] 4 = 32
+      // Progressive difficulty based on currentLevel:
       const operators: ('+' | '-' | '×' | '÷')[] = ['+', '-', '×', '÷'];
       const op = operators[Math.floor(Math.random() * operators.length)];
-      let a = Math.floor(Math.random() * 12) + 2;
-      let b = Math.floor(Math.random() * 9) + 2;
+      const scale = Math.max(1, currentLevel);
+      let a = Math.floor(Math.random() * (6 + scale * 4)) + 2;
+      let b = Math.floor(Math.random() * (5 + scale * 3)) + 2;
       let result = 0;
 
-      if (op === '+') result = a + b;
-      else if (op === '-') {
+      if (op === '+') {
+        result = a + b;
+      } else if (op === '-') {
         if (a < b) [a, b] = [b, a];
+        if (a === b) a += Math.floor(Math.random() * 5) + 1;
         result = a - b;
       } else if (op === '×') {
-        a = Math.floor(Math.random() * 9) + 2;
-        b = Math.floor(Math.random() * 8) + 2;
+        a = Math.floor(Math.random() * (4 + scale * 2)) + 2;
+        b = Math.floor(Math.random() * (4 + scale * 2)) + 2;
         result = a * b;
       } else {
         // Division: ensure clean integer
-        b = Math.floor(Math.random() * 8) + 2;
-        result = Math.floor(Math.random() * 9) + 2;
+        b = Math.floor(Math.random() * (4 + scale * 2)) + 2;
+        result = Math.floor(Math.random() * (4 + scale * 2)) + 2;
         a = b * result;
       }
 
@@ -180,6 +186,7 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
     setTimeLeft(60);
     setIsGameOver(false);
     setIsTimerRunning(true);
+    setOperatorSolvedCount(0);
     setLevel(1);
     nextProblem(mode, 1);
   }, [mode, nextProblem]);
@@ -234,27 +241,29 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
         } catch {}
       }
 
-      // Check level upgrade every 5 correct answers in Level mode
-      if (mode === 'levels' && newStreak % 4 === 0) {
-        setLevel((l) => l + 1);
-        confetti({ particleCount: 50, spread: 50, origin: { y: 0.5 } });
+      // Check level upgrade every 5 correct answers in Operator mode
+      let nextLvl = level;
+      if (mode === 'operator') {
+        const nextSolved = operatorSolvedCount + 1;
+        setOperatorSolvedCount(nextSolved);
+
+        if (nextSolved % 5 === 0) {
+          nextLvl = level + 1;
+          setLevel(nextLvl);
+          sound.playVictory();
+          confetti({ particleCount: 60, spread: 60, origin: { y: 0.5 } });
+          setLevelToast(`🚀 LEVEL UP! Welcome to Level ${nextLvl}! (+25 Coins)`);
+          setTimeout(() => setLevelToast(null), 3000);
+        }
       }
 
-      // Trigger global win rewards periodically
-      if (newStreak >= 5) {
-        onWin(newScore);
-      }
-
-      // Advance to next after short delay
+      // Advance to next after short delay without interrupting modal popups
       setTimeout(() => {
-        nextProblem(mode, level);
-      }, 450);
+        nextProblem(mode, nextLvl);
+      }, 420);
     } else {
       sound.playError();
       setStreak(0);
-      if (mode === 'levels') {
-        // Penalty in levels
-      }
       setTimeout(() => {
         setSelectedOption(null);
         setIsCorrect(null);
@@ -276,6 +285,13 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
 
   return (
     <div className="w-full flex flex-col items-center animate-fade-in max-w-xl mx-auto pb-10">
+      {/* Level Up Banner */}
+      {levelToast && (
+        <div className="w-full mb-3 p-2.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 border-2 border-emerald-400 text-white font-black text-xs text-center shadow-lg animate-bounce font-['Fredoka']">
+          {levelToast}
+        </div>
+      )}
+
       {/* ---------------- TOP CONTROLS & MODE SELECTOR ---------------- */}
       <div className="w-full flex items-center justify-between gap-2 mb-3 px-1">
         <div className="flex items-center gap-1 bg-slate-100 dark:bg-[#161a29] p-1 rounded-2xl border-2 border-slate-300 dark:border-[#2f3752]">
@@ -288,7 +304,7 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
             }`}
           >
             <Timer className="w-3.5 h-3.5" />
-            <span>Speed Run</span>
+            <span>Speed Run (60s)</span>
           </button>
 
           <button
@@ -301,18 +317,6 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
           >
             <Zap className="w-3.5 h-3.5" />
             <span>Operators</span>
-          </button>
-
-          <button
-            onClick={() => { sound.playTap(); setMode('levels'); resetGame(); }}
-            className={`px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1 transition font-['Fredoka'] ${
-              mode === 'levels'
-                ? 'bg-[#fcd116] text-slate-950 shadow-sm'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-            }`}
-          >
-            <Award className="w-3.5 h-3.5" />
-            <span>Levels</span>
           </button>
         </div>
 
@@ -348,9 +352,9 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
             </>
           ) : (
             <>
-              <span className="text-[10px] font-bold text-emerald-600 font-['Fredoka'] block">LEVEL</span>
-              <span className="text-base sm:text-lg font-black text-slate-900 dark:text-white font-pixel leading-none">
-                {level}
+              <span className="text-[10px] font-bold text-emerald-600 font-['Fredoka'] block">LEVEL {level}</span>
+              <span className="text-xs sm:text-sm font-black text-slate-900 dark:text-white font-['Fredoka'] leading-none">
+                {operatorSolvedCount % 5}/5 Solved
               </span>
             </>
           )}
@@ -449,7 +453,10 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
             </div>
 
             <button
-              onClick={resetGame}
+              onClick={() => {
+                if (score > 0) onWin(score);
+                resetGame();
+              }}
               className="w-full py-3 rounded-2xl bg-[#00a859] border-b-4 border-[#006633] text-white font-black text-sm shadow-md hover:brightness-110 active:translate-y-0.5 transition flex items-center justify-center gap-2 font-['Fredoka']"
             >
               <Play className="w-4 h-4 fill-white" />

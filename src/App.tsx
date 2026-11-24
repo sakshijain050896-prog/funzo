@@ -17,6 +17,7 @@ import { MysteryHub } from './components/games/MysteryHub';
 import { TicTacToe } from './components/games/TicTacToe';
 import { MemoryMatch } from './components/games/MemoryMatch';
 import { DiceRoll } from './components/games/DiceRoll';
+import { BalloonPop } from './components/games/BalloonPop';
 
 // Modals
 import { StatsModal } from './components/StatsModal';
@@ -272,6 +273,7 @@ export const App: React.FC = () => {
                     {activeGame === 'tictactoe' && 'Tic Tac Toe'}
                     {activeGame === 'memory' && 'Memory Match'}
                     {activeGame === 'dice' && 'Dice Roll'}
+                    {activeGame === 'balloon' && 'Balloon Pop'}
                     {activeGame === 'arrows' && 'Arrow Out'}
                     {activeGame === '2048' && '2048 Rush'}
                     {activeGame === 'mystery' && (
@@ -376,6 +378,15 @@ export const App: React.FC = () => {
                       setStats(updated);
                       syncPlayerProgress(updated);
                     }
+                  }}
+                />
+              </div>
+
+              <div className={`w-full ${activeGame === 'balloon' ? 'block' : 'hidden'}`}>
+                <BalloonPop
+                  onWin={(score) => {
+                    handleGameActivity('balloon');
+                    handleLevelCelebration(10, 'BALLOON POP CHAMPION! 🎈', `Popped like a superstar! Score: ${score}`, 'balloon');
                   }}
                 />
               </div>

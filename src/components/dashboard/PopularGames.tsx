@@ -2,7 +2,7 @@ import React from 'react';
 import { Play, Flame, ArrowRight } from 'lucide-react';
 import { sound } from '../../lib/soundEffects';
 
-export type GameKey = 'tod' | 'sudoku' | '2t1l' | 'tictactoe' | 'memory' | 'dice' | 'arrows' | '2048' | 'mystery';
+export type GameKey = 'tod' | 'sudoku' | '2t1l' | 'tictactoe' | 'memory' | 'dice' | 'arrows' | '2048' | 'balloon' | 'mystery';
 
 interface PopularGamesProps {
   onSelectGame: (gameKey: GameKey) => void;

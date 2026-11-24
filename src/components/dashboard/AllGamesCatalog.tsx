@@ -3,13 +3,13 @@ import { Play, Sparkles } from 'lucide-react';
 import { GameKey } from './PopularGames';
 import { sound } from '../../lib/soundEffects';
 
-export type CategoryFilter = 'all' | 'brain' | 'social' | 'mystery';
+export type CategoryFilter = 'all' | 'brain' | 'social' | 'kids';
 
 export interface GameCatalogItem {
   id: GameKey;
   subTab?: string;
   title: string;
-  genre: 'brain' | 'social' | 'mystery';
+  genre: 'brain' | 'social' | 'kids';
   genreLabel: string;
   tag: string;
   emoji: string;
@@ -25,7 +25,7 @@ export const CATEGORY_THEMES: Record<string, { tagBg: string; buttonBg: string }
     tagBg: 'bg-rose-100 text-rose-900 dark:bg-rose-950/80 dark:text-rose-300 border border-rose-300 dark:border-rose-700/50',
     buttonBg: 'mario-btn-red',
   },
-  mystery: {
+  kids: {
     tagBg: 'bg-amber-100 text-amber-950 dark:bg-amber-950/80 dark:text-amber-300 border border-amber-300 dark:border-amber-700/50',
     buttonBg: 'mario-btn-yellow text-slate-950',
   },
@@ -103,36 +103,42 @@ export const ALL_GAMES_DATA: GameCatalogItem[] = [
     bgGradient: 'from-fuchsia-500 to-purple-600',
   },
 
-  // 3. MYSTERY & DETECTIVE FORENSICS
+  // 3. KIDS FUN (AGES 3 - 10)
   {
-    id: 'mystery',
-    subTab: 'crime-scene',
-    title: 'The Case Files',
-    genre: 'mystery',
-    genreLabel: 'Mystery Riddles',
-    tag: 'Crime Scene',
-    emoji: '🔍',
-    bgGradient: 'from-amber-600 to-yellow-600',
+    id: 'balloon',
+    title: 'Balloon Pop',
+    genre: 'kids',
+    genreLabel: 'Kids Fun',
+    tag: 'Ages 3-10',
+    emoji: '🎈',
+    bgGradient: 'from-pink-500 to-rose-600',
   },
   {
-    id: 'mystery',
-    subTab: 'safe-code',
-    title: 'Vault Safe Codebreaker',
-    genre: 'mystery',
-    genreLabel: 'Mystery Riddles',
-    tag: 'Vault Code',
-    emoji: '🔐',
-    bgGradient: 'from-yellow-500 to-amber-700',
+    id: 'memory',
+    title: 'Animal Memory Match',
+    genre: 'kids',
+    genreLabel: 'Kids Fun',
+    tag: 'Ages 3-10',
+    emoji: '🐶',
+    bgGradient: 'from-amber-400 to-yellow-600',
   },
   {
-    id: 'mystery',
-    subTab: 'daily-riddles',
-    title: 'Detective Riddles',
-    genre: 'mystery',
-    genreLabel: 'Mystery Riddles',
-    tag: 'Story Riddles',
-    emoji: '📜',
-    bgGradient: 'from-violet-600 to-indigo-600',
+    id: 'tictactoe',
+    title: 'Tic Tac Toe',
+    genre: 'kids',
+    genreLabel: 'Kids Fun',
+    tag: 'Ages 3-10',
+    emoji: '❌⭕',
+    bgGradient: 'from-emerald-500 to-teal-600',
+  },
+  {
+    id: 'dice',
+    title: 'Lucky Dice Roll',
+    genre: 'kids',
+    genreLabel: 'Kids Fun',
+    tag: 'Ages 3-10',
+    emoji: '🎲',
+    bgGradient: 'from-indigo-500 to-purple-600',
   },
 ];
 
@@ -140,7 +146,7 @@ const CATEGORY_TABS: { id: CategoryFilter; label: string; emoji: string }[] = [
   { id: 'all', label: 'All Games', emoji: '⭐' },
   { id: 'brain', label: 'Brain & Logic', emoji: '🧩' },
   { id: 'social', label: 'Party & Social', emoji: '🔥' },
-  { id: 'mystery', label: 'Mystery Riddles', emoji: '🔍' },
+  { id: 'kids', label: 'Kids Games (Ages 3-10)', emoji: '🎈' },
 ];
 
 interface AllGamesCatalogProps {

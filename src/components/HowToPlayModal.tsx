@@ -23,6 +23,26 @@ interface GameInstruction {
 
 const INSTRUCTIONS_DATA: GameInstruction[] = [
   {
+    id: 'balloon',
+    title: 'Balloon Pop',
+    genre: 'Kids Fun',
+    icon: '🎈',
+    tagline: 'Vibrant & fast floating balloon popping game (Ages 3-10)',
+    objective: 'Pop rising colorful balloons with cute emojis, build popping streaks, and score points!',
+    mobileControls: 'Tap any floating balloon with your finger to pop it with funny sound effects.',
+    desktopControls: 'Click balloons with your mouse cursor.',
+    rules: [
+      'Tap balloons before they float off the top of the screen.',
+      'Balloons have different colors and cute animal emojis.',
+      'Pop consecutively without missing to build big combo streaks!',
+      'Enjoy Endless Relax mode or 30s Speed Pop mode.',
+    ],
+    proTips: [
+      'Look out for fast-moving balloons for bonus points!',
+      'Pop golden star balloons for extra sparkle bursts.',
+    ],
+  },
+  {
     id: 'sudoku',
     title: 'Maths Puzzle',
     genre: 'Brain Math',
