@@ -9,6 +9,8 @@ interface TopBarProps {
   onToggleSound: () => void;
   onOpenProfile: () => void;
   onOpenStats: () => void;
+  onOpenNotifications: () => void;
+  unreadNotificationCount?: number;
   onOpenMenu: () => void;
   searchQuery: string;
   onSearchChange: (q: string) => void;
@@ -22,6 +24,8 @@ export const TopBar: React.FC<TopBarProps> = ({
   onToggleSound,
   onOpenProfile,
   onOpenStats,
+  onOpenNotifications,
+  unreadNotificationCount = 0,
   onOpenMenu,
   searchQuery,
   onSearchChange,
@@ -116,18 +120,20 @@ export const TopBar: React.FC<TopBarProps> = ({
             )}
           </button>
 
-          {/* Notifications (hidden on small mobile to guarantee space for Profile) */}
-          <div className="relative hidden sm:block shrink-0">
+          {/* Notifications Bell Button */}
+          <div className="relative shrink-0">
             <button
-              onClick={onOpenStats}
-              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#22283a] border-2 border-slate-200 dark:border-[#444] text-slate-700 dark:text-white transition active:translate-y-0.5"
+              onClick={onOpenNotifications}
+              className="p-1.5 sm:p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#22283a] border-2 border-slate-200 dark:border-[#444] text-slate-700 dark:text-white transition active:translate-y-0.5 shadow-sm"
               title="Notifications"
             >
               <Bell className="w-4 h-4" />
             </button>
-            <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#f43f5e] border border-white text-white font-black text-[9px] flex items-center justify-center font-['Fredoka']">
-              3
-            </span>
+            {unreadNotificationCount > 0 && (
+              <span className="absolute -top-1 -right-1 min-w-[17px] h-[17px] px-0.5 rounded-full bg-[#f43f5e] border-2 border-white dark:border-[#181d2f] text-white font-black text-[9px] flex items-center justify-center font-['Fredoka'] pointer-events-none">
+                {unreadNotificationCount > 9 ? '9+' : unreadNotificationCount}
+              </span>
+            )}
           </div>
 
           {/* Player Profile Chip - Always pinned and fully visible on all mobile viewports */}

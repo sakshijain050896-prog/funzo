@@ -164,3 +164,19 @@ export const getIQRankDetails = (iq: number): IQRankDetails => {
     progressPercent: 100,
   };
 };
+
+export interface AppNotification {
+  id: string;
+  title: string;
+  message: string;
+  time: string;
+  type: 'reward' | 'streak' | 'challenge' | 'system' | 'update';
+  icon: string;
+  isRead: boolean;
+  actionGameId?: string;
+  actionCategory?: string;
+  actionLabel?: string;
+  claimed?: boolean;
+  rewardCoins?: number;
+}
+

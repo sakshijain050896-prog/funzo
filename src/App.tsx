@@ -25,6 +25,7 @@ import { HowToPlayModal } from './components/HowToPlayModal';
 import { CelebrationModal } from './components/CelebrationModal';
 import { AdModal } from './components/AdModal';
 import { AdminModal } from './components/AdminModal';
+import { NotificationModal } from './components/NotificationModal';
 
 import { 
   getStoredStats, 
@@ -39,8 +40,74 @@ import {
 } from './lib/storage';
 import { syncPlayerProgress } from './lib/authService';
 import { sound } from './lib/soundEffects';
-import { PlayerStats, ThemeMode } from './types';
+import { PlayerStats, ThemeMode, AppNotification } from './types';
 import { ArrowLeft, HelpCircle, Flame } from 'lucide-react';
+
+const NOTIFICATIONS_STORAGE_KEY = 'funzo_user_notifications_v1';
+
+const INITIAL_NOTIFICATIONS: AppNotification[] = [
+  {
+    id: 'notif-welcome-gift',
+    title: 'Daily Welcome Gift 🎁',
+    message: 'Welcome back to Funzo! Claim your daily gift of +25 coins to unlock new custom avatars!',
+    time: 'Today',
+    type: 'reward',
+    icon: '🎁',
+    isRead: false,
+    rewardCoins: 25,
+    claimed: false,
+    actionLabel: 'Claim +25 🪙',
+  },
+  {
+    id: 'notif-kids-adventure',
+    title: 'Kids Adventure Mode Live! 🎈',
+    message: 'Play the new timed Balloon Pop countdown challenge and Animal Memory Match stages with your family!',
+    time: '2 hours ago',
+    type: 'update',
+    icon: '🎈',
+    isRead: false,
+    actionCategory: 'kids',
+    actionGameId: 'balloon',
+    actionLabel: 'Play Balloon Pop ➔',
+  },
+  {
+    id: 'notif-streak-tracker',
+    title: 'Streak Multiplier Active 🔥',
+    message: 'Maintain your daily puzzle streak to boost your Mushroom leaderboard ranking!',
+    time: 'Yesterday',
+    type: 'streak',
+    icon: '⭐',
+    isRead: false,
+    actionCategory: 'all',
+    actionGameId: 'sudoku',
+    actionLabel: 'Play Maths Puzzle 🧮',
+  },
+  {
+    id: 'notif-brain-challenge',
+    title: 'Weekly Brain Challenge 🧠',
+    message: 'Test your bluffing detector in 2 Truths & 1 Lie or challenge your reflexes in 2048 Rush!',
+    time: '2 days ago',
+    type: 'challenge',
+    icon: '🎯',
+    isRead: true,
+    actionCategory: 'all',
+    actionGameId: '2t1l',
+    actionLabel: 'Play 2T1L ➔',
+  },
+];
+
+const loadNotifications = (): AppNotification[] => {
+  if (typeof window === 'undefined') return INITIAL_NOTIFICATIONS;
+  try {
+    const raw = localStorage.getItem(NOTIFICATIONS_STORAGE_KEY);
+    if (raw) {
+      return JSON.parse(raw);
+    }
+  } catch (e) {
+    console.error('Error loading notifications', e);
+  }
+  return INITIAL_NOTIFICATIONS;
+};
 
 export const App: React.FC = () => {
   const [stats, setStats] = useState<PlayerStats>(getStoredStats);
@@ -59,7 +126,64 @@ export const App: React.FC = () => {
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isHowToPlayOpen, setIsHowToPlayOpen] = useState(false);
   const [howToPlayGameId, setHowToPlayGameId] = useState<string>('sudoku');
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [notifications, setNotifications] = useState<AppNotification[]>(loadNotifications);
   const [streakToast, setStreakToast] = useState<string | null>(null);
+
+  const saveNotificationsState = (updated: AppNotification[]) => {
+    setNotifications(updated);
+    try {
+      localStorage.setItem(NOTIFICATIONS_STORAGE_KEY, JSON.stringify(updated));
+    } catch (e) {
+      console.error('Error saving notifications', e);
+    }
+  };
+
+  const handleMarkAsRead = (id: string) => {
+    sound.playTap();
+    const updated = notifications.map((n) => (n.id === id ? { ...n, isRead: true } : n));
+    saveNotificationsState(updated);
+  };
+
+  const handleMarkAllAsRead = () => {
+    sound.playTap();
+    const updated = notifications.map((n) => ({ ...n, isRead: true }));
+    saveNotificationsState(updated);
+  };
+
+  const handleClaimReward = (id: string, coins: number) => {
+    sound.playVictory();
+    confetti({
+      particleCount: 60,
+      spread: 70,
+      origin: { y: 0.3 },
+    });
+    const currentStats = getStoredStats();
+    const updatedStats: PlayerStats = {
+      ...currentStats,
+      coins: (currentStats.coins || 0) + coins,
+    };
+    saveStats(updatedStats);
+    setStats(updatedStats);
+    syncPlayerProgress(updatedStats);
+
+    const updatedNotifications = notifications.map((n) =>
+      n.id === id ? { ...n, claimed: true, isRead: true } : n
+    );
+    saveNotificationsState(updatedNotifications);
+  };
+
+  const handleNavigateGameFromNotification = (gameId?: string, category?: string) => {
+    sound.playTap();
+    if (category) {
+      setActiveCategory(category as CategoryFilter);
+    }
+    if (gameId) {
+      handleLaunchGame(gameId as GameKey);
+    }
+  };
+
+  const unreadNotificationCount = notifications.filter((n) => !n.isRead).length;
 
   // Celebration Dopamine Modal State
   const [celebrationOpen, setCelebrationOpen] = useState(false);
@@ -246,6 +370,11 @@ export const App: React.FC = () => {
           onToggleSound={handleToggleSound}
           onOpenProfile={() => setIsProfileOpen(true)}
           onOpenStats={() => setIsStatsOpen(true)}
+          onOpenNotifications={() => {
+            sound.playTap();
+            setIsNotificationsOpen(true);
+          }}
+          unreadNotificationCount={unreadNotificationCount}
           onOpenMenu={() => setIsMobileSidebarOpen(true)}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
@@ -440,6 +569,16 @@ export const App: React.FC = () => {
       </div>
 
       {/* ---------------- GLOBAL MODALS ---------------- */}
+      <NotificationModal
+        isOpen={isNotificationsOpen}
+        onClose={() => setIsNotificationsOpen(false)}
+        notifications={notifications}
+        onMarkAsRead={handleMarkAsRead}
+        onMarkAllAsRead={handleMarkAllAsRead}
+        onClaimReward={handleClaimReward}
+        onNavigateGame={handleNavigateGameFromNotification}
+      />
+
       <StatsModal
         isOpen={isStatsOpen}
         onClose={() => setIsStatsOpen(false)}
