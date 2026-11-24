@@ -91,9 +91,9 @@
   background-color: #c84c0c;
 }
 .mario-btn-red {
-  background-color: #e52521;
-  border-bottom: 4px solid #9e100e;
-  color: white;
+  background-color: #fecdd3;
+  border-bottom: 3px solid #fda4af;
+  color: #9f1239;
   transition: all 0.08s ease-in-out;
 }
 .mario-btn-red:active {
@@ -102,9 +102,9 @@
 }
 
 .mario-btn-green {
-  background-color: #00a859;
-  border-bottom: 4px solid #006633;
-  color: white;
+  background-color: #a7f3d0;
+  border-bottom: 3px solid #6ee7b7;
+  color: #065f46;
   transition: all 0.08s ease-in-out;
 }
 .mario-btn-green:active {
@@ -113,9 +113,9 @@
 }
 
 .mario-btn-yellow {
-  background-color: #fcd116;
-  border-bottom: 4px solid #b89100;
-  color: #1a1a1a;
+  background-color: #fef08a;
+  border-bottom: 3px solid #fde047;
+  color: #854d0e;
   transition: all 0.08s ease-in-out;
 }
 .mario-btn-yellow:active {
@@ -124,9 +124,9 @@
 }
 
 .mario-btn-blue {
-  background-color: #0099e6;
-  border-bottom: 4px solid #005f99;
-  color: white;
+  background-color: #bae6fd;
+  border-bottom: 3px solid #7dd3fc;
+  color: #0369a1;
   transition: all 0.08s ease-in-out;
 }
 .mario-btn-blue:active {

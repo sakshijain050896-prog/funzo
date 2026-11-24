@@ -24,7 +24,7 @@ export const PopularGames: React.FC<PopularGamesProps> = ({
       id: 'tod',
       title: 'Truth or Dare',
       subtitle: 'Spice up your day!',
-      bgGradient: 'from-[#ff3366] via-[#f43f5e] to-[#be123c]',
+      bgGradient: 'from-[#fecdd3] via-[#fda4af] to-[#f472b6]',
       icon: (
         <div className="text-3xl filter drop-shadow-md animate-pulse">
           💕
@@ -35,7 +35,7 @@ export const PopularGames: React.FC<PopularGamesProps> = ({
       id: 'sudoku',
       title: 'Sudoku',
       subtitle: 'Train Your Brain',
-      bgGradient: 'from-[#38bdf8] via-[#0284c7] to-[#0369a1]',
+      bgGradient: 'from-[#bae6fd] via-[#7dd3fc] to-[#60a5fa]',
       icon: (
         <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-md p-1 grid grid-cols-3 grid-rows-3 gap-0.5 text-[8px] font-mono font-black text-white shadow-inner">
           <span>5</span><span>3</span><span>1</span>
@@ -48,7 +48,7 @@ export const PopularGames: React.FC<PopularGamesProps> = ({
       id: '2t1l',
       title: '2 Truths 1 Lie',
       subtitle: 'Guess the Lie!',
-      bgGradient: 'from-[#84cc16] via-[#65a30d] to-[#4d7c0f]',
+      bgGradient: 'from-[#bbf7d0] via-[#86efac] to-[#4ade80]',
       icon: (
         <div className="text-3xl filter drop-shadow-md">
           💬
@@ -59,7 +59,7 @@ export const PopularGames: React.FC<PopularGamesProps> = ({
       id: 'tictactoe',
       title: 'Tic Tac Toe',
       subtitle: 'Classic Fun',
-      bgGradient: 'from-[#f59e0b] via-[#d97706] to-[#b45309]',
+      bgGradient: 'from-[#fed7aa] via-[#fdba74] to-[#f59e0b]',
       icon: (
         <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-md p-1 grid grid-cols-3 grid-rows-3 gap-0.5 text-[9px] font-mono font-black text-white shadow-inner text-center">
           <span>X</span><span>O</span><span>X</span>
@@ -72,7 +72,7 @@ export const PopularGames: React.FC<PopularGamesProps> = ({
       id: 'memory',
       title: 'Memory Match',
       subtitle: 'Test Your Memory',
-      bgGradient: 'from-[#a855f7] via-[#8b5cf6] to-[#6b21a8]',
+      bgGradient: 'from-[#ddd6fe] via-[#c4b5fd] to-[#a78bfa]',
       icon: (
         <div className="text-3xl filter drop-shadow-md animate-bounce">
           🧠
@@ -83,7 +83,7 @@ export const PopularGames: React.FC<PopularGamesProps> = ({
       id: 'balloon',
       title: 'Balloon Pop',
       subtitle: 'Pop & Fun',
-      bgGradient: 'from-[#ec4899] via-[#f43f5e] to-[#e11d48]',
+      bgGradient: 'from-[#fbcfe8] via-[#f472b6] to-[#ec4899]',
       icon: (
         <div className="text-3xl filter drop-shadow-md animate-bounce">
           🎈

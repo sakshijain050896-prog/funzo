@@ -59,20 +59,20 @@ export const TopBar: React.FC<TopBarProps> = ({
 
       {/* Center: Explanatory Player Stats */}
       <div className="hidden md:flex items-center gap-3 font-['Fredoka'] text-xs">
-        {/* Coins Badge */}
-        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#fcd116] border-2 border-[#b89100] text-slate-950 font-black shadow-sm">
+        {/* Coins Badge - Pastel Sunshine */}
+        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#fef9c3] border-2 border-[#fef08a] text-[#854d0e] font-black shadow-sm">
           <span className="text-sm">🪙</span>
           <span>{stats.coins} Coins</span>
         </div>
 
-        {/* Day Streak Badge */}
-        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-100 dark:bg-orange-950/60 border-2 border-orange-300 dark:border-orange-500/40 text-orange-800 dark:text-orange-300 font-black shadow-sm">
+        {/* Day Streak Badge - Pastel Peach */}
+        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#ffedd5] border-2 border-[#fed7aa] text-[#c2410c] font-black shadow-sm">
           <span className="text-sm">⭐</span>
           <span>{stats.streak}d Streak</span>
         </div>
 
-        {/* Games Won Badge */}
-        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 border-2 border-emerald-300 dark:border-emerald-500/40 text-emerald-800 dark:text-emerald-300 font-black shadow-sm">
+        {/* Games Won Badge - Pastel Mint */}
+        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#dcfce7] border-2 border-[#bbf7d0] text-[#065f46] font-black shadow-sm">
           <span className="text-sm">🏆</span>
           <span>{stats.totalGamesWon} Won</span>
         </div>
@@ -80,10 +80,10 @@ export const TopBar: React.FC<TopBarProps> = ({
 
       {/* Right: Quick Controls (Coins, Sound, Theme, Profile) */}
       <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-        {/* Mobile Stats Chip */}
+        {/* Mobile Stats Chip - Pastel Sunshine */}
         <button
           onClick={onOpenStats}
-          className="hidden xs:flex md:hidden items-center gap-1 px-2 py-1 rounded-full bg-[#fcd116] border-2 border-[#b89100] text-slate-950 font-black text-xs shadow-sm active:translate-y-0.5 shrink-0"
+          className="hidden xs:flex md:hidden items-center gap-1 px-2.5 py-1 rounded-full bg-[#fef9c3] border-2 border-[#fef08a] text-[#854d0e] font-black text-xs shadow-sm active:translate-y-0.5 shrink-0"
           title="Your Stats"
         >
           <span>🪙</span>
@@ -96,7 +96,7 @@ export const TopBar: React.FC<TopBarProps> = ({
           className="hidden sm:flex p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#22283a] border-2 border-slate-200 dark:border-[#444] text-slate-700 dark:text-white transition active:translate-y-0.5 shrink-0"
           title={soundEnabled ? 'Mute Audio' : 'Enable Audio'}
         >
-          {soundEnabled ? <Volume2 className="w-4 h-4 text-[#00a859]" /> : <VolumeX className="w-4 h-4 text-[#e52521]" />}
+          {soundEnabled ? <Volume2 className="w-4 h-4 text-[#059669]" /> : <VolumeX className="w-4 h-4 text-[#e11d48]" />}
         </button>
 
         {/* Theme Toggle Button (Overworld Bright ☀️ vs Dark Mode 🌙) */}
@@ -121,7 +121,7 @@ export const TopBar: React.FC<TopBarProps> = ({
           >
             <Bell className="w-4 h-4" />
           </button>
-          <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#e52521] border border-white text-white font-black text-[9px] flex items-center justify-center font-['Fredoka']">
+          <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#f43f5e] border border-white text-white font-black text-[9px] flex items-center justify-center font-['Fredoka']">
             3
           </span>
         </div>
@@ -129,13 +129,13 @@ export const TopBar: React.FC<TopBarProps> = ({
         {/* Player Profile Chip - Always pinned and fully visible on all mobile viewports */}
         <button
           onClick={onOpenProfile}
-          className="flex items-center gap-1 sm:gap-2 pl-1 pr-2 sm:pl-1.5 sm:pr-3 py-1 sm:py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-[#22283a] border-2 border-slate-200 dark:border-[#444] hover:border-[#e52521] transition active:scale-95 shadow-sm shrink-0"
+          className="flex items-center gap-1 sm:gap-2 pl-1 pr-2 sm:pl-1.5 sm:pr-3 py-1 sm:py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-[#22283a] border-2 border-slate-200 dark:border-[#444] hover:border-pink-300 transition active:scale-95 shadow-sm shrink-0"
           title="My Profile"
         >
-          <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gradient-to-tr from-[#e52521] to-[#fcd116] border border-white flex items-center justify-center text-xs sm:text-sm shadow-sm shrink-0">
+          <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gradient-to-tr from-[#fecdd3] to-[#fed7aa] border border-white flex items-center justify-center text-xs sm:text-sm shadow-sm shrink-0">
             <span>{avatar.emoji}</span>
           </div>
-          <span className="text-xs font-black text-slate-900 dark:text-white hidden md:block max-w-[85px] truncate font-['Fredoka']">
+          <span className="text-xs font-black text-slate-800 dark:text-white hidden md:block max-w-[85px] truncate font-['Fredoka']">
             {displayName}
           </span>
           <ChevronDown className="w-3.5 h-3.5 text-slate-500 shrink-0" />

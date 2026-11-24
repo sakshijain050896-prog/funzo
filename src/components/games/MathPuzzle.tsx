@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import confetti from 'canvas-confetti';
-import { 
+import {
   Play, RotateCcw, Zap, Timer, Flame, Lightbulb, CheckCircle2
 } from 'lucide-react';
 import { PlayerStats } from '../../types';
@@ -238,7 +238,7 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
         setBestScore(newScore);
         try {
           localStorage.setItem('funzo_math_highscore', newScore.toString());
-        } catch {}
+        } catch { }
       }
 
       // Check level upgrade every 5 correct answers in Operator mode
@@ -294,12 +294,12 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
 
       {/* ---------------- TOP CONTROLS & MODE SELECTOR ---------------- */}
       <div className="w-full flex items-center justify-between gap-2 mb-3 px-1">
-        <div className="flex items-center gap-1 bg-slate-100 dark:bg-[#161a29] p-1 rounded-2xl border-2 border-slate-300 dark:border-[#2f3752]">
+        <div className="flex items-center gap-1 bg-white/80 dark:bg-[#181d2f] p-1 rounded-2xl border-2 border-slate-200 dark:border-slate-700 shadow-sm">
           <button
             onClick={() => { sound.playTap(); setMode('speed'); resetGame(); }}
             className={`px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1 transition font-['Fredoka'] ${
               mode === 'speed'
-                ? 'bg-[#e52521] text-white shadow-sm'
+                ? 'bg-[#fecdd3] text-[#9f1239] border border-[#fda4af] shadow-sm'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
@@ -311,7 +311,7 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
             onClick={() => { sound.playTap(); setMode('operator'); resetGame(); }}
             className={`px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1 transition font-['Fredoka'] ${
               mode === 'operator'
-                ? 'bg-[#00a859] text-white shadow-sm'
+                ? 'bg-[#a7f3d0] text-[#065f46] border border-[#6ee7b7] shadow-sm'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
@@ -322,7 +322,7 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
 
         <button
           onClick={resetGame}
-          className="p-2 rounded-2xl bg-slate-100 dark:bg-[#161a29] border-2 border-slate-300 dark:border-[#2f3752] text-slate-700 dark:text-slate-300 hover:text-[#e52521] transition active:scale-95"
+          className="p-2 rounded-2xl bg-white dark:bg-[#181d2f] border-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-[#e11d48] transition active:scale-95 shadow-sm"
           title="Restart Puzzle"
         >
           <RotateCcw className="w-4 h-4" />
@@ -332,7 +332,7 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
       {/* ---------------- STATS DASHBOARD BAR ---------------- */}
       <div className="w-full grid grid-cols-3 gap-2 mb-3">
         {/* Score */}
-        <div className="p-2.5 rounded-2xl bg-white dark:bg-[#161a29] border-3 border-black dark:border-[#2f3752] shadow-[3px_3px_0_#000] text-center">
+        <div className="p-2.5 rounded-2xl bg-white/95 dark:bg-[#181d2f]/95 border-2 border-slate-200 dark:border-slate-700/60 shadow-sm text-center">
           <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 font-['Fredoka'] block">SCORE</span>
           <span className="text-base sm:text-lg font-black text-slate-900 dark:text-white font-pixel leading-none">
             {score}
@@ -340,13 +340,13 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
         </div>
 
         {/* Timer or Level */}
-        <div className="p-2.5 rounded-2xl bg-white dark:bg-[#161a29] border-3 border-black dark:border-[#2f3752] shadow-[3px_3px_0_#000] text-center">
+        <div className="p-2.5 rounded-2xl bg-white/95 dark:bg-[#181d2f]/95 border-2 border-slate-200 dark:border-slate-700/60 shadow-sm text-center">
           {mode === 'speed' ? (
             <>
-              <span className="text-[10px] font-bold text-[#e52521] font-['Fredoka'] block flex items-center justify-center gap-0.5">
+              <span className="text-[10px] font-bold text-rose-500 font-['Fredoka'] block flex items-center justify-center gap-0.5">
                 <Timer className="w-3 h-3" /> TIME
               </span>
-              <span className={`text-base sm:text-lg font-black font-pixel leading-none ${timeLeft <= 10 ? 'text-[#e52521] animate-pulse' : 'text-slate-900 dark:text-white'}`}>
+              <span className={`text-base sm:text-lg font-black font-pixel leading-none ${timeLeft <= 10 ? 'text-[#e11d48] animate-pulse' : 'text-slate-900 dark:text-white'}`}>
                 {timeLeft}s
               </span>
             </>
@@ -361,7 +361,7 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
         </div>
 
         {/* Streak */}
-        <div className="p-2.5 rounded-2xl bg-white dark:bg-[#161a29] border-3 border-black dark:border-[#2f3752] shadow-[3px_3px_0_#000] text-center">
+        <div className="p-2.5 rounded-2xl bg-white/95 dark:bg-[#181d2f]/95 border-2 border-slate-200 dark:border-slate-700/60 shadow-sm text-center">
           <span className="text-[10px] font-bold text-amber-500 font-['Fredoka'] block flex items-center justify-center gap-0.5">
             <Flame className="w-3 h-3 fill-amber-500 text-amber-500" /> STREAK
           </span>
@@ -372,32 +372,32 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
       </div>
 
       {/* ---------------- MAIN EQUATION QUESTION BOARD ---------------- */}
-      <div className="w-full p-6 sm:p-8 rounded-3xl bg-gradient-to-b from-[#5c94fc] to-[#3a75e0] border-4 border-black shadow-[5px_5px_0_#000] flex flex-col items-center justify-center text-center relative overflow-hidden mb-4 min-h-[170px] sm:min-h-[200px]">
-        {/* Mario Question block pattern in background */}
+      <div className="w-full p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[#c7d2fe] via-[#a5b4fc] to-[#818cf8] dark:from-[#1e2746] dark:via-[#263156] dark:to-[#313f6d] border-4 border-[#a5b4fc] dark:border-indigo-700/60 shadow-md flex flex-col items-center justify-center text-center relative overflow-hidden mb-4 min-h-[170px] sm:min-h-[200px]">
+        {/* Soft Question mark pattern */}
         <div className="absolute top-2 left-3 text-white/20 font-pixel text-xl select-none">?</div>
         <div className="absolute top-2 right-3 text-white/20 font-pixel text-xl select-none">?</div>
         <div className="absolute bottom-2 left-3 text-white/20 font-pixel text-xl select-none">?</div>
         <div className="absolute bottom-2 right-3 text-white/20 font-pixel text-xl select-none">?</div>
 
-        <span className="text-xs font-black uppercase tracking-wider text-yellow-300 font-['Fredoka'] mb-1">
+        <span className="text-xs font-black uppercase tracking-wider text-[#1e1b4b] dark:text-[#e0e7ff] font-['Fredoka'] mb-1">
           {mode === 'operator' ? 'Find the Missing Sign' : 'Solve the Equation'}
         </span>
 
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white font-['Fredoka'] tracking-wide drop-shadow-[2px_2px_0_#000] select-none my-2">
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white font-['Fredoka'] tracking-wide drop-shadow-sm select-none my-2">
           {currentProblem.question}
         </h2>
 
         {/* Hint toggle */}
         {showHint ? (
-          <p className="text-xs font-black text-yellow-200 mt-2 font-['Fredoka'] bg-black/30 px-3 py-1 rounded-full animate-fade-in">
+          <p className="text-xs font-black text-[#1e1b4b] mt-2 font-['Fredoka'] bg-white/50 px-3 py-1 rounded-full animate-fade-in shadow-sm">
             💡 {currentProblem.hint}
           </p>
         ) : (
           <button
             onClick={handleHintClick}
-            className="mt-2 text-xs font-bold text-white/80 hover:text-white flex items-center gap-1 font-['Fredoka'] transition"
+            className="mt-2 text-xs font-bold text-white/90 hover:text-white flex items-center gap-1 font-['Fredoka'] transition"
           >
-            <Lightbulb className="w-3 h-3 text-yellow-300" />
+            <Lightbulb className="w-3.5 h-3.5 text-yellow-200" />
             <span>Need a hint? ({freeHints} free)</span>
           </button>
         )}
@@ -407,13 +407,13 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
       <div className="w-full grid grid-cols-2 gap-3 sm:gap-4 mb-3">
         {currentProblem.options.map((opt, idx) => {
           const isSelected = selectedOption === opt;
-          let btnStyle = 'bg-white dark:bg-[#161a29] text-slate-900 dark:text-white border-black dark:border-[#2f3752] hover:bg-slate-50 dark:hover:bg-[#1f2438]';
+          let btnStyle = 'bg-white dark:bg-[#181d2f] text-slate-800 dark:text-white border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-[#202538]';
 
           if (isSelected) {
             if (isCorrect) {
-              btnStyle = 'bg-[#00a859] text-white border-[#006633] scale-[1.02] shadow-[3px_3px_0_#006633]';
+              btnStyle = 'bg-[#a7f3d0] text-[#064e3b] border-[#34d399] scale-[1.02] shadow-sm';
             } else {
-              btnStyle = 'bg-[#e52521] text-white border-[#9e100e] animate-shake shadow-[3px_3px_0_#9e100e]';
+              btnStyle = 'bg-[#fecdd3] text-[#9f1239] border-[#f43f5e] animate-shake shadow-sm';
             }
           }
 
@@ -422,10 +422,10 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
               key={idx}
               disabled={selectedOption !== null || isGameOver}
               onClick={() => handleSelectOption(opt)}
-              className={`py-4 sm:py-5 px-3 rounded-2xl sm:rounded-3xl border-3 shadow-[4px_4px_0_#000] dark:shadow-[4px_4px_0_#1e293b] active:translate-y-1 transition text-xl sm:text-2xl lg:text-3xl font-black font-['Fredoka'] flex items-center justify-center gap-2 select-none ${btnStyle}`}
+              className={`py-4 sm:py-5 px-3 rounded-2xl sm:rounded-3xl border-2 shadow-sm active:translate-y-0.5 transition text-xl sm:text-2xl lg:text-3xl font-black font-['Fredoka'] flex items-center justify-center gap-2 select-none ${btnStyle}`}
             >
               <span>{opt}</span>
-              {isSelected && isCorrect && <CheckCircle2 className="w-5 h-5 text-white inline" />}
+              {isSelected && isCorrect && <CheckCircle2 className="w-5 h-5 text-[#064e3b] inline" />}
             </button>
           );
         })}

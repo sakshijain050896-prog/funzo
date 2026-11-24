@@ -167,19 +167,19 @@ export const MemoryMatch: React.FC<MemoryMatchProps> = ({ onWin, onBackToKids })
       {/* Top Header info */}
       <div className="w-full flex items-center justify-between mb-3 px-1">
         <div className="flex items-center gap-1.5 sm:gap-2">
-          {/* Level Badge */}
-          <div className="px-3 py-1.5 rounded-xl bg-[#00a859] border-2 border-[#006633] text-white text-xs font-black shadow-sm">
+          {/* Level Badge - Pastel Mint */}
+          <div className="px-3 py-1.5 rounded-2xl bg-[#a7f3d0] border-2 border-[#6ee7b7] text-[#065f46] text-xs font-black shadow-sm">
             <span>Level {level}</span>
           </div>
 
-          {/* Moves Badge */}
-          <div className="px-2.5 py-1.5 rounded-xl bg-white dark:bg-[#161a29] border-2 border-slate-300 dark:border-[#2f3752] text-xs font-black text-slate-800 dark:text-white shadow-sm">
-            Moves: <span className="font-pixel text-[#e52521] ml-0.5">{moves}</span>
+          {/* Moves Badge - Pastel Neutral */}
+          <div className="px-2.5 py-1.5 rounded-2xl bg-white/95 dark:bg-[#181d2f]/95 border-2 border-slate-200 dark:border-slate-700 text-xs font-black text-slate-800 dark:text-white shadow-sm">
+            Moves: <span className="font-pixel text-[#e11d48] ml-0.5">{moves}</span>
           </div>
 
-          {/* Timer */}
-          <div className="px-2.5 py-1.5 rounded-xl bg-white dark:bg-[#161a29] border-2 border-slate-300 dark:border-[#2f3752] text-xs font-black text-amber-500 shadow-sm">
-            ⏱️ <span className="font-pixel text-slate-900 dark:text-white ml-0.5">{formatTime(seconds)}</span>
+          {/* Timer - Pastel Sunshine */}
+          <div className="px-2.5 py-1.5 rounded-2xl bg-[#fef9c3] border-2 border-[#fef08a] text-xs font-black text-[#854d0e] shadow-sm">
+            ⏱️ <span className="font-pixel text-[#854d0e] ml-0.5">{formatTime(seconds)}</span>
           </div>
         </div>
 
@@ -187,7 +187,7 @@ export const MemoryMatch: React.FC<MemoryMatchProps> = ({ onWin, onBackToKids })
           {onBackToKids && (
             <button
               onClick={onBackToKids}
-              className="px-2.5 py-1.5 rounded-xl bg-amber-100 hover:bg-amber-200 dark:bg-amber-950/60 border-2 border-amber-300 dark:border-amber-700/50 text-amber-900 dark:text-amber-300 font-black text-xs transition active:scale-95"
+              className="px-2.5 py-1.5 rounded-2xl bg-[#fef3c7] hover:bg-[#fde68a] border-2 border-[#fde68a] text-[#92400e] font-black text-xs transition active:scale-95 shadow-sm"
               title="Back to Kids Games"
             >
               ← Kids
@@ -196,7 +196,7 @@ export const MemoryMatch: React.FC<MemoryMatchProps> = ({ onWin, onBackToKids })
 
           <button
             onClick={handleRestartCurrent}
-            className="p-1.5 sm:p-2 rounded-xl bg-white dark:bg-[#161a29] border-2 border-slate-300 dark:border-[#2f3752] text-slate-700 dark:text-slate-300 hover:text-[#e52521] transition active:scale-95 shadow-sm"
+            className="p-1.5 sm:p-2 rounded-2xl bg-white dark:bg-[#181d2f] border-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-[#e11d48] transition active:scale-95 shadow-sm"
             title="Restart Level"
           >
             <RotateCcw className="w-4 h-4" />
@@ -211,18 +211,18 @@ export const MemoryMatch: React.FC<MemoryMatchProps> = ({ onWin, onBackToKids })
         </span>
       </div>
 
-      {/* Memory Card Grid */}
-      <div className={`relative w-full p-3 rounded-3xl bg-white dark:bg-[#161a29] border-3 border-black dark:border-[#2f3752] shadow-[4px_4px_0_#000] grid ${gridColsClass} gap-2 sm:gap-2.5`}>
+      {/* Memory Card Grid - Pastel Soft Container */}
+      <div className={`relative w-full p-3 sm:p-4 rounded-3xl bg-white/95 dark:bg-[#181d2f]/95 backdrop-blur-md border-2 border-slate-200 dark:border-slate-700/60 shadow-md grid ${gridColsClass} gap-2 sm:gap-2.5`}>
         {cards.map((card, idx) => (
           <button
             key={card.id}
             onClick={() => handleCardClick(idx)}
             className={`aspect-square rounded-2xl flex items-center justify-center text-2xl sm:text-3xl transition-all duration-300 active:scale-95 border-2 ${
               card.isMatched
-                ? 'bg-gradient-to-tr from-emerald-400 to-green-500 text-white shadow-md border-emerald-600 scale-[0.98]'
+                ? 'bg-gradient-to-tr from-[#a7f3d0] to-[#6ee7b7] text-white shadow-sm border-[#34d399] scale-[0.98]'
                 : card.isFlipped
-                ? 'bg-gradient-to-tr from-amber-200 to-yellow-300 border-amber-500 text-slate-900 shadow-md scale-105'
-                : 'bg-slate-100 hover:bg-slate-200 dark:bg-[#22283a] dark:hover:bg-[#2b334a] border-slate-300 dark:border-[#444] text-slate-400 hover:scale-105'
+                ? 'bg-gradient-to-tr from-[#fef08a] to-[#fde047] border-[#facc15] text-slate-900 shadow-sm scale-105'
+                : 'bg-slate-100 hover:bg-slate-200/80 dark:bg-[#22283a] dark:hover:bg-[#2b334a] border-slate-200 dark:border-slate-700 text-slate-400 hover:scale-105'
             }`}
           >
             {card.isFlipped || card.isMatched ? card.emoji : '❓'}
@@ -231,20 +231,20 @@ export const MemoryMatch: React.FC<MemoryMatchProps> = ({ onWin, onBackToKids })
 
         {/* Won Overlay Banner */}
         {isWon && (
-          <div className="absolute inset-0 bg-black/80 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center p-5 z-20 animate-fade-in text-center">
-            <div className="w-14 h-14 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center mb-2.5 shadow-lg border-2 border-black animate-bounce">
-              <Trophy className="w-8 h-8 fill-slate-950" />
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center p-5 z-20 animate-fade-in text-center">
+            <div className="w-14 h-14 rounded-3xl bg-[#fef08a] text-[#854d0e] border-2 border-[#facc15] flex items-center justify-center mb-2.5 shadow-md animate-bounce">
+              <Trophy className="w-8 h-8 fill-current" />
             </div>
-            <span className="text-xs font-black uppercase text-yellow-300 font-pixel">FANTASTIC MEMORY!</span>
+            <span className="text-xs font-black uppercase text-[#fef08a] font-pixel">FANTASTIC MEMORY!</span>
             <h3 className="text-2xl font-black text-white mt-1">Level {level} Cleared! 🎉</h3>
-            <p className="text-xs text-slate-200 my-2">
+            <p className="text-xs text-slate-100 my-2">
               All {currentConfig.pairs.length} pairs matched in {moves} moves · {formatTime(seconds)}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-2 w-full mt-2">
               <button
                 onClick={handleNextLevel}
-                className="flex-1 py-3 px-4 rounded-2xl bg-[#00a859] hover:bg-[#00c868] border-b-4 border-[#006633] text-white font-black text-xs shadow-md active:translate-y-0.5 transition flex items-center justify-center gap-1.5"
+                className="flex-1 py-3 px-4 rounded-2xl bg-[#a7f3d0] hover:bg-[#6ee7b7] border-b-4 border-[#059669] text-[#064e3b] font-black text-xs shadow-md active:translate-y-0.5 transition flex items-center justify-center gap-1.5"
               >
                 <span>{level < 3 ? `Next Level (Level ${level + 1})` : 'Play Again (Level 1)'}</span>
                 <ArrowRight className="w-4 h-4" />
@@ -253,7 +253,7 @@ export const MemoryMatch: React.FC<MemoryMatchProps> = ({ onWin, onBackToKids })
               {onBackToKids && (
                 <button
                   onClick={onBackToKids}
-                  className="py-3 px-4 rounded-2xl bg-white dark:bg-[#22283a] border-2 border-slate-300 dark:border-[#444] text-slate-900 dark:text-white font-black text-xs shadow-md active:translate-y-0.5 transition flex items-center justify-center gap-1"
+                  className="py-3 px-4 rounded-2xl bg-white/90 hover:bg-white border-2 border-slate-200 text-slate-800 font-black text-xs shadow-md active:translate-y-0.5 transition flex items-center justify-center gap-1"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
                   <span>Kids Games</span>

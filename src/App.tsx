@@ -47,7 +47,7 @@ export const App: React.FC = () => {
   const [soundEnabled, setSoundEnabled] = useState<boolean>(getSoundPreference);
   const [theme, setTheme] = useState<ThemeMode>(getThemePreference);
   const [activeNavTab, setActiveNavTab] = useState<DashboardNavTab>('home');
-  const [activeCategory, setActiveCategory] = useState<CategoryFilter>('kids');
+  const [activeCategory, setActiveCategory] = useState<CategoryFilter>('all');
   const [activeGame, setActiveGame] = useState<GameKey | null>(null);
   const [activeSubTab, setActiveSubTab] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -209,9 +209,9 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-[100dvh] w-full bg-[#5c94fc] dark:bg-[#0c101c] text-slate-900 dark:text-slate-100 flex overflow-x-hidden transition-colors duration-200 relative font-['Fredoka']">
+    <div className="min-h-[100dvh] w-full bg-gradient-to-br from-[#fdfbf7] via-[#f4f6fc] to-[#eff4fb] dark:from-[#111420] dark:via-[#161a29] dark:to-[#1a1f32] text-slate-800 dark:text-slate-100 flex overflow-x-hidden transition-colors duration-200 relative font-['Fredoka']">
       {/* Mario Overworld Retro Floating Clouds */}
-      <div className="fixed inset-0 pointer-events-none opacity-20 dark:opacity-5 overflow-hidden z-0 select-none">
+      <div className="fixed inset-0 pointer-events-none opacity-15 dark:opacity-5 overflow-hidden z-0 select-none">
         <div className="absolute top-12 left-[8%] text-5xl">☁️</div>
         <div className="absolute top-28 left-[58%] text-6xl">☁️</div>
         <div className="absolute top-52 left-[32%] text-4xl">☁️</div>
@@ -267,10 +267,10 @@ export const App: React.FC = () => {
           {activeGame !== null ? (
             <div className="w-full flex flex-col items-center animate-fade-in">
               {/* Back Bar & Game Navigation */}
-              <div className="w-full flex items-center justify-between gap-2 mb-4 p-2.5 sm:p-3 rounded-2xl bg-white dark:bg-[#161a29] border-3 border-black dark:border-[#2f3752] shadow-[4px_4px_0_#000]">
+              <div className="w-full flex items-center justify-between gap-2 mb-4 p-2.5 sm:p-3 rounded-2xl bg-white/95 dark:bg-[#181d2f]/95 backdrop-blur-md border-2 border-slate-200 dark:border-slate-700/60 shadow-sm">
                 <button
                   onClick={handleBackToHub}
-                  className="px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-[#00a859] hover:bg-[#00c868] border-2 border-black border-b-4 border-b-[#006633] text-xs font-black text-white transition flex items-center gap-1 active:translate-y-0.5 shadow-sm font-['Fredoka'] shrink-0"
+                  className="px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-[#a7f3d0] hover:bg-[#6ee7b7] border-2 border-[#6ee7b7] border-b-4 border-b-[#059669] text-xs font-black text-[#064e3b] transition flex items-center gap-1 active:translate-y-0.5 shadow-sm font-['Fredoka'] shrink-0"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   <span className="hidden sm:inline">← Back to Games</span>
@@ -298,14 +298,14 @@ export const App: React.FC = () => {
                       'The Case Files'
                     )}
                   </span>
-                  <span className="hidden sm:inline-block px-2 py-0.5 rounded-md bg-[#e52521] text-[9px] font-black text-white uppercase border border-black font-['Fredoka'] shrink-0">
+                  <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-lg bg-[#fecdd3] text-[#9f1239] text-[9px] font-black uppercase border border-[#fda4af] font-['Fredoka'] shrink-0">
                     PLAYING
                   </span>
                 </div>
 
                 <button
                   onClick={() => handleOpenHowToPlay(activeGame)}
-                  className="p-2 sm:p-2.5 rounded-xl bg-[#fbd000] hover:bg-[#ffe34d] border-2 border-black text-slate-950 transition active:translate-y-0.5 shadow-sm shrink-0"
+                  className="p-2 sm:p-2.5 rounded-xl bg-[#fef08a] hover:bg-[#fde047] border-2 border-[#facc15] text-[#854d0e] transition active:translate-y-0.5 shadow-sm shrink-0"
                   title="How to Play"
                 >
                   <HelpCircle className="w-4 h-4" />

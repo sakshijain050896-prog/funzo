@@ -18,16 +18,16 @@ export interface GameCatalogItem {
 
 export const CATEGORY_THEMES: Record<string, { tagBg: string; buttonBg: string }> = {
   brain: {
-    tagBg: 'bg-sky-100 text-sky-900 dark:bg-sky-950/80 dark:text-sky-300 border border-sky-300 dark:border-sky-700/50',
-    buttonBg: 'mario-btn-blue',
+    tagBg: 'bg-[#e0f2fe] text-[#0369a1] dark:bg-sky-950/70 dark:text-sky-300 border border-[#bae6fd] dark:border-sky-800/40',
+    buttonBg: 'bg-[#bae6fd] hover:bg-[#7dd3fc] text-[#0369a1] border-b-3 border-[#38bdf8] shadow-sm active:translate-y-0.5',
   },
   social: {
-    tagBg: 'bg-rose-100 text-rose-900 dark:bg-rose-950/80 dark:text-rose-300 border border-rose-300 dark:border-rose-700/50',
-    buttonBg: 'mario-btn-red',
+    tagBg: 'bg-[#ffe4e6] text-[#be123c] dark:bg-rose-950/70 dark:text-rose-300 border border-[#fecdd3] dark:border-rose-800/40',
+    buttonBg: 'bg-[#fecdd3] hover:bg-[#fda4af] text-[#9f1239] border-b-3 border-[#f43f5e] shadow-sm active:translate-y-0.5',
   },
   kids: {
-    tagBg: 'bg-amber-100 text-amber-950 dark:bg-amber-950/80 dark:text-amber-300 border border-amber-300 dark:border-amber-700/50',
-    buttonBg: 'mario-btn-yellow text-slate-950',
+    tagBg: 'bg-[#d1fae5] text-[#065f46] dark:bg-emerald-950/70 dark:text-emerald-300 border border-[#a7f3d0] dark:border-emerald-800/40',
+    buttonBg: 'bg-[#a7f3d0] hover:bg-[#6ee7b7] text-[#065f46] border-b-3 border-[#34d399] shadow-sm active:translate-y-0.5',
   },
 };
 
@@ -40,7 +40,7 @@ export const ALL_GAMES_DATA: GameCatalogItem[] = [
     genreLabel: 'Brain & Logic',
     tag: 'Math & Logic',
     emoji: '🧮',
-    bgGradient: 'from-sky-500 to-blue-600',
+    bgGradient: 'from-[#bae6fd] to-[#93c5fd]',
   },
   {
     id: 'arrows',
@@ -49,7 +49,7 @@ export const ALL_GAMES_DATA: GameCatalogItem[] = [
     genreLabel: 'Brain & Logic',
     tag: 'Spatial Maze',
     emoji: '🚀',
-    bgGradient: 'from-teal-500 to-emerald-600',
+    bgGradient: 'from-[#a7f3d0] to-[#6ee7b7]',
   },
   {
     id: '2048',
@@ -58,7 +58,7 @@ export const ALL_GAMES_DATA: GameCatalogItem[] = [
     genreLabel: 'Brain & Logic',
     tag: 'Number Merge',
     emoji: '⚡',
-    bgGradient: 'from-purple-500 to-indigo-600',
+    bgGradient: 'from-[#e9d5ff] to-[#c4b5fd]',
   },
 
   // 2. SOCIAL & PARTY (SPILL IT)
@@ -70,7 +70,7 @@ export const ALL_GAMES_DATA: GameCatalogItem[] = [
     genreLabel: 'Party & Social',
     tag: 'Party Favorite',
     emoji: '🔥',
-    bgGradient: 'from-rose-500 to-pink-600',
+    bgGradient: 'from-[#fecdd3] to-[#fda4af]',
   },
   {
     id: '2t1l',
@@ -80,7 +80,7 @@ export const ALL_GAMES_DATA: GameCatalogItem[] = [
     genreLabel: 'Party & Social',
     tag: 'Spot the Lie',
     emoji: '🤥',
-    bgGradient: 'from-emerald-500 to-green-600',
+    bgGradient: 'from-[#d9f99d] to-[#bef264]',
   },
   {
     id: 'tod',
@@ -90,7 +90,7 @@ export const ALL_GAMES_DATA: GameCatalogItem[] = [
     genreLabel: 'Party & Social',
     tag: 'Social Vote',
     emoji: '⚖️',
-    bgGradient: 'from-amber-500 to-orange-600',
+    bgGradient: 'from-[#fed7aa] to-[#fdba74]',
   },
   {
     id: 'tod',
@@ -100,7 +100,7 @@ export const ALL_GAMES_DATA: GameCatalogItem[] = [
     genreLabel: 'Party & Social',
     tag: 'Confessions',
     emoji: '🙈',
-    bgGradient: 'from-fuchsia-500 to-purple-600',
+    bgGradient: 'from-[#fbcfe8] to-[#f472b6]',
   },
 
   // 3. KIDS FUN
@@ -111,7 +111,7 @@ export const ALL_GAMES_DATA: GameCatalogItem[] = [
     genreLabel: 'Kids Fun',
     tag: 'Balloon Fun',
     emoji: '🎈',
-    bgGradient: 'from-pink-500 to-rose-600',
+    bgGradient: 'from-[#fecdd3] to-[#f472b6]',
   },
   {
     id: 'memory',
@@ -120,7 +120,7 @@ export const ALL_GAMES_DATA: GameCatalogItem[] = [
     genreLabel: 'Kids Fun',
     tag: 'Animal Match',
     emoji: '🐶',
-    bgGradient: 'from-amber-400 to-yellow-600',
+    bgGradient: 'from-[#fef08a] to-[#fde047]',
   },
   {
     id: 'tictactoe',
@@ -129,7 +129,7 @@ export const ALL_GAMES_DATA: GameCatalogItem[] = [
     genreLabel: 'Kids Fun',
     tag: '3-in-a-Row',
     emoji: '❌⭕',
-    bgGradient: 'from-emerald-500 to-teal-600',
+    bgGradient: 'from-[#a7f3d0] to-[#5eead4]',
   },
 ];
 
@@ -186,6 +186,12 @@ export const AllGamesCatalog: React.FC<AllGamesCatalogProps> = ({
               ? ALL_GAMES_DATA.length 
               : ALL_GAMES_DATA.filter((g) => g.genre === tab.id).length;
 
+            let tabActiveStyle = 'bg-[#c7d2fe] text-[#312e81] border-2 border-[#a5b4fc] shadow-sm';
+            if (tab.id === 'all') tabActiveStyle = 'bg-[#fef3c7] text-[#92400e] border-2 border-[#fde68a] shadow-sm';
+            if (tab.id === 'brain') tabActiveStyle = 'bg-[#bae6fd] text-[#0369a1] border-2 border-[#7dd3fc] shadow-sm';
+            if (tab.id === 'social') tabActiveStyle = 'bg-[#fecdd3] text-[#9f1239] border-2 border-[#fda4af] shadow-sm';
+            if (tab.id === 'kids') tabActiveStyle = 'bg-[#a7f3d0] text-[#065f46] border-2 border-[#6ee7b7] shadow-sm';
+
             return (
               <button
                 key={tab.id}
@@ -193,17 +199,17 @@ export const AllGamesCatalog: React.FC<AllGamesCatalogProps> = ({
                   sound.playTap();
                   setSelectedCategory(tab.id);
                 }}
-                className={`px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 shrink-0 transition-all font-['Fredoka'] ${
+                className={`px-3 py-1.5 rounded-2xl text-xs font-black flex items-center gap-1.5 shrink-0 transition-all font-['Fredoka'] ${
                   isSelected
-                    ? 'bg-[#e52521] text-white border-2 border-[#9e100e] shadow-[2px_2px_0_#9e100e] scale-[1.02]'
-                    : 'bg-white dark:bg-[#161a29] text-slate-700 dark:text-slate-300 border-2 border-slate-300 dark:border-[#2f3752] hover:border-slate-400 dark:hover:border-slate-500 shadow-sm'
+                    ? `${tabActiveStyle} scale-[1.02]`
+                    : 'bg-white/80 dark:bg-[#181d2f]/80 text-slate-700 dark:text-slate-300 border-2 border-slate-200 dark:border-slate-700/60 hover:bg-slate-50 shadow-sm'
                 }`}
               >
                 <span>{tab.emoji}</span>
                 <span>{tab.label}</span>
                 <span className={`text-[10px] px-1.5 py-0.2 rounded-md font-pixel ${
                   isSelected 
-                    ? 'bg-white/20 text-white' 
+                    ? 'bg-black/10 text-current' 
                     : 'bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-400'
                 }`}>
                   {count}
@@ -244,7 +250,7 @@ export const AllGamesCatalog: React.FC<AllGamesCatalogProps> = ({
                   sound.playTap();
                   onSelectGame(game.id, game.subTab);
                 }}
-                className="w-full p-2.5 sm:p-3 rounded-2xl bg-white dark:bg-[#161a29] border-2 border-black dark:border-[#2f3752] shadow-[2px_2px_0_#000] dark:shadow-[2px_2px_0_#1e293b] hover:border-[#e52521] hover:shadow-[3px_3px_0_#000] hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-between gap-3 group"
+                className="w-full p-2.5 sm:p-3 rounded-2xl bg-white/95 dark:bg-[#181d2f]/95 backdrop-blur-sm border-2 border-slate-200 dark:border-slate-700/60 shadow-sm hover:shadow-md hover:border-indigo-300 dark:hover:border-indigo-500/50 hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-between gap-3 group"
               >
                 {/* Left: Game Icon & Title */}
                 <div className="flex items-center gap-3 overflow-hidden min-w-0">
