@@ -36,21 +36,31 @@ export const CATEGORY_THEMES: Record<string, { tagBg: string; buttonBg: string }
 };
 
 export const ALL_GAMES_DATA: GameCatalogItem[] = [
-  // 0. QUIZ UP (10,000+ TRIVIA)
+  // 0. QUIZ UP TRIVIA
   {
     id: 'quizup',
     subTab: 'all',
-    title: 'Quiz Up (10,000+ Qs)',
+    title: 'Quiz Up: General Knowledge',
     genre: 'quiz',
     genreLabel: 'Quiz Up',
-    tag: '10k+ GK Trivia',
+    tag: 'All GK Trivia',
     emoji: '💡',
     bgGradient: 'from-[#fef08a] to-[#fde047]',
   },
   {
     id: 'quizup',
+    subTab: 'cinema',
+    title: 'Quiz Up: Bollywood & Hollywood',
+    genre: 'quiz',
+    genreLabel: 'Quiz Up',
+    tag: 'Movies & Cinema',
+    emoji: '🎬',
+    bgGradient: 'from-[#fecdd3] to-[#fda4af]',
+  },
+  {
+    id: 'quizup',
     subTab: 'science',
-    title: 'Quiz Up: Science',
+    title: 'Quiz Up: Science & Nature',
     genre: 'quiz',
     genreLabel: 'Quiz Up',
     tag: 'Biology & Space',
@@ -60,7 +70,7 @@ export const ALL_GAMES_DATA: GameCatalogItem[] = [
   {
     id: 'quizup',
     subTab: 'physics',
-    title: 'Quiz Up: Physics',
+    title: 'Quiz Up: Physics & Energy',
     genre: 'quiz',
     genreLabel: 'Quiz Up',
     tag: 'Forces & Energy',
@@ -70,7 +80,7 @@ export const ALL_GAMES_DATA: GameCatalogItem[] = [
   {
     id: 'quizup',
     subTab: 'chemistry',
-    title: 'Quiz Up: Chemistry',
+    title: 'Quiz Up: Chemistry & Elements',
     genre: 'quiz',
     genreLabel: 'Quiz Up',
     tag: 'Elements & Reactions',
@@ -80,7 +90,7 @@ export const ALL_GAMES_DATA: GameCatalogItem[] = [
   {
     id: 'quizup',
     subTab: 'history',
-    title: 'Quiz Up: History',
+    title: 'Quiz Up: World History',
     genre: 'quiz',
     genreLabel: 'Quiz Up',
     tag: 'World Events & Civs',
@@ -90,12 +100,42 @@ export const ALL_GAMES_DATA: GameCatalogItem[] = [
   {
     id: 'quizup',
     subTab: 'math',
-    title: 'Quiz Up: Math',
+    title: 'Quiz Up: Math & Logic',
     genre: 'quiz',
     genreLabel: 'Quiz Up',
-    tag: 'Geometry & Numbers',
+    tag: 'Numbers & Geometry',
     emoji: '🧮',
     bgGradient: 'from-[#fecdd3] to-[#fda4af]',
+  },
+  {
+    id: 'quizup',
+    subTab: 'geography',
+    title: 'Quiz Up: Geography & Wonders',
+    genre: 'quiz',
+    genreLabel: 'Quiz Up',
+    tag: 'World Wonders',
+    emoji: '🌍',
+    bgGradient: 'from-[#ccfbf1] to-[#99f6e4]',
+  },
+  {
+    id: 'quizup',
+    subTab: 'tech',
+    title: 'Quiz Up: Tech & Inventions',
+    genre: 'quiz',
+    genreLabel: 'Quiz Up',
+    tag: 'Computers & Gadgets',
+    emoji: '💻',
+    bgGradient: 'from-[#e0e7ff] to-[#c7d2fe]',
+  },
+  {
+    id: 'quizup',
+    subTab: 'sports',
+    title: 'Quiz Up: Sports & Olympics',
+    genre: 'quiz',
+    genreLabel: 'Quiz Up',
+    tag: 'Cricket & Football',
+    emoji: '⚽',
+    bgGradient: 'from-[#ecfccb] to-[#d9f99d]',
   },
 
   // 1. BRAIN & LOGIC PUZZLES
@@ -200,8 +240,8 @@ export const ALL_GAMES_DATA: GameCatalogItem[] = [
 ];
 
 const CATEGORY_TABS: { id: CategoryFilter; label: string; emoji: string }[] = [
-  { id: 'quiz', label: 'Quiz Up', emoji: '💡' },
   { id: 'all', label: 'All Games', emoji: '⭐' },
+  { id: 'quiz', label: 'Quiz Up', emoji: '💡' },
   { id: 'brain', label: 'Brain & Logic', emoji: '🧩' },
   { id: 'social', label: 'Party & Social', emoji: '🔥' },
   { id: 'kids', label: 'Kids Games', emoji: '🎈' },

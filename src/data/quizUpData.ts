@@ -1,7 +1,19 @@
-// Quiz Up - Comprehensive 10,000+ Question Knowledge Engine
-// Covers Science, Physics, Chemistry, History, Mathematics, Geography, and General Knowledge.
+// Quiz Up - Comprehensive Trivia & Knowledge Engine
+// Covers Cinema (Bollywood & Hollywood), Science, Physics, Chemistry, History, Math, Geography, Tech, and Sports.
 
-export type QuizTopic = 'all' | 'science' | 'physics' | 'chemistry' | 'history' | 'math';
+export type QuizTopic =
+  | 'all'
+  | 'cinema'
+  | 'science'
+  | 'physics'
+  | 'chemistry'
+  | 'history'
+  | 'math'
+  | 'geography'
+  | 'tech'
+  | 'sports';
+
+export type QuizDifficulty = 'all' | 'easy' | 'medium' | 'hard';
 
 export interface QuizQuestion {
   id: string;
@@ -15,656 +27,824 @@ export interface QuizQuestion {
   difficulty: 'easy' | 'medium' | 'hard';
 }
 
-// ---------------- 1. CURATED MULTI-DISCIPLINARY CORE DATABASE ----------------
+// ---------------- 1. CURATED QUESTIONS (INCLUDING TRICKY QUESTIONS) ----------------
 export const CURATED_QUIZ_QUESTIONS: Omit<QuizQuestion, 'id'>[] = [
-  // --- PHYSICS & MECHANICS ---
+  // ==================== CINEMA (BOLLYWOOD & HOLLYWOOD) ====================
+  {
+    topic: 'cinema',
+    topicLabel: 'Bollywood & Hollywood',
+    topicEmoji: '🎬',
+    question: 'In the iconic Bollywood film "Dilwale Dulhania Le Jayenge" (DDLJ), who played Raj Malhotra?',
+    options: ['Shah Rukh Khan', 'Salman Khan', 'Aamir Khan', 'Akshay Kumar'],
+    answer: 'Shah Rukh Khan',
+    explanation: 'Shah Rukh Khan portrayed Raj Malhotra in the 1995 cult classic directed by Aditya Chopra.',
+    difficulty: 'easy',
+  },
+  {
+    topic: 'cinema',
+    topicLabel: 'Bollywood & Hollywood',
+    topicEmoji: '🎬',
+    question: 'Which Indian song won the Academy Award (Oscar) for Best Original Song in 2023?',
+    options: ['Naatu Naatu (RRR)', 'Jai Ho (Slumdog Millionaire)', 'Chhaiya Chhaiya (Dil Se)', 'Kesariya (Brahmastra)'],
+    answer: 'Naatu Naatu (RRR)',
+    explanation: 'Composed by M. M. Keeravani with lyrics by Chandrabose, Naatu Naatu won the Oscar for RRR.',
+    difficulty: 'easy',
+  },
+  {
+    topic: 'cinema',
+    topicLabel: 'Bollywood & Hollywood',
+    topicEmoji: '🎬',
+    question: 'Who played Tony Stark / Iron Man in the Marvel Cinematic Universe starting in 2008?',
+    options: ['Robert Downey Jr.', 'Chris Evans', 'Chris Hemsworth', 'Christian Bale'],
+    answer: 'Robert Downey Jr.',
+    explanation: 'Robert Downey Jr. launched the MCU with Iron Man (2008) and played the hero for over a decade.',
+    difficulty: 'easy',
+  },
+  {
+    topic: 'cinema',
+    topicLabel: 'Bollywood & Hollywood',
+    topicEmoji: '🎬',
+    question: 'In the classic movie "3 Idiots", what was Rancho’s real legal identity revealed to be?',
+    options: ['Phunsukh Wangdu', 'Chhote Lal', 'Ranchhoddas Chanchad', 'Manmohan'],
+    answer: 'Phunsukh Wangdu',
+    explanation: 'Rancho was actually Phunsukh Wangdu, a genius scientist living in Ladakh with 400 patents.',
+    difficulty: 'easy',
+  },
+  {
+    topic: 'cinema',
+    topicLabel: 'Bollywood & Hollywood',
+    topicEmoji: '🎬',
+    question: 'TRICKY: What was India’s very first full-length sound (talkie) motion picture in 1931?',
+    options: ['Alam Ara', 'Raja Harishchandra', 'Kisan Kanya', 'Mother India'],
+    answer: 'Alam Ara',
+    explanation: 'Alam Ara (1931) was India’s first talkie. Raja Harishchandra (1913) was the first feature film, but was silent.',
+    difficulty: 'medium',
+  },
+  {
+    topic: 'cinema',
+    topicLabel: 'Bollywood & Hollywood',
+    topicEmoji: '🎬',
+    question: 'TRICKY: In Christopher Nolan’s "Inception", what is Dom Cobb’s personal totem to test reality?',
+    options: ['A Spinning Top', 'A Loaded Die', 'A Chess Bishop', 'A Poker Chip'],
+    answer: 'A Spinning Top',
+    explanation: 'Cobb uses his late wife Mal’s spinning top; if it spins indefinitely without falling, he is dreaming.',
+    difficulty: 'medium',
+  },
+  {
+    topic: 'cinema',
+    topicLabel: 'Bollywood & Hollywood',
+    topicEmoji: '🎬',
+    question: 'TRICKY: Who is the only male actor to win three Academy Awards for Best Actor in a Leading Role?',
+    options: ['Daniel Day-Lewis', 'Jack Nicholson', 'Marlon Brando', 'Tom Hanks'],
+    answer: 'Daniel Day-Lewis',
+    explanation: 'Daniel Day-Lewis won Lead Actor for My Left Foot (1989), There Will Be Blood (2007), and Lincoln (2012).',
+    difficulty: 'medium',
+  },
+  {
+    topic: 'cinema',
+    topicLabel: 'Bollywood & Hollywood',
+    topicEmoji: '🎬',
+    question: 'TRICKY: What was the first Indian film ever officially nominated for the Academy Award for Best Foreign Language Film?',
+    options: ['Mother India (1957)', 'Lagaan (2001)', 'Salaam Bombay! (1988)', 'Pather Panchali (1955)'],
+    answer: 'Mother India (1957)',
+    explanation: 'Mehboob Khan’s "Mother India" was nominated in 1957, losing the Oscar by just one single vote!',
+    difficulty: 'medium',
+  },
+
+  // ==================== TRICKY SCIENCE & BIOLOGY ====================
+  {
+    topic: 'science',
+    topicLabel: 'Science & Nature',
+    topicEmoji: '🔬',
+    question: 'What organelle is widely known as the powerhouse of the cell?',
+    options: ['Mitochondria', 'Nucleus', 'Ribosome', 'Endoplasmic Reticulum'],
+    answer: 'Mitochondria',
+    explanation: 'Mitochondria produce ATP (adenosine triphosphate) through cellular respiration.',
+    difficulty: 'easy',
+  },
+  {
+    topic: 'science',
+    topicLabel: 'Science & Nature',
+    topicEmoji: '🔬',
+    question: 'What is the most abundant gas in planet Earth’s atmosphere?',
+    options: ['Nitrogen (~78%)', 'Oxygen (~21%)', 'Argon (~0.9%)', 'Carbon Dioxide (~0.04%)'],
+    answer: 'Nitrogen (~78%)',
+    explanation: 'Nitrogen makes up approximately 78% of dry atmosphere by volume, while oxygen is roughly 21%.',
+    difficulty: 'easy',
+  },
+  {
+    topic: 'science',
+    topicLabel: 'Science & Nature',
+    topicEmoji: '🔬',
+    question: 'TRICKY: Which human organ has the unique biological capability to regenerate its tissue back to full mass after partial removal?',
+    options: ['Liver', 'Kidney', 'Spleen', 'Pancreas'],
+    answer: 'Liver',
+    explanation: 'The liver is the only visceral human organ capable of natural tissue regeneration from as little as 25-30% remaining tissue.',
+    difficulty: 'medium',
+  },
+  {
+    topic: 'science',
+    topicLabel: 'Science & Nature',
+    topicEmoji: '🔬',
+    question: 'TRICKY: Approximately how many bones is a human baby born with before many fuse together in adulthood?',
+    options: ['Around 270–300 bones', 'Exactly 206 bones', 'Around 150 bones', 'Around 380 bones'],
+    answer: 'Around 270–300 bones',
+    explanation: 'Babies are born with ~270 to 300 bones, which gradually fuse into the 206 bones found in an adult skeleton.',
+    difficulty: 'medium',
+  },
+  {
+    topic: 'science',
+    topicLabel: 'Science & Nature',
+    topicEmoji: '🔬',
+    question: 'TRICKY: Botanically speaking, which of the following is classified as a Fruit rather than a vegetable?',
+    options: ['Tomato', 'Carrot', 'Spinach', 'Potato'],
+    answer: 'Tomato',
+    explanation: 'Botanically, tomatoes, cucumbers, and bell peppers are fruits because they develop from the flower ovary and contain seeds.',
+    difficulty: 'easy',
+  },
+  {
+    topic: 'science',
+    topicLabel: 'Science & Nature',
+    topicEmoji: '🔬',
+    question: 'TRICKY: What color does pure liquid oxygen exhibit under atmospheric condensation?',
+    options: ['Pale Blue', 'Colorless / Clear', 'Light Amber', 'Pale Violet'],
+    answer: 'Pale Blue',
+    explanation: 'Liquid oxygen is paramagnetically distinct and has a characteristic pale sky-blue color due to red light absorption.',
+    difficulty: 'medium',
+  },
+
+  // ==================== TRICKY PHYSICS ====================
   {
     topic: 'physics',
-    topicLabel: 'Physics',
+    topicLabel: 'Physics & Energy',
     topicEmoji: '⚡',
-    question: 'What is the speed of light in a vacuum (approximately)?',
-    options: ['300,000 km/s', '150,000 km/s', '1,000,000 km/s', '30,000 km/s'],
+    question: 'What is the speed of light in a vacuum (rounded)?',
+    options: ['300,000 km/s', '150,000 km/s', '30,000 km/s', '1,000,000 km/s'],
     answer: '300,000 km/s',
-    explanation: 'Light travels at approximately 299,792 km per second in a vacuum.',
+    explanation: 'Light travels at exactly 299,792 km/s in a vacuum.',
     difficulty: 'easy',
   },
   {
     topic: 'physics',
-    topicLabel: 'Physics',
+    topicLabel: 'Physics & Energy',
     topicEmoji: '⚡',
     question: 'What is the standard SI unit of electrical resistance?',
     options: ['Ohm (Ω)', 'Volt (V)', 'Ampere (A)', 'Watt (W)'],
     answer: 'Ohm (Ω)',
-    explanation: 'The Ohm is named after German physicist Georg Simon Ohm.',
+    explanation: 'The Ohm is named after physicist Georg Simon Ohm.',
     difficulty: 'easy',
   },
   {
     topic: 'physics',
-    topicLabel: 'Physics',
+    topicLabel: 'Physics & Energy',
     topicEmoji: '⚡',
-    question: 'Which fundamental law states that for every action, there is an equal and opposite reaction?',
-    options: ["Newton's Third Law", "Newton's First Law", "Newton's Second Law", "Law of Gravitation"],
-    answer: "Newton's Third Law",
-    explanation: "Newton's Third Law of Motion governs reciprocal forces between interacting bodies.",
+    question: 'TRICKY: If an astronaut drops a heavy hammer and a light feather together in the lunar vacuum, what happens?',
+    options: ['Both hit the surface simultaneously', 'Hammer hits first due to mass', 'Feather hits first due to air drag', 'Both float away without landing'],
+    answer: 'Both hit the surface simultaneously',
+    explanation: 'In the vacuum of space, all objects accelerate at the exact same rate regardless of mass, famously demonstrated on Apollo 15.',
+    difficulty: 'medium',
+  },
+  {
+    topic: 'physics',
+    topicLabel: 'Physics & Energy',
+    topicEmoji: '⚡',
+    question: 'TRICKY: Can mechanical sound waves propagate across outer space?',
+    options: ['No, sound requires a material medium to propagate', 'Yes, but sound travels at light speed in space', 'Yes, but only ultrasonic frequencies can travel', 'Only near planetary magnetic fields'],
+    answer: 'No, sound requires a material medium to propagate',
+    explanation: 'Mechanical sound waves require vibrating particles (air, liquid, or solid). In vacuum, sound cannot travel.',
     difficulty: 'easy',
   },
   {
     topic: 'physics',
-    topicLabel: 'Physics',
+    topicLabel: 'Physics & Energy',
     topicEmoji: '⚡',
-    question: 'What subatomic particle carries a negative electrical charge?',
-    options: ['Electron', 'Proton', 'Neutron', 'Positron'],
-    answer: 'Electron',
-    explanation: 'Electrons carry a charge of -1e, while protons are positive and neutrons neutral.',
-    difficulty: 'easy',
+    question: 'TRICKY: When a flat metal disc with a hole in the middle is uniformly heated, what happens to the hole?',
+    options: ['The hole gets bigger (expands)', 'The hole gets smaller (contracts)', 'The hole stays the exact same diameter', 'The hole warps into an ellipse'],
+    answer: 'The hole gets bigger (expands)',
+    explanation: 'Thermal expansion acts like photographic enlargement: every linear dimension, including internal cavities and holes, expands.',
+    difficulty: 'medium',
   },
   {
     topic: 'physics',
-    topicLabel: 'Physics',
+    topicLabel: 'Physics & Energy',
     topicEmoji: '⚡',
-    question: 'What phenomenon causes a straw to look bent when submerged in a glass of water?',
-    options: ['Refraction', 'Reflection', 'Diffraction', 'Polarization'],
+    question: 'TRICKY: What phenomenon causes a straight stick to appear bent when partially placed in water?',
+    options: ['Refraction', 'Reflection', 'Diffraction', 'Dispersion'],
     answer: 'Refraction',
-    explanation: 'Light bends (refracts) when traveling between media of different optical densities.',
-    difficulty: 'medium',
-  },
-  {
-    topic: 'physics',
-    topicLabel: 'Physics',
-    topicEmoji: '⚡',
-    question: 'What is the acceleration due to gravity on Earth’s surface (approximate standard)?',
-    options: ['9.8 m/s²', '8.9 m/s²', '11.2 m/s²', '6.67 m/s²'],
-    answer: '9.8 m/s²',
-    explanation: 'Standard Earth gravity (g) is approximately 9.80665 m/s².',
-    difficulty: 'medium',
-  },
-  {
-    topic: 'physics',
-    topicLabel: 'Physics',
-    topicEmoji: '⚡',
-    question: 'Who proposed the Special Theory of Relativity in 1905?',
-    options: ['Albert Einstein', 'Isaac Newton', 'Niels Bohr', 'Max Planck'],
-    answer: 'Albert Einstein',
-    explanation: 'Einstein published his groundbreaking paper on Special Relativity during his Annus Mirabilis in 1905.',
+    explanation: 'Light changes speed and bends when passing between media of differing refractive indices (air to water).',
     difficulty: 'easy',
   },
 
-  // --- CHEMISTRY & ELEMENTS ---
+  // ==================== TRICKY CHEMISTRY ====================
   {
     topic: 'chemistry',
-    topicLabel: 'Chemistry',
+    topicLabel: 'Chemistry & Elements',
     topicEmoji: '🧪',
-    question: 'What is the chemical symbol for the element Gold?',
-    options: ['Au', 'Ag', 'Gd', 'Fe'],
+    question: 'What is the chemical symbol for Gold on the periodic table?',
+    options: ['Au', 'Ag', 'Fe', 'Gd'],
     answer: 'Au',
-    explanation: 'The symbol Au comes from the Latin word for gold, "Aurum" (meaning shining dawn).',
+    explanation: 'Au comes from the Latin word "Aurum", which translates to shining dawn.',
     difficulty: 'easy',
   },
   {
     topic: 'chemistry',
-    topicLabel: 'Chemistry',
-    topicEmoji: '🧪',
-    question: 'What is the pH value of pure distilled water at 25°C?',
-    options: ['7.0 (Neutral)', '5.5 (Acidic)', '8.5 (Basic)', '0.0'],
-    answer: '7.0 (Neutral)',
-    explanation: 'Pure water has an equal concentration of H+ and OH- ions, giving it a neutral pH of 7.',
-    difficulty: 'easy',
-  },
-  {
-    topic: 'chemistry',
-    topicLabel: 'Chemistry',
-    topicEmoji: '🧪',
-    question: 'Which gas is the most abundant in Earth’s atmosphere?',
-    options: ['Nitrogen (~78%)', 'Oxygen (~21%)', 'Argon (~0.9%)', 'Carbon Dioxide (~0.04%)'],
-    answer: 'Nitrogen (~78%)',
-    explanation: 'Nitrogen gas (N₂) makes up roughly 78.08% of dry atmospheric air.',
-    difficulty: 'easy',
-  },
-  {
-    topic: 'chemistry',
-    topicLabel: 'Chemistry',
+    topicLabel: 'Chemistry & Elements',
     topicEmoji: '🧪',
     question: 'What is the chemical formula for ordinary table salt?',
-    options: ['NaCl', 'KCl', 'CaCl2', 'NaHCO3'],
+    options: ['NaCl', 'KCl', 'NaHCO3', 'CaCO3'],
     answer: 'NaCl',
-    explanation: 'Table salt is Sodium Chloride (NaCl), formed by ionic bonding of sodium and chlorine.',
+    explanation: 'Table salt is Sodium Chloride (NaCl), an ionic compound of sodium and chlorine.',
     difficulty: 'easy',
   },
   {
     topic: 'chemistry',
-    topicLabel: 'Chemistry',
+    topicLabel: 'Chemistry & Elements',
     topicEmoji: '🧪',
-    question: 'Which element has the atomic number 1 on the periodic table?',
-    options: ['Hydrogen', 'Helium', 'Carbon', 'Lithium'],
-    answer: 'Hydrogen',
-    explanation: 'Hydrogen (H) has a single proton in its nucleus, giving it atomic number 1.',
-    difficulty: 'easy',
+    question: 'TRICKY: What is the ONLY metallic element that remains liquid at standard room temperature and pressure?',
+    options: ['Mercury (Hg)', 'Gallium (Ga)', 'Bromine (Br)', 'Cesium (Cs)'],
+    answer: 'Mercury (Hg)',
+    explanation: 'Mercury is the only metal that is liquid at standard room conditions (Gallium melts in your hand at ~30°C).',
+    difficulty: 'medium',
   },
   {
     topic: 'chemistry',
-    topicLabel: 'Chemistry',
+    topicLabel: 'Chemistry & Elements',
     topicEmoji: '🧪',
-    question: 'What is the hardest naturally occurring mineral on Earth?',
-    options: ['Diamond', 'Corundum', 'Topaz', 'Quartz'],
-    answer: 'Diamond',
-    explanation: 'Diamond is pure crystallized carbon structured in a covalent tetrahedral lattice, scoring 10 on the Mohs scale.',
-    difficulty: 'easy',
+    question: 'TRICKY: What is the ONLY non-metallic element on the periodic table that is a liquid at room temperature?',
+    options: ['Bromine (Br)', 'Mercury (Hg)', 'Chlorine (Cl)', 'Iodine (I)'],
+    answer: 'Bromine (Br)',
+    explanation: 'Bromine is a reddish-brown liquid at standard room temperature. Mercury is a metal, not a non-metal!',
+    difficulty: 'medium',
   },
   {
     topic: 'chemistry',
-    topicLabel: 'Chemistry',
+    topicLabel: 'Chemistry & Elements',
     topicEmoji: '🧪',
-    question: 'Which of the following is a noble (inert) gas?',
-    options: ['Neon', 'Chlorine', 'Oxygen', 'Fluorine'],
-    answer: 'Neon',
-    explanation: 'Group 18 elements including Helium, Neon, Argon, and Krypton have complete valence shells.',
+    question: 'TRICKY: What primary acid is naturally secreted by the parietal cells in the human stomach for digestion?',
+    options: ['Hydrochloric Acid (HCl)', 'Sulfuric Acid (H2SO4)', 'Acetic Acid (CH3COOH)', 'Nitric Acid (HNO3)'],
+    answer: 'Hydrochloric Acid (HCl)',
+    explanation: 'Gastric acid contains Hydrochloric Acid (pH 1.5 to 3.5), which activates pepsin for protein digestion.',
     difficulty: 'medium',
+  },
+  {
+    topic: 'chemistry',
+    topicLabel: 'Chemistry & Elements',
+    topicEmoji: '🧪',
+    question: 'TRICKY: Diamond, Graphite, and Graphene are all allotropes composed entirely of which single chemical element?',
+    options: ['Carbon', 'Silicon', 'Boron', 'Germanium'],
+    answer: 'Carbon',
+    explanation: 'Diamond and graphite are pure elemental carbon with different crystalline lattices and bonding arrangements.',
+    difficulty: 'easy',
   },
 
-  // --- SCIENCE, BIOLOGY & NATURE ---
+  // ==================== TRICKY HISTORY ====================
   {
-    topic: 'science',
-    topicLabel: 'Science',
-    topicEmoji: '🔬',
-    question: 'Which organelle is commonly referred to as the "Powerhouse of the Cell"?',
-    options: ['Mitochondria', 'Nucleus', 'Ribosome', 'Endoplasmic Reticulum'],
-    answer: 'Mitochondria',
-    explanation: 'Mitochondria generate most of the chemical energy needed to power the cell’s biochemical reactions (ATP).',
+    topic: 'history',
+    topicLabel: 'World History',
+    topicEmoji: '🏛️',
+    question: 'In which modern-day country are the Great Pyramids of Giza located?',
+    options: ['Egypt', 'Sudan', 'Jordan', 'Greece'],
+    answer: 'Egypt',
+    explanation: 'The Giza pyramids stand near Cairo, Egypt, constructed during the Old Kingdom period.',
     difficulty: 'easy',
   },
   {
-    topic: 'science',
-    topicLabel: 'Science',
-    topicEmoji: '🔬',
-    question: 'How many planets are in our Solar System (officially recognized by the IAU)?',
-    options: ['8 Planets', '9 Planets', '7 Planets', '10 Planets'],
-    answer: '8 Planets',
-    explanation: 'Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, and Neptune (Pluto was reclassified as a dwarf planet in 2006).',
+    topic: 'history',
+    topicLabel: 'World History',
+    topicEmoji: '🏛️',
+    question: 'In which year did India gain Independence from British colonial rule?',
+    options: ['1947', '1950', '1942', '1935'],
+    answer: '1947',
+    explanation: 'India gained independence on August 15, 1947, through the Indian Independence Act.',
     difficulty: 'easy',
   },
   {
-    topic: 'science',
-    topicLabel: 'Science',
-    topicEmoji: '🔬',
-    question: 'What is the process by which green plants make food using sunlight?',
-    options: ['Photosynthesis', 'Respiration', 'Transpiration', 'Fermentation'],
-    answer: 'Photosynthesis',
-    explanation: 'Plants use chlorophyll to convert sunlight, carbon dioxide, and water into glucose and oxygen.',
-    difficulty: 'easy',
-  },
-  {
-    topic: 'science',
-    topicLabel: 'Science',
-    topicEmoji: '🔬',
-    question: 'What is the largest organ of the human body by surface area?',
-    options: ['Skin', 'Liver', 'Lungs', 'Small Intestine'],
-    answer: 'Skin',
-    explanation: 'The skin (integumentary system) covers approximately 20 square feet on an adult human.',
-    difficulty: 'easy',
-  },
-  {
-    topic: 'science',
-    topicLabel: 'Science',
-    topicEmoji: '🔬',
-    question: 'Which planet is known as the "Red Planet"?',
-    options: ['Mars', 'Venus', 'Jupiter', 'Mercury'],
-    answer: 'Mars',
-    explanation: 'Mars appears reddish because of widespread iron oxide (rust) covering its surface rocks.',
-    difficulty: 'easy',
-  },
-  {
-    topic: 'science',
-    topicLabel: 'Science',
-    topicEmoji: '🔬',
-    question: 'What is the DNA molecule’s signature geometrical shape?',
-    options: ['Double Helix', 'Single Spiral', 'Triple Strand', 'Conical Cylinder'],
-    answer: 'Double Helix',
-    explanation: 'Watson, Crick, and Franklin discovered that DNA consists of two antiparallel strands coiled around an axis.',
+    topic: 'history',
+    topicLabel: 'World History',
+    topicEmoji: '🏛️',
+    question: 'TRICKY: Cleopatra VII, the famous final ruler of Ptolemaic Egypt, was of which ethnic origin?',
+    options: ['Macedonian Greek', 'Native Egyptian', 'Roman', 'Persian'],
+    answer: 'Macedonian Greek',
+    explanation: 'Cleopatra was of Macedonian Greek ancestry, descended from Ptolemy I Soter, a general of Alexander the Great.',
     difficulty: 'medium',
+  },
+  {
+    topic: 'history',
+    topicLabel: 'World History',
+    topicEmoji: '🏛️',
+    question: 'TRICKY: How many years did the famous "Hundred Years’ War" between England and France actually last?',
+    options: ['116 years (1337–1453)', 'Exactly 100 years', '96 years', '105 years'],
+    answer: '116 years (1337–1453)',
+    explanation: 'The conflict spanned 116 years with several truces, concluding in 1453 with the Battle of Castillon.',
+    difficulty: 'medium',
+  },
+  {
+    topic: 'history',
+    topicLabel: 'World History',
+    topicEmoji: '🏛️',
+    question: 'TRICKY: What was the shortest recorded war in world history (the Anglo-Zanzibar War of 1896)?',
+    options: ['Between 38 and 45 minutes', '3 days', '24 hours', '2 weeks'],
+    answer: 'Between 38 and 45 minutes',
+    explanation: 'Fought on 27 August 1896, the conflict ended after British naval bombardment in under 45 minutes.',
+    difficulty: 'medium',
+  },
+  {
+    topic: 'history',
+    topicLabel: 'World History',
+    topicEmoji: '🏛️',
+    question: 'TRICKY: Which pre-Columbian civilization built the mountain citadel of Machu Picchu in Peru?',
+    options: ['Inca Empire', 'Maya Civilization', 'Aztec Empire', 'Olmec Civilization'],
+    answer: 'Inca Empire',
+    explanation: 'Machu Picchu was built in the 15th century by the Inca emperor Pachacuti in the Cusco Region.',
+    difficulty: 'easy',
   },
 
-  // --- HISTORY & CIVILIZATIONS ---
-  {
-    topic: 'history',
-    topicLabel: 'History',
-    topicEmoji: '🏛️',
-    question: 'In which year did Christopher Columbus first reach the Americas?',
-    options: ['1492', '1453', '1512', '1398'],
-    answer: '1492',
-    explanation: 'Columbus sailed the ocean blue and landed in the Bahamas archipelago in 1492.',
-    difficulty: 'easy',
-  },
-  {
-    topic: 'history',
-    topicLabel: 'History',
-    topicEmoji: '🏛️',
-    question: 'Who was the first President of the United States?',
-    options: ['George Washington', 'Thomas Jefferson', 'John Adams', 'Benjamin Franklin'],
-    answer: 'George Washington',
-    explanation: 'George Washington served as the first U.S. President from 1789 to 1797.',
-    difficulty: 'easy',
-  },
-  {
-    topic: 'history',
-    topicLabel: 'History',
-    topicEmoji: '🏛️',
-    question: 'What ancient structure in Egypt is the only surviving wonder of the ancient world?',
-    options: ['Great Pyramid of Giza', 'Colossus of Rhodes', 'Lighthouse of Alexandria', 'Hanging Gardens'],
-    answer: 'Great Pyramid of Giza',
-    explanation: 'Built around 2560 BC for Pharaoh Khufu, the Great Pyramid still stands intact today.',
-    difficulty: 'easy',
-  },
-  {
-    topic: 'history',
-    topicLabel: 'History',
-    topicEmoji: '🏛️',
-    question: 'In what year did World War II officially end?',
-    options: ['1945', '1944', '1939', '1918'],
-    answer: '1945',
-    explanation: 'World War II concluded in 1945 following the surrender of Axis forces in Europe and Asia.',
-    difficulty: 'easy',
-  },
-  {
-    topic: 'history',
-    topicLabel: 'History',
-    topicEmoji: '🏛️',
-    question: 'Who was the famous French emperor who was defeated at the Battle of Waterloo in 1815?',
-    options: ['Napoleon Bonaparte', 'Louis XIV', 'Charles de Gaulle', 'Charlemagne'],
-    answer: 'Napoleon Bonaparte',
-    explanation: 'Napoleon met his final defeat at Waterloo against the Seventh Coalition commanded by the Duke of Wellington.',
-    difficulty: 'medium',
-  },
-  {
-    topic: 'history',
-    topicLabel: 'History',
-    topicEmoji: '🏛️',
-    question: 'The Renaissance movement originally began in which European country?',
-    options: ['Italy (Florence)', 'France', 'England', 'Germany'],
-    answer: 'Italy (Florence)',
-    explanation: 'The Renaissance began in 14th-century Italian city-states like Florence and Venice before spreading across Europe.',
-    difficulty: 'medium',
-  },
-
-  // --- MATHEMATICS & LOGIC ---
+  // ==================== TRICKY MATHEMATICS ====================
   {
     topic: 'math',
-    topicLabel: 'Math',
+    topicLabel: 'Math & Logic',
     topicEmoji: '🧮',
-    question: 'What is the mathematical constant Pi (π) rounded to two decimal places?',
-    options: ['3.14', '3.41', '3.12', '3.16'],
-    answer: '3.14',
-    explanation: 'Pi is approximately 3.14159..., representing the ratio of a circle’s circumference to its diameter.',
+    question: 'What is the only even prime number in all of mathematics?',
+    options: ['2', '0', '4', '6'],
+    answer: '2',
+    explanation: '2 is the only even prime because any larger even number is divisible by 2.',
     difficulty: 'easy',
   },
   {
     topic: 'math',
-    topicLabel: 'Math',
+    topicLabel: 'Math & Logic',
     topicEmoji: '🧮',
-    question: 'What is the sum of interior angles in any triangle?',
+    question: 'What is the principal square root of 144 (√144)?',
+    options: ['12', '14', '16', '11'],
+    answer: '12',
+    explanation: '12 × 12 = 144.',
+    difficulty: 'easy',
+  },
+  {
+    topic: 'math',
+    topicLabel: 'Math & Logic',
+    topicEmoji: '🧮',
+    question: 'TRICKY: What is the mathematical value of 0! (Zero Factorial)?',
+    options: ['1', '0', 'Undefined', 'Infinity'],
+    answer: '1',
+    explanation: 'By convention and combinatorial definition (the number of ways to arrange 0 items is 1), 0! = 1.',
+    difficulty: 'medium',
+  },
+  {
+    topic: 'math',
+    topicLabel: 'Math & Logic',
+    topicEmoji: '🧮',
+    question: 'TRICKY: A right-angled triangle has legs of length 3 cm and 4 cm. What is the length of its hypotenuse?',
+    options: ['5 cm', '6 cm', '7 cm', '4.5 cm'],
+    answer: '5 cm',
+    explanation: 'By Pythagorean theorem: 3² + 4² = 9 + 16 = 25, and √25 = 5 cm.',
+    difficulty: 'easy',
+  },
+  {
+    topic: 'math',
+    topicLabel: 'Math & Logic',
+    topicEmoji: '🧮',
+    question: 'TRICKY: Which number is neither considered positive nor negative?',
+    options: ['0 (Zero)', '1', '-1', '0.5'],
+    answer: '0 (Zero)',
+    explanation: 'Zero is the neutral boundary separating positive and negative numbers on the real number line.',
+    difficulty: 'easy',
+  },
+  {
+    topic: 'math',
+    topicLabel: 'Math & Logic',
+    topicEmoji: '🧮',
+    question: 'TRICKY: How many degrees is the sum of interior angles in any Euclidean triangle?',
     options: ['180°', '360°', '90°', '270°'],
     answer: '180°',
-    explanation: 'The three interior angles of any planar Euclidean triangle always add up to 180 degrees.',
+    explanation: 'In Euclidean planar geometry, the sum of three interior angles in any triangle is always exactly 180° (π radians).',
+    difficulty: 'easy',
+  },
+
+  // ==================== GEOGRAPHY & WORLD WONDERS ====================
+  {
+    topic: 'geography',
+    topicLabel: 'Geography & Wonders',
+    topicEmoji: '🌍',
+    question: 'What is the largest ocean on planet Earth by surface area?',
+    options: ['Pacific Ocean', 'Atlantic Ocean', 'Indian Ocean', 'Arctic Ocean'],
+    answer: 'Pacific Ocean',
+    explanation: 'The Pacific Ocean covers over 30% of Earth’s surface, larger than all of Earth’s land area combined.',
     difficulty: 'easy',
   },
   {
-    topic: 'math',
-    topicLabel: 'Math',
-    topicEmoji: '🧮',
-    question: 'What is the only even prime number?',
-    options: ['2', '4', '0', '6'],
-    answer: '2',
-    explanation: '2 is divisible only by 1 and itself, making it the first and only even prime number.',
+    topic: 'geography',
+    topicLabel: 'Geography & Wonders',
+    topicEmoji: '🌍',
+    question: 'What is the federal capital city of Australia?',
+    options: ['Canberra', 'Sydney', 'Melbourne', 'Brisbane'],
+    answer: 'Canberra',
+    explanation: 'Canberra was chosen as the compromise capital in 1908 to resolve the rivalry between Sydney and Melbourne.',
     difficulty: 'easy',
   },
   {
-    topic: 'math',
-    topicLabel: 'Math',
-    topicEmoji: '🧮',
-    question: 'In the Pythagorean theorem (a² + b² = c²), what is "c" called?',
-    options: ['Hypotenuse', 'Adjacent side', 'Opposite side', 'Altitude'],
-    answer: 'Hypotenuse',
-    explanation: 'The hypotenuse is the longest side of a right-angled triangle, directly facing the 90° right angle.',
-    difficulty: 'easy',
-  },
-  {
-    topic: 'math',
-    topicLabel: 'Math',
-    topicEmoji: '🧮',
-    question: 'What is 2 to the power of 8 (2⁸)?',
-    options: ['256', '128', '512', '64'],
-    answer: '256',
-    explanation: 'Powers of 2: 2, 4, 8, 16, 32, 64, 128, 256.',
+    topic: 'geography',
+    topicLabel: 'Geography & Wonders',
+    topicEmoji: '🌍',
+    question: 'TRICKY: What is the largest desert in the entire world by geographic surface area?',
+    options: ['Antarctic Polar Desert', 'Sahara Desert', 'Arabian Desert', 'Gobi Desert'],
+    answer: 'Antarctic Polar Desert',
+    explanation: 'A desert is defined by low precipitation (<250mm/yr). Antarctica (~14.2 million km²) is the largest desert on Earth!',
     difficulty: 'medium',
   },
   {
-    topic: 'math',
-    topicLabel: 'Math',
-    topicEmoji: '🧮',
-    question: 'What Roman numeral represents the number 500?',
-    options: ['D', 'C', 'L', 'M'],
-    answer: 'D',
-    explanation: 'In Roman numerals: L = 50, C = 100, D = 500, M = 1000.',
+    topic: 'geography',
+    topicLabel: 'Geography & Wonders',
+    topicEmoji: '🌍',
+    question: 'TRICKY: Which country in the world contains the highest number of natural lakes?',
+    options: ['Canada', 'Finland', 'Russia', 'United States'],
+    answer: 'Canada',
+    explanation: 'Canada holds over 60% of all the world’s natural lakes (over 879,000 lakes).',
+    difficulty: 'medium',
+  },
+  {
+    topic: 'geography',
+    topicLabel: 'Geography & Wonders',
+    topicEmoji: '🌍',
+    question: 'TRICKY: In which European capital city is the iconic ancient Flavian Amphitheatre (Colosseum) located?',
+    options: ['Rome', 'Athens', 'Madrid', 'Florence'],
+    answer: 'Rome',
+    explanation: 'The Colosseum was commissioned by Emperor Vespasian in AD 72 in the heart of Rome, Italy.',
+    difficulty: 'easy',
+  },
+
+  // ==================== TECH & INVENTIONS ====================
+  {
+    topic: 'tech',
+    topicLabel: 'Tech & Inventions',
+    topicEmoji: '💻',
+    question: 'What does the abbreviation "WWW" stand for in web internet addresses?',
+    options: ['World Wide Web', 'World Wide Windows', 'Wide World Web', 'Web World Wide'],
+    answer: 'World Wide Web',
+    explanation: 'Sir Tim Berners-Lee invented the World Wide Web in 1989 while working at CERN.',
+    difficulty: 'easy',
+  },
+  {
+    topic: 'tech',
+    topicLabel: 'Tech & Inventions',
+    topicEmoji: '💻',
+    question: 'Who co-founded Apple Computers in 1976 alongside Steve Wozniak in a garage?',
+    options: ['Steve Jobs', 'Bill Gates', 'Paul Allen', 'Elon Musk'],
+    answer: 'Steve Jobs',
+    explanation: 'Steve Jobs, Steve Wozniak, and Ronald Wayne founded Apple Computer on April 1, 1976.',
+    difficulty: 'easy',
+  },
+  {
+    topic: 'tech',
+    topicLabel: 'Tech & Inventions',
+    topicEmoji: '💻',
+    question: 'TRICKY: What was Google’s original research project name when Larry Page and Sergey Brin started it at Stanford?',
+    options: ['BackRub', 'Googolplex', 'PageRanker', 'SearchMatrix'],
+    answer: 'BackRub',
+    explanation: 'The search engine was originally nicknamed "BackRub" because the system analyzed web backlinks.',
+    difficulty: 'medium',
+  },
+  {
+    topic: 'tech',
+    topicLabel: 'Tech & Inventions',
+    topicEmoji: '💻',
+    question: 'TRICKY: Which ubiquitous web programming language was created in just 10 days in May 1995 by Brendan Eich?',
+    options: ['JavaScript', 'Python', 'Java', 'PHP'],
+    answer: 'JavaScript',
+    explanation: 'Brendan Eich designed JavaScript in only 10 days while at Netscape Communications.',
+    difficulty: 'medium',
+  },
+  {
+    topic: 'tech',
+    topicLabel: 'Tech & Inventions',
+    topicEmoji: '💻',
+    question: 'TRICKY: What material was the world’s very first computer mouse made out of by Douglas Engelbart in 1964?',
+    options: ['Wood', 'Plastic', 'Aluminum', 'Bakelite'],
+    answer: 'Wood',
+    explanation: 'The first computer mouse prototype was hand-carved out of a block of wood with two metal wheels.',
+    difficulty: 'medium',
+  },
+
+  // ==================== SPORTS & ATHLETICS ====================
+  {
+    topic: 'sports',
+    topicLabel: 'Sports & Olympics',
+    topicEmoji: '⚽',
+    question: 'How many players are on the field for one team in a standard Cricket match?',
+    options: ['11 players', '9 players', '10 players', '12 players'],
+    answer: '11 players',
+    explanation: 'A cricket side consists of eleven active players, including one designated captain and wicket-keeper.',
+    difficulty: 'easy',
+  },
+  {
+    topic: 'sports',
+    topicLabel: 'Sports & Olympics',
+    topicEmoji: '⚽',
+    question: 'Which country has won the FIFA Men’s World Cup the most times in history (5 titles)?',
+    options: ['Brazil', 'Germany', 'Italy', 'Argentina'],
+    answer: 'Brazil',
+    explanation: 'Brazil has won 5 FIFA World Cups (1958, 1962, 1970, 1994, 2002).',
+    difficulty: 'easy',
+  },
+  {
+    topic: 'sports',
+    topicLabel: 'Sports & Olympics',
+    topicEmoji: '⚽',
+    question: 'TRICKY: What is the ONLY sport ever played on the surface of the Moon (by astronaut Alan Shepard during Apollo 14)?',
+    options: ['Golf', 'Baseball', 'Tennis', 'Javelin'],
+    answer: 'Golf',
+    explanation: 'Astronaut Alan Shepard famously hit two golf balls on the lunar surface using a makeshift 6-iron club in 1971.',
+    difficulty: 'medium',
+  },
+  {
+    topic: 'sports',
+    topicLabel: 'Sports & Olympics',
+    topicEmoji: '⚽',
+    question: 'TRICKY: What is the exact official distance of a standard Olympic marathon race?',
+    options: ['42.195 km (26 miles 385 yards)', '40.000 km', '45.200 km', '50.000 km'],
+    answer: '42.195 km (26 miles 385 yards)',
+    explanation: 'Standardized at the 1908 London Olympics so the race would start at Windsor Castle and finish in front of the Royal Box.',
     difficulty: 'medium',
   },
 ];
 
-// ---------------- 2. MASSIVE FACTUAL KNOWLEDGE POOLS FOR SYNTHESIZER ----------------
-
-// Elements for dynamic chemical trivia
-const ELEMENTS_DB = [
-  { name: 'Hydrogen', symbol: 'H', number: 1, group: 'Non-metal' },
-  { name: 'Helium', symbol: 'He', number: 2, group: 'Noble Gas' },
-  { name: 'Lithium', symbol: 'Li', number: 3, group: 'Alkali Metal' },
-  { name: 'Carbon', symbol: 'C', number: 6, group: 'Non-metal' },
-  { name: 'Nitrogen', symbol: 'N', number: 7, group: 'Non-metal' },
-  { name: 'Oxygen', symbol: 'O', number: 8, group: 'Non-metal' },
-  { name: 'Sodium', symbol: 'Na', number: 11, group: 'Alkali Metal' },
-  { name: 'Magnesium', symbol: 'Mg', number: 12, group: 'Alkaline Earth' },
-  { name: 'Aluminum', symbol: 'Al', number: 13, group: 'Post-transition Metal' },
-  { name: 'Silicon', symbol: 'Si', number: 14, group: 'Metalloid' },
-  { name: 'Phosphorus', symbol: 'P', number: 15, group: 'Non-metal' },
-  { name: 'Sulfur', symbol: 'S', number: 16, group: 'Non-metal' },
-  { name: 'Chlorine', symbol: 'Cl', number: 17, group: 'Halogen' },
-  { name: 'Potassium', symbol: 'K', number: 19, group: 'Alkali Metal' },
-  { name: 'Calcium', symbol: 'Ca', number: 20, group: 'Alkaline Earth' },
-  { name: 'Iron', symbol: 'Fe', number: 26, group: 'Transition Metal' },
-  { name: 'Copper', symbol: 'Cu', number: 29, group: 'Transition Metal' },
-  { name: 'Zinc', symbol: 'Zn', number: 30, group: 'Transition Metal' },
-  { name: 'Silver', symbol: 'Ag', number: 47, group: 'Precious Metal' },
-  { name: 'Tin', symbol: 'Sn', number: 50, group: 'Post-transition Metal' },
-  { name: 'Gold', symbol: 'Au', number: 79, group: 'Precious Metal' },
-  { name: 'Mercury', symbol: 'Hg', number: 80, group: 'Liquid Metal' },
-  { name: 'Lead', symbol: 'Pb', number: 82, group: 'Heavy Metal' },
-  { name: 'Uranium', symbol: 'U', number: 92, group: 'Actinide' },
+// ---------------- 2. FACTUAL DATABASE ARRAYS FOR EXTENSIVE QUESTION POOLS ----------------
+export const ELEMENTS_DB = [
+  { name: 'Hydrogen', symbol: 'H', number: 1, mass: '1.008' },
+  { name: 'Helium', symbol: 'He', number: 2, mass: '4.002' },
+  { name: 'Lithium', symbol: 'Li', number: 3, mass: '6.94' },
+  { name: 'Beryllium', symbol: 'Be', number: 4, mass: '9.012' },
+  { name: 'Boron', symbol: 'B', number: 5, mass: '10.81' },
+  { name: 'Carbon', symbol: 'C', number: 6, mass: '12.011' },
+  { name: 'Nitrogen', symbol: 'N', number: 7, mass: '14.007' },
+  { name: 'Oxygen', symbol: 'O', number: 8, mass: '15.999' },
+  { name: 'Fluorine', symbol: 'F', number: 9, mass: '18.998' },
+  { name: 'Neon', symbol: 'Ne', number: 10, mass: '20.180' },
+  { name: 'Sodium', symbol: 'Na', number: 11, mass: '22.990' },
+  { name: 'Magnesium', symbol: 'Mg', number: 12, mass: '24.305' },
+  { name: 'Aluminum', symbol: 'Al', number: 13, mass: '26.982' },
+  { name: 'Silicon', symbol: 'Si', number: 14, mass: '28.085' },
+  { name: 'Phosphorus', symbol: 'P', number: 15, mass: '30.974' },
+  { name: 'Sulfur', symbol: 'S', number: 16, mass: '32.06' },
+  { name: 'Chlorine', symbol: 'Cl', number: 17, mass: '35.45' },
+  { name: 'Argon', symbol: 'Ar', number: 18, mass: '39.948' },
+  { name: 'Potassium', symbol: 'K', number: 19, mass: '39.098' },
+  { name: 'Calcium', symbol: 'Ca', number: 20, mass: '40.078' },
+  { name: 'Titanium', symbol: 'Ti', number: 22, mass: '47.867' },
+  { name: 'Iron', symbol: 'Fe', number: 26, mass: '55.845' },
+  { name: 'Copper', symbol: 'Cu', number: 29, mass: '63.546' },
+  { name: 'Zinc', symbol: 'Zn', number: 30, mass: '65.38' },
+  { name: 'Silver', symbol: 'Ag', number: 47, mass: '107.87' },
+  { name: 'Tin', symbol: 'Sn', number: 50, mass: '118.71' },
+  { name: 'Iodine', symbol: 'I', number: 53, mass: '126.90' },
+  { name: 'Platinum', symbol: 'Pt', number: 78, mass: '195.08' },
+  { name: 'Gold', symbol: 'Au', number: 79, mass: '196.97' },
+  { name: 'Lead', symbol: 'Pb', number: 82, mass: '207.2' },
+  { name: 'Uranium', symbol: 'U', number: 92, mass: '238.03' },
 ];
 
-// World Capitals & Geography
-const CAPITALS_DB = [
-  { country: 'Japan', capital: 'Tokyo', decoys: ['Kyoto', 'Osaka', 'Seoul'] },
-  { country: 'Australia', capital: 'Canberra', decoys: ['Sydney', 'Melbourne', 'Brisbane'] },
-  { country: 'Canada', capital: 'Ottawa', decoys: ['Toronto', 'Vancouver', 'Montreal'] },
-  { country: 'Brazil', capital: 'Brasília', decoys: ['Rio de Janeiro', 'São Paulo', 'Salvador'] },
-  { country: 'France', capital: 'Paris', decoys: ['Lyon', 'Marseille', 'Nice'] },
-  { country: 'Germany', capital: 'Berlin', decoys: ['Munich', 'Frankfurt', 'Hamburg'] },
-  { country: 'Italy', capital: 'Rome', decoys: ['Milan', 'Venice', 'Florence'] },
-  { country: 'Egypt', capital: 'Cairo', decoys: ['Alexandria', 'Giza', 'Luxor'] },
-  { country: 'India', capital: 'New Delhi', decoys: ['Mumbai', 'Kolkata', 'Bangalore'] },
-  { country: 'South Korea', capital: 'Seoul', decoys: ['Busan', 'Incheon', 'Daegu'] },
-  { country: 'United Kingdom', capital: 'London', decoys: ['Manchester', 'Edinburgh', 'Birmingham'] },
-  { country: 'Spain', capital: 'Madrid', decoys: ['Barcelona', 'Seville', 'Valencia'] },
-  { country: 'Turkey', capital: 'Ankara', decoys: ['Istanbul', 'Izmir', 'Antalya'] },
-  { country: 'Argentina', capital: 'Buenos Aires', decoys: ['Cordoba', 'Rosario', 'Mendoza'] },
-  { country: 'Norway', capital: 'Oslo', decoys: ['Bergen', 'Trondheim', 'Stavanger'] },
-  { country: 'Switzerland', capital: 'Bern', decoys: ['Zurich', 'Geneva', 'Basel'] },
+export const CAPITALS_DB = [
+  { country: 'Japan', capital: 'Tokyo' },
+  { country: 'France', capital: 'Paris' },
+  { country: 'United Kingdom', capital: 'London' },
+  { country: 'Germany', capital: 'Berlin' },
+  { country: 'India', capital: 'New Delhi' },
+  { country: 'Canada', capital: 'Ottawa' },
+  { country: 'Australia', capital: 'Canberra' },
+  { country: 'Brazil', capital: 'Brasília' },
+  { country: 'Egypt', capital: 'Cairo' },
+  { country: 'Italy', capital: 'Rome' },
+  { country: 'Spain', capital: 'Madrid' },
+  { country: 'South Korea', capital: 'Seoul' },
+  { country: 'Argentina', capital: 'Buenos Aires' },
+  { country: 'Mexico', capital: 'Mexico City' },
+  { country: 'Turkey', capital: 'Ankara' },
+  { country: 'South Africa', capital: 'Pretoria' },
+  { country: 'Thailand', capital: 'Bangkok' },
+  { country: 'New Zealand', capital: 'Wellington' },
+  { country: 'Norway', capital: 'Oslo' },
+  { country: 'Sweden', capital: 'Stockholm' },
+  { country: 'Switzerland', capital: 'Bern' },
+  { country: 'Netherlands', capital: 'Amsterdam' },
+  { country: 'Greece', capital: 'Athens' },
+  { country: 'Portugal', capital: 'Lisbon' },
+  { country: 'Vietnam', capital: 'Hanoi' },
 ];
 
-// Famous Discoveries & Inventions
-const INVENTIONS_DB = [
-  { invention: 'Telephone', inventor: 'Alexander Graham Bell', decoys: ['Thomas Edison', 'Nikola Tesla', 'Guglielmo Marconi'] },
-  { invention: 'Light Bulb', inventor: 'Thomas Edison', decoys: ['Nikola Tesla', 'Benjamin Franklin', 'James Watt'] },
-  { invention: 'World Wide Web', inventor: 'Tim Berners-Lee', decoys: ['Bill Gates', 'Steve Jobs', 'Alan Turing'] },
-  { invention: 'Penicillin', inventor: 'Alexander Fleming', decoys: ['Louis Pasteur', 'Robert Koch', 'Edward Jenner'] },
-  { invention: 'Polio Vaccine', inventor: 'Jonas Salk', decoys: ['Albert Sabin', 'Louis Pasteur', 'Joseph Lister'] },
-  { invention: 'Modern Airplane', inventor: 'Wright Brothers', decoys: ['Alberto Santos-Dumont', 'Charles Lindbergh', 'Amelia Earhart'] },
-  { invention: 'Steam Engine (improved)', inventor: 'James Watt', decoys: ['George Stephenson', 'Thomas Newcomen', 'Robert Fulton'] },
-  { invention: 'Printing Press', inventor: 'Johannes Gutenberg', decoys: ['Leonardo da Vinci', 'William Caxton', 'Desiderius Erasmus'] },
+export const INVENTIONS_DB = [
+  { invention: 'Telephone', inventor: 'Alexander Graham Bell', year: '1876' },
+  { invention: 'Light Bulb', inventor: 'Thomas Edison', year: '1879' },
+  { invention: 'World Wide Web', inventor: 'Tim Berners-Lee', year: '1989' },
+  { invention: 'Airplane', inventor: 'Wright Brothers', year: '1903' },
+  { invention: 'Penicillin', inventor: 'Alexander Fleming', year: '1928' },
+  { invention: 'Radio', inventor: 'Guglielmo Marconi', year: '1895' },
+  { invention: 'Polio Vaccine', inventor: 'Jonas Salk', year: '1953' },
+  { invention: 'Steam Engine', inventor: 'James Watt', year: '1769' },
+  { invention: 'Telescope', inventor: 'Hans Lippershey', year: '1608' },
+  { invention: 'Printing Press', inventor: 'Johannes Gutenberg', year: '1440' },
 ];
 
-// SI Units Trivia
-const SI_UNITS_DB = [
-  { quantity: 'Force', unit: 'Newton (N)', decoys: ['Joule (J)', 'Watt (W)', 'Pascal (Pa)'] },
-  { quantity: 'Energy & Work', unit: 'Joule (J)', decoys: ['Newton (N)', 'Watt (W)', 'Volt (V)'] },
-  { quantity: 'Power', unit: 'Watt (W)', decoys: ['Joule (J)', 'Ohm (Ω)', 'Hertz (Hz)'] },
-  { quantity: 'Frequency', unit: 'Hertz (Hz)', decoys: ['Decibel (dB)', 'Watt (W)', 'Radian (rad)'] },
-  { quantity: 'Pressure', unit: 'Pascal (Pa)', decoys: ['Bar', 'Atmosphere', 'Newton (N)'] },
-  { quantity: 'Electric Potential', unit: 'Volt (V)', decoys: ['Ampere (A)', 'Ohm (Ω)', 'Coulomb (C)'] },
-  { quantity: 'Electric Current', unit: 'Ampere (A)', decoys: ['Volt (V)', 'Watt (W)', 'Ohm (Ω)'] },
-  { quantity: 'Magnetic Flux Density', unit: 'Tesla (T)', decoys: ['Weber (Wb)', 'Henry (H)', 'Gauss (G)'] },
+export const SI_UNITS_DB = [
+  { quantity: 'Force', unit: 'Newton (N)' },
+  { quantity: 'Energy or Work', unit: 'Joule (J)' },
+  { quantity: 'Power', unit: 'Watt (W)' },
+  { quantity: 'Pressure', unit: 'Pascal (Pa)' },
+  { quantity: 'Frequency', unit: 'Hertz (Hz)' },
+  { quantity: 'Electric Potential', unit: 'Volt (V)' },
+  { quantity: 'Electric Charge', unit: 'Coulomb (C)' },
+  { quantity: 'Electric Capacitance', unit: 'Farad (F)' },
+  { quantity: 'Magnetic Flux Density', unit: 'Tesla (T)' },
+  { quantity: 'Inductance', unit: 'Henry (H)' },
+  { quantity: 'Luminous Flux', unit: 'Lumen (lm)' },
+  { quantity: 'Illuminance', unit: 'Lux (lx)' },
 ];
 
-// ---------------- 3. DETERMINISTIC PRNG HASH GENERATOR ----------------
-function seededRand(seed: number) {
-  let t = (seed += 0x6d2b79f5);
-  t = Math.imul(t ^ (t >>> 15), t | 1);
-  t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+// Deterministic PRNG
+function seededRand(seed: number): number {
+  const x = Math.sin(seed) * 10000;
+  return x - Math.floor(x);
 }
 
-// Fisher-Yates shuffle with seed
-function shuffleWithOptions<T>(arr: T[], seed: number): T[] {
-  const result = [...arr];
+// Deterministic Shuffle
+function shuffleWithOptions<T>(array: T[], seed: number): T[] {
+  const result = [...array];
   for (let i = result.length - 1; i > 0; i--) {
-    const j = Math.floor(seededRand(seed + i * 37) * (i + 1));
+    const j = Math.floor(seededRand(seed + i * 17) * (i + 1));
     [result[i], result[j]] = [result[j], result[i]];
   }
   return result;
 }
 
-// ---------------- 4. 10,000+ QUESTION SYNTHESIZER ----------------
-export function getQuizQuestionById(index: number, requestedTopic: QuizTopic = 'all'): QuizQuestion {
-  // If index is within curated base and matches topic
-  const curatedMatches = requestedTopic === 'all'
-    ? CURATED_QUIZ_QUESTIONS
-    : CURATED_QUIZ_QUESTIONS.filter((q) => q.topic === requestedTopic);
+// ---------------- 3. PROCEDURAL QUESTION GENERATION ENGINE ----------------
+export function getQuizQuestionById(
+  index: number,
+  topic: QuizTopic = 'all',
+  difficultyFilter: QuizDifficulty = 'all'
+): QuizQuestion {
+  // If requesting curated question
+  const matchingCurated = CURATED_QUIZ_QUESTIONS.filter((q) => {
+    const matchesTopic = topic === 'all' || q.topic === topic;
+    const matchesDiff = difficultyFilter === 'all' || q.difficulty === difficultyFilter;
+    return matchesTopic && matchesDiff;
+  });
 
-  if (index < curatedMatches.length) {
-    const q = curatedMatches[index];
-    const shuffledOptions = shuffleWithOptions(q.options, index * 17 + 5);
+  if (matchingCurated.length > 0 && index < matchingCurated.length) {
+    const item = matchingCurated[index % matchingCurated.length];
     return {
-      ...q,
       id: `quiz-curated-${index}`,
-      options: shuffledOptions,
+      ...item,
     };
   }
 
-  // Algorithmic Synthesizer for 10,000+ questions
-  const seed = index * 1009 + 43;
-  const randVal = seededRand(seed);
+  // Procedural generator
+  const seed = index * 997 + 13;
+  const chosenTopic: QuizTopic =
+    topic !== 'all'
+      ? topic
+      : (['cinema', 'science', 'physics', 'chemistry', 'history', 'math', 'geography', 'tech', 'sports'] as QuizTopic[])[
+          Math.floor(seededRand(seed) * 9)
+        ];
 
-  // Topic determination
-  let topic: QuizTopic = requestedTopic;
-  if (topic === 'all') {
-    const topics: QuizTopic[] = ['science', 'physics', 'chemistry', 'history', 'math'];
-    topic = topics[Math.floor(randVal * topics.length)];
+  const difficulty: 'easy' | 'medium' = seededRand(seed + 1) > 0.5 ? 'medium' : 'easy';
+
+  if (chosenTopic === 'chemistry') {
+    const elIndex = Math.floor(seededRand(seed + 2) * ELEMENTS_DB.length);
+    const target = ELEMENTS_DB[elIndex];
+    const decoys = ELEMENTS_DB.filter((_, i) => i !== elIndex)
+      .slice(0, 3)
+      .map((e) => e.symbol);
+    const options = shuffleWithOptions([target.symbol, ...decoys], seed + 3);
+
+    return {
+      id: `quiz-gen-${index}`,
+      topic: 'chemistry',
+      topicLabel: 'Chemistry & Elements',
+      topicEmoji: '🧪',
+      question: `What is the chemical symbol for ${target.name} (Atomic number ${target.number})?`,
+      options,
+      answer: target.symbol,
+      explanation: `${target.name} has atomic number ${target.number} and chemical symbol ${target.symbol}.`,
+      difficulty,
+    };
   }
 
-  // Branch by topic
-  if (topic === 'chemistry') {
-    const elemIdx = Math.floor(seededRand(seed + 1) * ELEMENTS_DB.length);
-    const elem = ELEMENTS_DB[elemIdx];
-    const isSymbolQ = seededRand(seed + 2) > 0.5;
+  if (chosenTopic === 'geography' || chosenTopic === 'history') {
+    const capIndex = Math.floor(seededRand(seed + 4) * CAPITALS_DB.length);
+    const target = CAPITALS_DB[capIndex];
+    const decoys = CAPITALS_DB.filter((_, i) => i !== capIndex)
+      .slice(0, 3)
+      .map((c) => c.capital);
+    const options = shuffleWithOptions([target.capital, ...decoys], seed + 5);
 
-    if (isSymbolQ) {
-      // "What is the chemical symbol of X?"
-      const otherSymbols = ELEMENTS_DB.filter((e) => e.symbol !== elem.symbol)
-        .map((e) => e.symbol);
-      const decoys = shuffleWithOptions(otherSymbols, seed + 3).slice(0, 3);
-      const options = shuffleWithOptions([elem.symbol, ...decoys], seed + 4);
-
-      return {
-        id: `quiz-gen-${index}`,
-        topic: 'chemistry',
-        topicLabel: 'Chemistry',
-        topicEmoji: '🧪',
-        question: `What is the chemical symbol for the element ${elem.name}?`,
-        options,
-        answer: elem.symbol,
-        explanation: `${elem.name} is represented by the symbol "${elem.symbol}" with atomic number ${elem.number}.`,
-        difficulty: elem.number > 30 ? 'medium' : 'easy',
-      };
-    } else {
-      // "What is the atomic number of X?"
-      const realNum = elem.number;
-      const decoys = [realNum + 1, Math.max(1, realNum - 1), realNum + 2].map(String);
-      const options = shuffleWithOptions([String(realNum), ...decoys], seed + 5);
-
-      return {
-        id: `quiz-gen-${index}`,
-        topic: 'chemistry',
-        topicLabel: 'Chemistry',
-        topicEmoji: '🧪',
-        question: `What is the atomic number of ${elem.name} (${elem.symbol}) on the periodic table?`,
-        options,
-        answer: String(realNum),
-        explanation: `${elem.name} has ${realNum} proton(s) in its atomic nucleus.`,
-        difficulty: realNum > 20 ? 'medium' : 'easy',
-      };
-    }
+    return {
+      id: `quiz-gen-${index}`,
+      topic: 'geography',
+      topicLabel: 'Geography & Capitals',
+      topicEmoji: '🌍',
+      question: `What is the capital city of ${target.country}?`,
+      options,
+      answer: target.capital,
+      explanation: `${target.capital} is the recognized administrative capital of ${target.country}.`,
+      difficulty,
+    };
   }
 
-  if (topic === 'physics') {
-    // SI Units or physical laws
-    const unitIdx = Math.floor(seededRand(seed + 10) * SI_UNITS_DB.length);
-    const item = SI_UNITS_DB[unitIdx];
-    const options = shuffleWithOptions([item.unit, ...item.decoys], seed + 11);
+  if (chosenTopic === 'physics') {
+    const unitIndex = Math.floor(seededRand(seed + 6) * SI_UNITS_DB.length);
+    const target = SI_UNITS_DB[unitIndex];
+    const decoys = SI_UNITS_DB.filter((_, i) => i !== unitIndex)
+      .slice(0, 3)
+      .map((u) => u.unit);
+    const options = shuffleWithOptions([target.unit, ...decoys], seed + 7);
 
     return {
       id: `quiz-gen-${index}`,
       topic: 'physics',
-      topicLabel: 'Physics',
+      topicLabel: 'Physics & Units',
       topicEmoji: '⚡',
-      question: `What is the standard International System (SI) unit for ${item.quantity}?`,
+      question: `What is the standard SI derived unit of ${target.quantity}?`,
       options,
-      answer: item.unit,
-      explanation: `In standard physics, ${item.quantity} is measured in ${item.unit}.`,
-      difficulty: 'medium',
+      answer: target.unit,
+      explanation: `The SI unit for ${target.quantity} is the ${target.unit}.`,
+      difficulty,
     };
   }
 
-  if (topic === 'history') {
-    const isCapitalQ = seededRand(seed + 20) > 0.4;
-    if (isCapitalQ) {
-      const capIdx = Math.floor(seededRand(seed + 21) * CAPITALS_DB.length);
-      const item = CAPITALS_DB[capIdx];
-      const options = shuffleWithOptions([item.capital, ...item.decoys], seed + 22);
+  if (chosenTopic === 'tech') {
+    const invIndex = Math.floor(seededRand(seed + 8) * INVENTIONS_DB.length);
+    const target = INVENTIONS_DB[invIndex];
+    const decoys = INVENTIONS_DB.filter((_, i) => i !== invIndex)
+      .slice(0, 3)
+      .map((inv) => inv.inventor);
+    const options = shuffleWithOptions([target.inventor, ...decoys], seed + 9);
 
-      return {
-        id: `quiz-gen-${index}`,
-        topic: 'history',
-        topicLabel: 'Geography & History',
-        topicEmoji: '🏛️',
-        question: `What is the official capital city of ${item.country}?`,
-        options,
-        answer: item.capital,
-        explanation: `${item.capital} is the political capital city of ${item.country}.`,
-        difficulty: 'easy',
-      };
-    } else {
-      const invIdx = Math.floor(seededRand(seed + 23) * INVENTIONS_DB.length);
-      const item = INVENTIONS_DB[invIdx];
-      const options = shuffleWithOptions([item.inventor, ...item.decoys], seed + 24);
-
-      return {
-        id: `quiz-gen-${index}`,
-        topic: 'history',
-        topicLabel: 'History & Inventions',
-        topicEmoji: '🏛️',
-        question: `Who is historically credited with the invention or breakthrough of the ${item.invention}?`,
-        options,
-        answer: item.inventor,
-        explanation: `${item.inventor} is celebrated worldwide for pioneering the ${item.invention}.`,
-        difficulty: 'medium',
-      };
-    }
+    return {
+      id: `quiz-gen-${index}`,
+      topic: 'tech',
+      topicLabel: 'Tech & Inventions',
+      topicEmoji: '💻',
+      question: `Who is historically credited with the invention of the ${target.invention} (${target.year})?`,
+      options,
+      answer: target.inventor,
+      explanation: `${target.inventor} pioneered the ${target.invention} around ${target.year}.`,
+      difficulty,
+    };
   }
 
-  if (topic === 'math') {
-    // Prime numbers, geometric angles, powers, percentages
-    const variant = Math.floor(seededRand(seed + 30) * 3);
+  if (chosenTopic === 'math') {
+    const a = Math.floor(seededRand(seed + 10) * 12) + 3;
+    const b = Math.floor(seededRand(seed + 11) * 12) + 3;
+    const product = a * b;
+    const decoys = [product + 4, product - 3, product + 10].map(String);
+    const options = shuffleWithOptions([String(product), ...decoys], seed + 12);
 
-    if (variant === 0) {
-      // Polygon degrees: (n - 2) * 180
-      const sides = Math.floor(seededRand(seed + 31) * 4) + 4; // 4 to 7 sides
-      const names = ['', '', '', '', 'Quadrilateral (4 sides)', 'Pentagon (5 sides)', 'Hexagon (6 sides)', 'Heptagon (7 sides)'];
-      const correctDegrees = (sides - 2) * 180;
-      const decoys = [correctDegrees - 180, correctDegrees + 180, correctDegrees + 90].map((d) => `${d}°`);
-      const options = shuffleWithOptions([`${correctDegrees}°`, ...decoys], seed + 32);
-
-      return {
-        id: `quiz-gen-${index}`,
-        topic: 'math',
-        topicLabel: 'Mathematics',
-        topicEmoji: '🧮',
-        question: `What is the sum of interior angles in a regular ${names[sides]}?`,
-        options,
-        answer: `${correctDegrees}°`,
-        explanation: `Formula (n - 2) × 180° gives (${sides} - 2) × 180° = ${correctDegrees}°.`,
-        difficulty: 'medium',
-      };
-    } else if (variant === 1) {
-      // Square roots
-      const bases = [12, 13, 14, 15, 16, 20, 25];
-      const b = bases[Math.floor(seededRand(seed + 33) * bases.length)];
-      const sq = b * b;
-      const decoys = [b - 1, b + 1, b + 2].map(String);
-      const options = shuffleWithOptions([String(b), ...decoys], seed + 34);
-
-      return {
-        id: `quiz-gen-${index}`,
-        topic: 'math',
-        topicLabel: 'Mathematics',
-        topicEmoji: '🧮',
-        question: `What is the principal square root of ${sq} (√${sq})?`,
-        options,
-        answer: String(b),
-        explanation: `${b} × ${b} = ${sq}, so √${sq} = ${b}.`,
-        difficulty: 'easy',
-      };
-    } else {
-      // Primes check
-      const primeSets = [
-        { q: 'Which of the following numbers is a Prime number?', ans: '29', dec: ['27', '33', '35'] },
-        { q: 'Which of the following numbers is a Prime number?', ans: '41', dec: ['45', '49', '51'] },
-        { q: 'Which of the following numbers is a Prime number?', ans: '73', dec: ['75', '77', '81'] },
-        { q: 'Which of the following numbers is a Prime number?', ans: '97', dec: ['91', '93', '95'] },
-      ];
-      const pItem = primeSets[Math.floor(seededRand(seed + 35) * primeSets.length)];
-      const options = shuffleWithOptions([pItem.ans, ...pItem.dec], seed + 36);
-
-      return {
-        id: `quiz-gen-${index}`,
-        topic: 'math',
-        topicLabel: 'Mathematics',
-        topicEmoji: '🧮',
-        question: pItem.q,
-        options,
-        answer: pItem.ans,
-        explanation: `${pItem.ans} has exactly two factors (1 and itself), making it prime.`,
-        difficulty: 'medium',
-      };
-    }
+    return {
+      id: `quiz-gen-${index}`,
+      topic: 'math',
+      topicLabel: 'Math & Logic',
+      topicEmoji: '🧮',
+      question: `What is the value of ${a} × ${b}?`,
+      options,
+      answer: String(product),
+      explanation: `Calculation: ${a} × ${b} = ${product}.`,
+      difficulty: 'easy',
+    };
   }
 
-  // Fallback: General Science
-  const spaceTrivia = [
-    { q: 'Which planet has the most extensive ring system in the Solar System?', a: 'Saturn', dec: ['Jupiter', 'Uranus', 'Neptune'] },
-    { q: 'What is the closest star to planet Earth?', a: 'The Sun', dec: ['Proxima Centauri', 'Sirius', 'Alpha Centauri A'] },
-    { q: 'What force keeps planets in orbit around the Sun?', a: 'Gravity', dec: ['Magnetism', 'Centrifugal Force', 'Solar Radiation'] },
-    { q: 'What galaxy is Earth and our Solar System located in?', a: 'Milky Way Galaxy', dec: ['Andromeda Galaxy', 'Triangulum Galaxy', 'Sombrero Galaxy'] },
-    { q: 'What is the hottest planet in our Solar System due to runaway greenhouse effect?', a: 'Venus', dec: ['Mercury', 'Mars', 'Jupiter'] },
+  // Fallback: Cinema & Pop Culture trivia
+  const cinemaTrivia = [
+    { q: 'Which movie won the Oscar for Best Animated Feature for the first time in 2002?', a: 'Shrek', dec: ['Monsters, Inc.', 'Toy Story', 'Ice Age'] },
+    { q: 'In Bollywood, who is widely celebrated with the title "King Khan"?', a: 'Shah Rukh Khan', dec: ['Salman Khan', 'Aamir Khan', 'Saif Ali Khan'] },
+    { q: 'Which sci-fi epic directed by James Cameron became the highest grossing film worldwide?', a: 'Avatar', dec: ['Titanic', 'Avengers: Endgame', 'Star Wars'] },
+    { q: 'Who portrayed the legendary Batman in Christopher Nolan’s Dark Knight Trilogy?', a: 'Christian Bale', dec: ['Ben Affleck', 'Michael Keaton', 'Robert Pattinson'] },
   ];
-  const sItem = spaceTrivia[Math.floor(seededRand(seed + 40) * spaceTrivia.length)];
-  const options = shuffleWithOptions([sItem.a, ...sItem.dec], seed + 41);
+  const item = cinemaTrivia[Math.floor(seededRand(seed + 14) * cinemaTrivia.length)];
+  const options = shuffleWithOptions([item.a, ...item.dec], seed + 15);
 
   return {
     id: `quiz-gen-${index}`,
-    topic: 'science',
-    topicLabel: 'Science & Astronomy',
-    topicEmoji: '🔬',
-    question: sItem.q,
+    topic: 'cinema',
+    topicLabel: 'Bollywood & Hollywood',
+    topicEmoji: '🎬',
+    question: item.q,
     options,
-    answer: sItem.a,
-    explanation: `${sItem.a} is scientifically verified by astronomical observations.`,
+    answer: item.a,
+    explanation: `${item.a} is globally celebrated in cinema history.`,
     difficulty: 'easy',
   };
 }
 
-// Generates a complete round of 10 timed questions
-export function generateQuizRound(roundNumber: number, topic: QuizTopic = 'all', count: number = 10): QuizQuestion[] {
+// ---------------- 4. ROUND GENERATOR ----------------
+export function generateQuizRound(
+  roundNumber: number,
+  topic: QuizTopic = 'all',
+  count: number = 10,
+  difficultyFilter: QuizDifficulty = 'all'
+): QuizQuestion[] {
   const startIndex = (roundNumber - 1) * count;
   const questions: QuizQuestion[] = [];
   for (let i = 0; i < count; i++) {
-    questions.push(getQuizQuestionById(startIndex + i, topic));
+    questions.push(getQuizQuestionById(startIndex + i, topic, difficultyFilter));
   }
   return questions;
 }

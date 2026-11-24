@@ -437,7 +437,7 @@ export const App: React.FC = () => {
                       activeSubTab === 'most-likely-to' ? 'Most Likely To' :
                       'Truth or Dare'
                     )}
-                    {activeGame === 'quizup' && 'Quiz Up (10,000+ Qs)'}
+                    {activeGame === 'quizup' && 'Quiz Up'}
                     {activeGame === 'sudoku' && 'Maths Puzzle'}
                     {activeGame === '2t1l' && '2 Truths & 1 Lie'}
                     {activeGame === 'tictactoe' && 'Tic Tac Toe'}
