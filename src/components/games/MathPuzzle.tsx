@@ -10,6 +10,7 @@ interface MathPuzzleProps {
   stats: PlayerStats;
   onWin: (score: number) => void;
   onRequestAd: (rewardTitle: string, onReward: () => void) => void;
+  onSpendCoins?: (amount: number) => boolean;
 }
 
 type MathMode = 'speed' | 'operator';
@@ -22,8 +23,10 @@ interface Problem {
 }
 
 export const MathPuzzle: React.FC<MathPuzzleProps> = ({
+  stats,
   onWin,
   onRequestAd,
+  onSpendCoins,
 }) => {
   const [mode, setMode] = useState<MathMode>('speed');
   const [level, setLevel] = useState<number>(1);
@@ -56,6 +59,7 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [showHint, setShowHint] = useState<boolean>(false);
   const [freeHints, setFreeHints] = useState<number>(3);
+  const [hiddenOptions, setHiddenOptions] = useState<(number | string)[]>([]);
 
   // Generate arithmetic question based on mode & level
   const generateProblem = useCallback((currentMode: MathMode, currentLevel: number): Problem => {
@@ -175,6 +179,7 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
     setSelectedOption(null);
     setIsCorrect(null);
     setShowHint(false);
+    setHiddenOptions([]);
     setCurrentProblem(generateProblem(currentMode, currentLvl));
   }, [generateProblem]);
 
@@ -283,6 +288,51 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
     }
   };
 
+  // Coin Booster 1: 50:50 Eliminator (10 Coins) - Hides 2 incorrect options
+  const handleFiftyFifty = () => {
+    if (!onSpendCoins) return;
+    if (selectedOption !== null || isGameOver || hiddenOptions.length > 0) return;
+    if (!onSpendCoins(10)) return;
+
+    sound.playTap();
+    const wrongOptions = currentProblem.options.filter((opt) => opt !== currentProblem.answer);
+    const shuffledWrong = [...wrongOptions].sort(() => 0.5 - Math.random());
+    setHiddenOptions(shuffledWrong.slice(0, 2));
+  };
+
+  // Coin Booster 2: +20s Time Boost (15 Coins) - Adds 20 seconds to Speed Run
+  const handleAddTimeBoost = () => {
+    if (!onSpendCoins) return;
+    if (isGameOver) return;
+    if (!onSpendCoins(15)) return;
+
+    sound.playTap();
+    setTimeLeft((t) => t + 20);
+  };
+
+  // Coin Booster 3: Auto-Solve (25 Coins) - Automatically answers with full points
+  const handleAutoSolve = () => {
+    if (!onSpendCoins) return;
+    if (selectedOption !== null || isGameOver) return;
+    if (!onSpendCoins(25)) return;
+
+    sound.playVictory();
+    confetti({ particleCount: 40, spread: 50, origin: { y: 0.5 } });
+    handleSelectOption(currentProblem.answer);
+  };
+
+  // Coin Booster 4: Overtime Revive (20 Coins) - Revives with +25s
+  const handleOvertimeRevive = () => {
+    if (!onSpendCoins) return;
+    if (!onSpendCoins(20)) return;
+
+    sound.playVictory();
+    confetti({ particleCount: 50, spread: 60, origin: { y: 0.5 } });
+    setTimeLeft(25);
+    setIsGameOver(false);
+    setIsTimerRunning(true);
+  };
+
   return (
     <div className="w-full flex flex-col items-center animate-fade-in max-w-xl mx-auto pb-10">
       {/* Level Up Banner */}
@@ -371,6 +421,53 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
         </div>
       </div>
 
+      {/* ---------------- COIN BOOSTERS BAR ---------------- */}
+      <div className="w-full flex items-center justify-between gap-1.5 mb-3 p-2 rounded-2xl bg-white/95 dark:bg-[#181d2f]/95 border-2 border-slate-200 dark:border-slate-800 shadow-xs font-['Fredoka']">
+        <div className="flex items-center gap-1 pl-1">
+          <span className="text-sm">🪙</span>
+          <span className="text-xs font-black text-slate-800 dark:text-slate-200">
+            {stats.coins ?? 0}
+          </span>
+        </div>
+
+        <div className="flex items-center gap-1.5 flex-wrap justify-end">
+          {/* Booster 1: 50:50 Eliminator (10 Coins) */}
+          <button
+            onClick={handleFiftyFifty}
+            disabled={selectedOption !== null || isGameOver || hiddenOptions.length > 0}
+            className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-[#e0e7ff] hover:bg-[#c7d2fe] border border-[#c7d2fe] text-[#4338ca] font-black text-xs shadow-xs active:scale-95 transition disabled:opacity-40"
+            title="Remove 2 incorrect choices (Costs 10 Coins)"
+          >
+            <span>✂️ 50:50</span>
+            <span className="px-1.5 py-0.5 rounded-md bg-[#c7d2fe] dark:bg-[#312e81]/40 text-[10px]">10🪙</span>
+          </button>
+
+          {/* Booster 2: +20s Time (15 Coins - in Speed mode) */}
+          {mode === 'speed' && (
+            <button
+              onClick={handleAddTimeBoost}
+              disabled={isGameOver}
+              className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-[#dcfce7] hover:bg-[#bbf7d0] border border-[#bbf7d0] text-[#065f46] font-black text-xs shadow-xs active:scale-95 transition disabled:opacity-40"
+              title="Add +20s to speed timer (Costs 15 Coins)"
+            >
+              <span>⏳ +20s</span>
+              <span className="px-1.5 py-0.5 rounded-md bg-[#bbf7d0] dark:bg-[#064e3b]/40 text-[10px]">15🪙</span>
+            </button>
+          )}
+
+          {/* Booster 3: Auto-Solve (25 Coins) */}
+          <button
+            onClick={handleAutoSolve}
+            disabled={selectedOption !== null || isGameOver}
+            className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-[#fef9c3] hover:bg-[#fef08a] border border-[#fef08a] text-[#854d0e] font-black text-xs shadow-xs active:scale-95 transition disabled:opacity-40"
+            title="Auto-solve current equation with full points (Costs 25 Coins)"
+          >
+            <span>⚡ Solve</span>
+            <span className="px-1.5 py-0.5 rounded-md bg-[#fef08a] dark:bg-[#713f12]/40 text-[10px]">25🪙</span>
+          </button>
+        </div>
+      </div>
+
       {/* ---------------- MAIN EQUATION QUESTION BOARD ---------------- */}
       <div className="w-full p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[#c7d2fe] via-[#a5b4fc] to-[#818cf8] dark:from-[#1e2746] dark:via-[#263156] dark:to-[#313f6d] border-4 border-[#a5b4fc] dark:border-indigo-700/60 shadow-md flex flex-col items-center justify-center text-center relative overflow-hidden mb-4 min-h-[170px] sm:min-h-[200px]">
         {/* Soft Question mark pattern */}
@@ -407,9 +504,12 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
       <div className="w-full grid grid-cols-2 gap-3 sm:gap-4 mb-3">
         {currentProblem.options.map((opt, idx) => {
           const isSelected = selectedOption === opt;
+          const isHiddenByBooster = hiddenOptions.includes(opt);
           let btnStyle = 'bg-white dark:bg-[#181d2f] text-slate-800 dark:text-white border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-[#202538]';
 
-          if (isSelected) {
+          if (isHiddenByBooster) {
+            btnStyle = 'opacity-20 pointer-events-none line-through bg-slate-100 dark:bg-slate-900 border-dashed border-slate-300 dark:border-slate-800 text-slate-400';
+          } else if (isSelected) {
             if (isCorrect) {
               btnStyle = 'bg-[#a7f3d0] text-[#064e3b] border-[#34d399] scale-[1.02] shadow-sm';
             } else {
@@ -420,7 +520,7 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
           return (
             <button
               key={idx}
-              disabled={selectedOption !== null || isGameOver}
+              disabled={selectedOption !== null || isGameOver || isHiddenByBooster}
               onClick={() => handleSelectOption(opt)}
               className={`py-4 sm:py-5 px-3 rounded-2xl sm:rounded-3xl border-2 shadow-sm active:translate-y-0.5 transition text-xl sm:text-2xl lg:text-3xl font-black font-['Fredoka'] flex items-center justify-center gap-2 select-none ${btnStyle}`}
             >
@@ -451,6 +551,15 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
                 <span className="text-2xl font-black text-[#00a859] dark:text-[#43b047] font-pixel">{bestScore}</span>
               </div>
             </div>
+
+            {onSpendCoins && (
+              <button
+                onClick={handleOvertimeRevive}
+                className="w-full py-3 rounded-2xl bg-[#fef9c3] hover:bg-[#fef08a] border-b-4 border-[#ca8a04] text-[#854d0e] font-black text-xs shadow-md active:translate-y-0.5 transition flex items-center justify-center gap-2 font-['Fredoka'] mb-2.5"
+              >
+                <span>💖 Continue with +25s Overtime (20 🪙)</span>
+              </button>
+            )}
 
             <button
               onClick={() => {

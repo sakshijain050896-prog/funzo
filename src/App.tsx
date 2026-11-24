@@ -183,6 +183,24 @@ export const App: React.FC = () => {
     }
   };
 
+  const handleSpendCoins = (amount: number): boolean => {
+    const current = getStoredStats();
+    if ((current.coins || 0) < amount) {
+      sound.playError();
+      alert(`Oops! You need ${amount} coins for this booster, but only have ${current.coins || 0} coins. Complete levels or claim daily gifts to earn more! 🪙`);
+      return false;
+    }
+    const updated: PlayerStats = {
+      ...current,
+      coins: (current.coins || 0) - amount,
+    };
+    saveStats(updated);
+    setStats(updated);
+    syncPlayerProgress(updated);
+    sound.playTap();
+    return true;
+  };
+
   const unreadNotificationCount = notifications.filter((n) => !n.isRead).length;
 
   // Celebration Dopamine Modal State
@@ -447,6 +465,7 @@ export const App: React.FC = () => {
                   stats={stats}
                   onWin={handleMathWin}
                   onRequestAd={handleRequestAd}
+                  onSpendCoins={handleSpendCoins}
                 />
               </div>
 
@@ -514,6 +533,8 @@ export const App: React.FC = () => {
 
               <div className={`w-full ${activeGame === 'balloon' ? 'block' : 'hidden'}`}>
                 <BalloonPop
+                  coins={stats.coins}
+                  onSpendCoins={handleSpendCoins}
                   onWin={() => {
                     handleGameActivity('balloon');
                   }}

@@ -4,6 +4,8 @@ import { RotateCcw, Sparkles, Award, ArrowRight, ArrowLeft, Timer, AlertCircle }
 import { sound } from '../../lib/soundEffects';
 
 interface BalloonPopProps {
+  coins?: number;
+  onSpendCoins?: (amount: number) => boolean;
   onWin?: (score: number) => void;
   onBackToKids?: () => void;
 }
@@ -31,7 +33,12 @@ const BALLOON_COLORS = [
 
 const LEVEL_DURATION = 25; // 25 seconds per level
 
-export const BalloonPop: React.FC<BalloonPopProps> = ({ onWin, onBackToKids }) => {
+export const BalloonPop: React.FC<BalloonPopProps> = ({
+  coins = 0,
+  onSpendCoins,
+  onWin,
+  onBackToKids
+}) => {
   const [level, setLevel] = useState<number>(1);
   const [balloons, setBalloons] = useState<Balloon[]>([]);
   const [score, setScore] = useState<number>(0);
@@ -157,6 +164,52 @@ export const BalloonPop: React.FC<BalloonPopProps> = ({ onWin, onBackToKids }) =
     setBalloons([]);
   };
 
+  // Coin Booster 1: Super Pop Bomb (15 Coins) - Pops all balloons currently on screen
+  const handleSuperBomb = () => {
+    if (!onSpendCoins) return;
+    if (balloons.length === 0 || isLevelCleared || isTimeUp) return;
+    if (!onSpendCoins(15)) return;
+
+    sound.playVictory();
+    confetti({ particleCount: 50, spread: 70, origin: { y: 0.6 } });
+
+    const unpopped = balloons.filter((b) => !b.isPopped);
+    const count = unpopped.length;
+    const addedScore = count * 10;
+    const newScore = score + addedScore;
+    const newPoppedInLevel = poppedInLevel + count;
+
+    setScore(newScore);
+    setPoppedInLevel(newPoppedInLevel);
+    setBalloons([]);
+
+    if (newPoppedInLevel >= targetForLevel) {
+      setIsLevelCleared(true);
+      if (onWin) onWin(newScore);
+    }
+  };
+
+  // Coin Booster 2: +15s Extra Time (10 Coins) - Adds 15 seconds to countdown timer
+  const handleAddTimeBonus = () => {
+    if (!onSpendCoins) return;
+    if (isLevelCleared || isTimeUp) return;
+    if (!onSpendCoins(10)) return;
+
+    sound.playTap();
+    setTimeLeft((t) => t + 15);
+  };
+
+  // Coin Booster 3: Revive on Time's Up (20 Coins) - Revives with +15s
+  const handleReviveWithCoins = () => {
+    if (!onSpendCoins) return;
+    if (!onSpendCoins(20)) return;
+
+    sound.playVictory();
+    confetti({ particleCount: 40, spread: 60, origin: { y: 0.5 } });
+    setTimeLeft(15);
+    setIsTimeUp(false);
+  };
+
   return (
     <div className="w-full flex flex-col items-center max-w-xl mx-auto animate-fade-in pb-10 font-['Fredoka'] select-none">
       {/* Top Status Bar: Level, Target, Timer */}
@@ -200,6 +253,40 @@ export const BalloonPop: React.FC<BalloonPopProps> = ({ onWin, onBackToKids }) =
             title="Restart Level"
           >
             <RotateCcw className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
+      {/* Coin Power-Ups / Boosters Strip */}
+      <div className="w-full max-w-[420px] flex items-center justify-between gap-1.5 mb-2.5 p-2 rounded-2xl bg-white/95 dark:bg-[#181d2f]/95 border-2 border-slate-200 dark:border-slate-800 shadow-xs">
+        <div className="flex items-center gap-1 pl-1 font-['Fredoka']">
+          <span className="text-sm">🪙</span>
+          <span className="text-xs font-black text-slate-800 dark:text-slate-200">
+            {coins}
+          </span>
+        </div>
+
+        <div className="flex items-center gap-1.5 font-['Fredoka']">
+          {/* Booster 1: Super Pop Bomb */}
+          <button
+            onClick={handleSuperBomb}
+            disabled={isLevelCleared || isTimeUp || balloons.length === 0}
+            className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-[#fef9c3] hover:bg-[#fef08a] border border-[#fef08a] text-[#854d0e] font-black text-xs shadow-xs active:scale-95 transition disabled:opacity-40"
+            title="Detonate all floating balloons immediately (Costs 15 Coins)"
+          >
+            <span>💣 Super Pop</span>
+            <span className="px-1.5 py-0.5 rounded-md bg-[#fef08a] dark:bg-[#713f12]/40 text-[10px]">15🪙</span>
+          </button>
+
+          {/* Booster 2: +15s Extra Time */}
+          <button
+            onClick={handleAddTimeBonus}
+            disabled={isLevelCleared || isTimeUp}
+            className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-[#dcfce7] hover:bg-[#bbf7d0] border border-[#bbf7d0] text-[#065f46] font-black text-xs shadow-xs active:scale-95 transition disabled:opacity-40"
+            title="Add +15 seconds to countdown timer (Costs 10 Coins)"
+          >
+            <span>⏳ +15s Time</span>
+            <span className="px-1.5 py-0.5 rounded-md bg-[#bbf7d0] dark:bg-[#064e3b]/40 text-[10px]">10🪙</span>
           </button>
         </div>
       </div>
@@ -286,7 +373,16 @@ export const BalloonPop: React.FC<BalloonPopProps> = ({ onWin, onBackToKids }) =
               You popped {poppedInLevel} of {targetForLevel} balloons. Try again!
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-2 w-full mt-3">
+            {onSpendCoins && (
+              <button
+                onClick={handleReviveWithCoins}
+                className="w-full py-2.5 px-4 mb-2 rounded-2xl bg-[#fef9c3] hover:bg-[#fef08a] border-b-4 border-[#ca8a04] text-[#854d0e] font-black text-xs shadow-md active:translate-y-0.5 transition flex items-center justify-center gap-2"
+              >
+                <span>💖 Revive & Add +15s (20 🪙)</span>
+              </button>
+            )}
+
+            <div className="flex flex-col sm:flex-row gap-2 w-full mt-1">
               <button
                 onClick={retryLevel}
                 className="flex-1 py-3 px-4 rounded-2xl bg-[#fcd34d] hover:bg-[#fbbf24] border-b-4 border-[#d97706] text-[#78350f] font-black text-xs shadow-md active:translate-y-0.5 transition flex items-center justify-center gap-1.5"
