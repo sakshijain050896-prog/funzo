@@ -32,17 +32,22 @@
     color-scheme: dark;
   }
 
+  /* Safe-area insets (iPhone notch / home bar) are applied ONCE:
+     top → sticky TopBar, bottom → <main>, sides → #root.
+     Never pad html/body/#root vertically, or the page gets taller than the
+     screen and scrolls (and the gap stacks up in the installed iOS app). */
   html,
-  body,
-  #root {
-    min-height: 100dvh;
+  body {
     width: 100%;
     margin: 0;
     padding: 0;
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
-    padding-left: env(safe-area-inset-left);
-    padding-right: env(safe-area-inset-right);
+    overscroll-behavior-y: none;
+  }
+  #root {
+    width: 100%;
+    min-height: 100dvh;
+    margin: 0;
+    padding: 0 env(safe-area-inset-right) 0 env(safe-area-inset-left);
     overscroll-behavior-y: none;
   }
 

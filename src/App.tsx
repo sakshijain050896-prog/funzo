@@ -454,14 +454,14 @@ export const App: React.FC = () => {
 
         {/* Streak Notification Toast */}
         {streakToast && (
-          <div className="fixed top-28 sm:top-20 left-1/2 -translate-x-1/2 z-50 pl-2 pr-4 h-11 rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-rose-500 text-white font-bold text-xs sm:text-sm shadow-[0_18px_40px_-12px_rgba(249,115,22,.8)] border border-white/25 flex items-center gap-2 animate-slide-down whitespace-nowrap">
+          <div className="fixed top-[calc(7rem+env(safe-area-inset-top))] sm:top-[calc(5rem+env(safe-area-inset-top))] left-1/2 -translate-x-1/2 z-50 pl-2 pr-4 h-11 rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-rose-500 text-white font-bold text-xs sm:text-sm shadow-[0_18px_40px_-12px_rgba(249,115,22,.8)] border border-white/25 flex items-center gap-2 animate-slide-down whitespace-nowrap">
             <span className="w-7 h-7 rounded-full bg-white/25 flex items-center justify-center"><Flame className="w-4 h-4 fill-white" /></span>
             <span>{streakToast}</span>
           </div>
         )}
 
         {/* Main Body Area */}
-        <main className="relative z-10 flex-1 px-3 py-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
+        <main className="relative z-10 flex-1 px-3 py-4 sm:p-6 lg:p-8 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:pb-[calc(1.5rem+env(safe-area-inset-bottom))] lg:pb-[calc(2rem+env(safe-area-inset-bottom))] max-w-7xl mx-auto w-full">
           {/* ---------------- SCENARIO A: ACTIVE GAME PLAYER MODE ---------------- */}
           {activeGame !== null ? (
             <div className="w-full flex flex-col items-center animate-fade-in">

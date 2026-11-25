@@ -56,7 +56,7 @@ export const TopBar: React.FC<TopBarProps> = ({
   ];
 
   return (
-    <header className="w-full sticky top-0 z-30 max-w-full bg-white/75 dark:bg-[#0a0b14]/70 backdrop-blur-xl border-b border-slate-900/5 dark:border-white/[0.06] text-slate-900 dark:text-white">
+    <header className="w-full sticky top-0 z-30 max-w-full pt-[env(safe-area-inset-top)] bg-white/75 dark:bg-[#0a0b14]/70 backdrop-blur-xl border-b border-slate-900/5 dark:border-white/[0.06] text-slate-900 dark:text-white">
       {/* Top Row */}
       <div className="w-full h-16 px-3 sm:px-6 lg:px-8 flex items-center justify-between gap-2 sm:gap-3">
         {/* Left: Menu + Search */}

@@ -52,7 +52,7 @@ export function initMobileApp(onCloseGameOrModal?: () => boolean) {
     try {
       StatusBar.setStyle({ style: Style.Dark });
       if (Capacitor.getPlatform() === 'android') {
-        StatusBar.setBackgroundColor({ color: '#e52521' });
+        StatusBar.setBackgroundColor({ color: '#0a0b14' });
         StatusBar.setOverlaysWebView({ overlay: false });
       }
     } catch (e) {
