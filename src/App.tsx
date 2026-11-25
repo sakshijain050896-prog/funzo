@@ -27,6 +27,7 @@ import { CelebrationModal } from './components/CelebrationModal';
 import { AdModal } from './components/AdModal';
 import { AdminModal } from './components/AdminModal';
 import { NotificationModal } from './components/NotificationModal';
+import { InstallAppModal } from './components/InstallAppModal';
 
 import { 
   getStoredStats, 
@@ -139,6 +140,7 @@ export const App: React.FC = () => {
   const [isHowToPlayOpen, setIsHowToPlayOpen] = useState(false);
   const [howToPlayGameId, setHowToPlayGameId] = useState<string>('sudoku');
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [isInstallModalOpen, setIsInstallModalOpen] = useState(false);
   const [notifications, setNotifications] = useState<AppNotification[]>(loadNotifications);
   const [streakToast, setStreakToast] = useState<string | null>(null);
   const [canInstallPwa, setCanInstallPwa] = useState<boolean>(false);
@@ -153,6 +155,7 @@ export const App: React.FC = () => {
   // Native Android Hardware Back-Button Management
   useEffect(() => {
     return registerBackButtonHandler(() => {
+      if (isInstallModalOpen) { setIsInstallModalOpen(false); return true; }
       if (isProfileOpen) { setIsProfileOpen(false); return true; }
       if (isStatsOpen) { setIsStatsOpen(false); return true; }
       if (isAdminOpen) { setIsAdminOpen(false); return true; }
@@ -165,7 +168,7 @@ export const App: React.FC = () => {
       }
       return false;
     });
-  }, [isProfileOpen, isStatsOpen, isAdminOpen, isHowToPlayOpen, isNotificationsOpen, isMobileSidebarOpen, activeGame]);
+  }, [isInstallModalOpen, isProfileOpen, isStatsOpen, isAdminOpen, isHowToPlayOpen, isNotificationsOpen, isMobileSidebarOpen, activeGame]);
 
   const saveNotificationsState = (updated: AppNotification[]) => {
     setNotifications(updated);
@@ -425,6 +428,7 @@ export const App: React.FC = () => {
         onCloseMobile={() => setIsMobileSidebarOpen(false)}
         canInstallApp={canInstallPwa}
         onInstallApp={promptInstallApp}
+        onOpenInstallModal={() => setIsInstallModalOpen(true)}
       />
 
       {/* 2. Main Content Wrapper */}
@@ -448,6 +452,7 @@ export const App: React.FC = () => {
           onToggleTheme={handleToggleTheme}
           canInstallApp={canInstallPwa}
           onInstallApp={promptInstallApp}
+          onOpenInstallModal={() => setIsInstallModalOpen(true)}
         />
 
         {/* Streak Notification Toast */}
@@ -713,6 +718,13 @@ export const App: React.FC = () => {
         onClose={() => setAdModalOpen(false)}
         onReward={adOnReward}
         rewardTitle={adRewardTitle}
+      />
+
+      <InstallAppModal
+        isOpen={isInstallModalOpen}
+        onClose={() => setIsInstallModalOpen(false)}
+        canInstallPwa={canInstallPwa}
+        onInstallPwa={promptInstallApp}
       />
     </div>
   );

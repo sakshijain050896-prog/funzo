@@ -25,3 +25,8 @@ dist-ssr
 
 # Vercel
 .vercel
+
+# Gradle
+.gradle/
+android/.gradle/
+

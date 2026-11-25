@@ -21,6 +21,7 @@ interface SidebarProps {
   stats?: PlayerStats;
   canInstallApp?: boolean;
   onInstallApp?: () => void;
+  onOpenInstallModal?: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -34,6 +35,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   stats,
   canInstallApp = false,
   onInstallApp,
+  onOpenInstallModal,
 }) => {
   const [logoClicks, setLogoClicks] = useState<number>(0);
   const currentUser = getCurrentUser();
@@ -149,21 +151,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Bottom Section: Daily Reward Promo & Profile Info */}
         <div className="flex flex-col gap-3">
-          {/* Install Mobile App Button (When Available) */}
-          {canInstallApp && (
-            <button
-              onClick={() => {
-                sound.playTap();
-                if (onInstallApp) onInstallApp();
-                if (onCloseMobile) onCloseMobile();
-              }}
-              className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-2xl bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-slate-950 font-black text-xs shadow-md border-b-4 border-orange-700 active:translate-y-0.5 transition font-['Fredoka']"
-              title="Install Funzo App directly to your device"
-            >
-              <span className="text-base">📲</span>
-              <span>Install Mobile App</span>
-            </button>
-          )}
+          {/* Install Mobile App Button - Always visible */}
+          <button
+            onClick={() => {
+              sound.playTap();
+              if (canInstallApp && onInstallApp) {
+                onInstallApp();
+              } else if (onOpenInstallModal) {
+                onOpenInstallModal();
+              }
+              if (onCloseMobile) onCloseMobile();
+            }}
+            className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-2xl bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-slate-950 font-black text-xs shadow-md border-b-4 border-orange-700 active:translate-y-0.5 transition font-['Fredoka'] animate-pulse"
+            title="Install Funzo App directly to your device"
+          >
+            <span className="text-base">📲</span>
+            <span>Install Mobile App</span>
+          </button>
 
           {/* Daily Coin Bonus Card - Pastel Peach/Buttercup */}
           <div className="p-3.5 rounded-3xl bg-gradient-to-br from-[#fef3c7] via-[#fed7aa] to-[#fecdd3] border-2 border-[#fde68a] text-center shadow-sm relative overflow-hidden group">
