@@ -1,7 +1,23 @@
+const SOUND_STORAGE_KEY = 'funzo_sound_v3';
+
+function readInitialSoundState(): boolean {
+  if (typeof window === 'undefined') return true;
+  try {
+    const stored = localStorage.getItem(SOUND_STORAGE_KEY);
+    return stored !== null ? stored === 'true' : true;
+  } catch {
+    return true;
+  }
+}
+
 // High-performance Web Audio API synthesizer for zero-latency, zero-file-download sound effects
 class SoundController {
   private ctx: AudioContext | null = null;
-  public enabled: boolean = true;
+  public enabled: boolean = readInitialSoundState();
+
+  constructor() {
+    this.enabled = readInitialSoundState();
+  }
 
   private getContext(): AudioContext | null {
     if (!this.enabled) return null;

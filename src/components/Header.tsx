@@ -101,14 +101,22 @@ export const Header: React.FC<HeaderProps> = ({
             <span>{stats.coins}</span>
           </button>
 
-          {/* Sound Toggle */}
+          {/* Sound Toggle - Green when ON, Red when OFF */}
           <button
             onClick={onToggleSound}
-            className="p-1.5 rounded-xl bg-slate-100 dark:bg-[#202f36] border-b-2 border-slate-300 dark:border-[#142026] text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white transition active:translate-y-0.5 active:border-b-0 shadow-sm"
+            className={`p-1.5 rounded-xl border-b-2 transition active:translate-y-0.5 active:border-b-0 shadow-sm ${
+              soundEnabled
+                ? 'bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-950/70 border-emerald-400 dark:border-emerald-600 text-emerald-800 dark:text-emerald-300'
+                : 'bg-rose-100 hover:bg-rose-200 dark:bg-rose-950/70 border-rose-400 dark:border-rose-600 text-rose-800 dark:text-rose-300'
+            }`}
             aria-label="Toggle Sound"
-            title={soundEnabled ? 'Mute Sound' : 'Enable Sound'}
+            title={soundEnabled ? 'Volume ON (Click to Mute)' : 'Volume OFF (Click to Unmute)'}
           >
-            {soundEnabled ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5 text-[#ff4b4b]" />}
+            {soundEnabled ? (
+              <Volume2 className="w-3.5 h-3.5 text-[#15803d] dark:text-emerald-300" />
+            ) : (
+              <VolumeX className="w-3.5 h-3.5 text-[#b91c1c] dark:text-rose-300" />
+            )}
           </button>
 
           {/* Theme Toggle */}

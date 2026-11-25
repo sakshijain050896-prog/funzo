@@ -98,13 +98,22 @@ export const TopBar: React.FC<TopBarProps> = ({
 
         {/* Right: Quick Controls (Sound, Theme, Notifications, Profile) */}
         <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-          {/* Sound Toggle (hidden on small mobile to guarantee space for Profile) */}
+          {/* Sound Toggle Button - Green when ON, Red when OFF */}
           <button
             onClick={onToggleSound}
-            className="hidden sm:flex p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#22283a] border-2 border-slate-200 dark:border-[#444] text-slate-700 dark:text-white transition active:translate-y-0.5 shrink-0"
-            title={soundEnabled ? 'Mute Audio' : 'Enable Audio'}
+            className={`p-1.5 sm:p-2 rounded-xl border-2 transition active:translate-y-0.5 shadow-sm shrink-0 flex items-center justify-center ${
+              soundEnabled
+                ? 'bg-[#dcfce7] hover:bg-[#bbf7d0] dark:bg-emerald-950/70 border-[#86efac] dark:border-emerald-600 text-[#15803d] dark:text-emerald-300'
+                : 'bg-[#ffe4e6] hover:bg-[#fecdd3] dark:bg-rose-950/70 border-[#fca5a5] dark:border-rose-600 text-[#b91c1c] dark:text-rose-300'
+            }`}
+            title={soundEnabled ? 'Volume ON (Click to Mute)' : 'Volume OFF (Click to Unmute)'}
+            aria-label={soundEnabled ? 'Mute Audio' : 'Enable Audio'}
           >
-            {soundEnabled ? <Volume2 className="w-4 h-4 text-[#059669]" /> : <VolumeX className="w-4 h-4 text-[#e11d48]" />}
+            {soundEnabled ? (
+              <Volume2 className="w-4 h-4 text-[#15803d] dark:text-emerald-300" />
+            ) : (
+              <VolumeX className="w-4 h-4 text-[#b91c1c] dark:text-rose-300" />
+            )}
           </button>
 
           {/* Theme Toggle Button (Overworld Bright ☀️ vs Dark Mode 🌙) */}

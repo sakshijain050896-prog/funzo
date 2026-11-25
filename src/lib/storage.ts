@@ -1,7 +1,7 @@
 import { PlayerStats, ThemeMode } from '../types';
 
 const STATS_KEY = 'funzo_player_stats_v4';
-const SOUND_KEY = 'funzo_sound_v2';
+const SOUND_KEY = 'funzo_sound_v3';
 const THEME_KEY = 'funzo_theme_v3';
 
 export const getStoredStats = (): PlayerStats => {

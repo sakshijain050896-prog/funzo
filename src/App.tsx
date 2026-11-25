@@ -114,6 +114,11 @@ export const App: React.FC = () => {
   const [stats, setStats] = useState<PlayerStats>(getStoredStats);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(getSoundPreference);
   const [theme, setTheme] = useState<ThemeMode>(getThemePreference);
+
+  // Synchronize Web Audio synth directly with soundEnabled state
+  useEffect(() => {
+    sound.enabled = soundEnabled;
+  }, [soundEnabled]);
   const [activeNavTab, setActiveNavTab] = useState<DashboardNavTab>('home');
   const [activeCategory, setActiveCategory] = useState<CategoryFilter>('all');
   const [activeGame, setActiveGame] = useState<GameKey | null>(null);
