@@ -487,7 +487,18 @@ export const App: React.FC = () => {
                       activeSubTab === 'most-likely-to' ? 'Most Likely To' :
                       'Truth or Dare'
                     )}
-                    {activeGame === 'quizup' && 'Quiz Up'}
+                    {activeGame === 'quizup' && (
+                      activeSubTab === 'cinema' ? 'Quiz Up: Cinema (Bolly & Holly)' :
+                      activeSubTab === 'science' ? 'Quiz Up: Science & Biology' :
+                      activeSubTab === 'physics' ? 'Quiz Up: Physics & Energy' :
+                      activeSubTab === 'chemistry' ? 'Quiz Up: Chemistry & Elements' :
+                      activeSubTab === 'history' ? 'Quiz Up: World History' :
+                      activeSubTab === 'math' ? 'Quiz Up: Math & Logic' :
+                      activeSubTab === 'geography' ? 'Quiz Up: Geography & Wonders' :
+                      activeSubTab === 'tech' ? 'Quiz Up: Tech & Inventions' :
+                      activeSubTab === 'sports' ? 'Quiz Up: Sports & Olympics' :
+                      'Quiz Up'
+                    )}
                     {activeGame === 'sudoku' && 'Maths Puzzle'}
                     {activeGame === '2t1l' && '2 Truths & 1 Lie'}
                     {activeGame === 'tictactoe' && 'Tic Tac Toe'}

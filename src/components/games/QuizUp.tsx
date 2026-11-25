@@ -104,6 +104,7 @@ export const QuizUp: React.FC<QuizUpProps> = ({
 
   // Auto-advance timer ref
   const autoAdvanceRef = useRef<any>(null);
+  const isFirstMountRef = useRef<boolean>(true);
 
   const currentQ: QuizQuestion | undefined = questions[currentIndex];
 
@@ -137,6 +138,18 @@ export const QuizUp: React.FC<QuizUpProps> = ({
     },
     [activeDifficulty]
   );
+
+  // Synchronize when initialTopic prop changes from catalog selection
+  useEffect(() => {
+    if (isFirstMountRef.current) {
+      isFirstMountRef.current = false;
+      return;
+    }
+    if (initialTopic) {
+      setActiveTopic(initialTopic);
+      startNewLevel(1, initialTopic, activeDifficulty);
+    }
+  }, [initialTopic, startNewLevel, activeDifficulty]);
 
   // Switch Topic
   const handleSelectTopic = (topic: QuizTopic) => {

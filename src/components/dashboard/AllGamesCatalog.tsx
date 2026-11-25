@@ -36,7 +36,7 @@ export const CATEGORY_THEMES: Record<string, { tagBg: string; buttonBg: string }
 };
 
 export const ALL_GAMES_DATA: GameCatalogItem[] = [
-  // 0. QUIZ UP TRIVIA
+  // 0. QUIZ UP TRIVIA (Single entry for "All Games" tab)
   {
     id: 'quizup',
     subTab: 'all',
@@ -149,6 +149,110 @@ export const ALL_GAMES_DATA: GameCatalogItem[] = [
   },
 ];
 
+// ---------------- ALL TOPIC-WISE LINES FOR QUIZ UP CATEGORY ----------------
+export const QUIZ_TOPIC_ITEMS: GameCatalogItem[] = [
+  {
+    id: 'quizup',
+    subTab: 'cinema',
+    title: 'Quiz Up: Cinema (Bolly & Holly)',
+    genre: 'quiz',
+    genreLabel: 'Quiz Up',
+    tag: 'Movies, Actors & Oscars',
+    emoji: '🎬',
+    bgGradient: 'from-[#fecdd3] to-[#fda4af]',
+  },
+  {
+    id: 'quizup',
+    subTab: 'science',
+    title: 'Quiz Up: Science & Biology',
+    genre: 'quiz',
+    genreLabel: 'Quiz Up',
+    tag: 'Living World & Nature',
+    emoji: '🔬',
+    bgGradient: 'from-[#d1fae5] to-[#a7f3d0]',
+  },
+  {
+    id: 'quizup',
+    subTab: 'physics',
+    title: 'Quiz Up: Physics & Energy',
+    genre: 'quiz',
+    genreLabel: 'Quiz Up',
+    tag: 'Forces, Space & Optics',
+    emoji: '⚡',
+    bgGradient: 'from-[#e0f2fe] to-[#bae6fd]',
+  },
+  {
+    id: 'quizup',
+    subTab: 'chemistry',
+    title: 'Quiz Up: Chemistry & Elements',
+    genre: 'quiz',
+    genreLabel: 'Quiz Up',
+    tag: 'Reactions, Acids & Elements',
+    emoji: '🧪',
+    bgGradient: 'from-[#ede9fe] to-[#ddd6fe]',
+  },
+  {
+    id: 'quizup',
+    subTab: 'history',
+    title: 'Quiz Up: World History',
+    genre: 'quiz',
+    genreLabel: 'Quiz Up',
+    tag: 'Empires, Wars & Wonders',
+    emoji: '🏛️',
+    bgGradient: 'from-[#ffedd5] to-[#fed7aa]',
+  },
+  {
+    id: 'quizup',
+    subTab: 'math',
+    title: 'Quiz Up: Math & Logic',
+    genre: 'quiz',
+    genreLabel: 'Quiz Up',
+    tag: 'Numbers, Algebra & IQ',
+    emoji: '🧮',
+    bgGradient: 'from-[#ffe4e6] to-[#fecdd3]',
+  },
+  {
+    id: 'quizup',
+    subTab: 'geography',
+    title: 'Quiz Up: Geography & Wonders',
+    genre: 'quiz',
+    genreLabel: 'Quiz Up',
+    tag: 'World Capitals & Oceans',
+    emoji: '🌍',
+    bgGradient: 'from-[#ccfbf1] to-[#99f6e4]',
+  },
+  {
+    id: 'quizup',
+    subTab: 'tech',
+    title: 'Quiz Up: Tech & Inventions',
+    genre: 'quiz',
+    genreLabel: 'Quiz Up',
+    tag: 'Computers, AI & Internet',
+    emoji: '💻',
+    bgGradient: 'from-[#e0e7ff] to-[#c7d2fe]',
+  },
+  {
+    id: 'quizup',
+    subTab: 'sports',
+    title: 'Quiz Up: Sports & Olympics',
+    genre: 'quiz',
+    genreLabel: 'Quiz Up',
+    tag: 'Cricket, Football & Records',
+    emoji: '⚽',
+    bgGradient: 'from-[#ecfccb] to-[#d9f99d]',
+  },
+  {
+    id: 'quizup',
+    subTab: 'all',
+    title: 'Quiz Up: All Topics Trivia Mix',
+    genre: 'quiz',
+    genreLabel: 'Quiz Up',
+    tag: 'Universal GK Challenge',
+    emoji: '🌟',
+    bgGradient: 'from-[#fef08a] to-[#fde047]',
+  },
+];
+
 const CATEGORY_TABS: { id: CategoryFilter; label: string; emoji: string }[] = [
   { id: 'all', label: 'All Games', emoji: '⭐' },
   { id: 'quiz', label: 'Quiz Up', emoji: '💡' },
@@ -178,14 +282,20 @@ export const AllGamesCatalog: React.FC<AllGamesCatalogProps> = ({
   const filteredGames = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     if (q.length > 0) {
-      return ALL_GAMES_DATA.filter((game) => 
+      // Search matches across both general games and all specific Quiz Up topics
+      return [...ALL_GAMES_DATA, ...QUIZ_TOPIC_ITEMS].filter((game) => 
         game.title.toLowerCase().includes(q) ||
         game.genreLabel.toLowerCase().includes(q) ||
         game.tag.toLowerCase().includes(q)
       );
     }
     if (selectedCategory === 'all') {
+      // In "All Games" tab, show one clean single row for Quiz Up
       return ALL_GAMES_DATA;
+    }
+    if (selectedCategory === 'quiz') {
+      // In "Quiz Up" category, ALL topic-wise lines should come!
+      return QUIZ_TOPIC_ITEMS;
     }
     return ALL_GAMES_DATA.filter((game) => game.genre === selectedCategory);
   }, [searchQuery, selectedCategory]);
@@ -201,6 +311,8 @@ export const AllGamesCatalog: React.FC<AllGamesCatalogProps> = ({
             const isSelected = selectedCategory === tab.id && !searchQuery.trim();
             const count = tab.id === 'all' 
               ? ALL_GAMES_DATA.length 
+              : tab.id === 'quiz'
+              ? QUIZ_TOPIC_ITEMS.length
               : ALL_GAMES_DATA.filter((g) => g.genre === tab.id).length;
 
             let tabActiveStyle = 'bg-[#c7d2fe] text-[#312e81] border-2 border-[#a5b4fc] shadow-sm';
@@ -248,9 +360,9 @@ export const AllGamesCatalog: React.FC<AllGamesCatalogProps> = ({
         <div className="flex items-center justify-between px-1 text-xs font-black text-slate-700 dark:text-slate-300 font-['Fredoka']">
           <div className="flex items-center gap-1.5">
             <span>{activeTabInfo?.emoji}</span>
-            <span>{activeTabInfo?.label} Games</span>
+            <span>{selectedCategory === 'quiz' ? 'Quiz Up Topics' : `${activeTabInfo?.label} Games`}</span>
             <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-200 dark:bg-white/10 text-slate-700 dark:text-slate-300">
-              {filteredGames.length}
+              {filteredGames.length} {selectedCategory === 'quiz' ? 'Topics' : 'Games'}
             </span>
           </div>
         </div>
