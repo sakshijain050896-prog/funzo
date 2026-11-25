@@ -228,7 +228,8 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
                         )
                       )}
 
-                      {notif.actionLabel && (
+                      {/* Only real shortcuts (a game/category to open); the welcome gift reuses its claim label as actionLabel */}
+                      {notif.actionLabel && (notif.actionGameId || notif.actionCategory) && (
                         <button
                           onClick={(e) => {
                             e.stopPropagation();

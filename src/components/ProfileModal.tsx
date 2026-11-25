@@ -520,7 +520,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
           <span>Close Window</span>
         </button>
 
-        {/* Secret Owner Admin Panel Access (PIN 8899) */}
+        {/* Secret Owner Admin Panel Access (PIN-gated) */}
         {onOpenAdmin && (
           <div className="mt-4 pt-3 border-t border-white/5 text-center">
             <button
@@ -531,7 +531,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
               className="text-[10px] text-slate-500 hover:text-violet-400 font-mono transition flex items-center justify-center gap-1 mx-auto"
             >
               <KeyRound className="w-3 h-3" />
-              <span>Owner &amp; Admin Panel (PIN: 8899)</span>
+              <span>Owner &amp; Admin Panel</span>
             </button>
           </div>
         )}

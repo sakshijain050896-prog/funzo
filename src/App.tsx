@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import confetti from 'canvas-confetti';
 import { Sidebar, DashboardNavTab } from './components/dashboard/Sidebar';
 import { TopBar } from './components/dashboard/TopBar';
@@ -36,10 +36,10 @@ import {
   recordGameWin, 
   getSoundPreference, 
   saveSoundPreference,
-  increasePlayerIQ,
   getThemePreference,
   saveThemePreference,
-  saveStats
+  saveStats,
+  markDailyChallengeDone,
 } from './lib/storage';
 import { syncPlayerProgress } from './lib/authService';
 import { sound } from './lib/soundEffects';
@@ -53,6 +53,8 @@ import { PlayerStats, ThemeMode, AppNotification } from './types';
 import { ArrowLeft, HelpCircle, Flame } from 'lucide-react';
 
 const NOTIFICATIONS_STORAGE_KEY = 'funzo_user_notifications_v1';
+const DAILY_CHALLENGE_BONUS = 100;
+const WIN_COINS = 25; // coins recordGameWin awards per win
 
 const INITIAL_NOTIFICATIONS: AppNotification[] = [
   {
@@ -249,6 +251,20 @@ export const App: React.FC = () => {
   const [celebrationTitle, setCelebrationTitle] = useState('FANTASTIC MOVE! 🌟');
   const [celebrationSubtitle, setCelebrationSubtitle] = useState('');
   const [celebrationIQGained, setCelebrationIQGained] = useState(15);
+  const [celebrationCoins, setCelebrationCoins] = useState(WIN_COINS);
+  const milestone2048Ref = useRef<number | null>(null);
+  // Party/mystery games call onActivity on every card; a "game played" is already
+  // counted once when the game is launched, so per-card activity must not add more.
+  const noopActivity = useCallback(() => {}, []);
+
+  // Persist + render + cloud-sync any stats change coming from a view/modal.
+  // (Rewards/Profile/Admin previously only updated React state, so claimed coins
+  // were lost on reload or overwritten by the next game action.)
+  const applyStats = useCallback((newStats: PlayerStats) => {
+    saveStats(newStats);
+    setStats(newStats);
+    syncPlayerProgress(newStats);
+  }, []);
 
   // Ad simulation modal state
   const [adModalOpen, setAdModalOpen] = useState(false);
@@ -319,28 +335,47 @@ export const App: React.FC = () => {
     }
   };
 
-  // Universal Victory & Level Complete Celebration (Records real wins across all games)
-  const handleLevelCelebration = (iqPoints: number, title: string, subtitle: string, gameId?: string) => {
-    const winUpdated = recordGameWin(gameId, undefined, false);
-    const { stats: updated } = increasePlayerIQ(iqPoints);
+  // Records exactly ONE win: +1 won, +25 coins (WIN_COINS), +XP, and an IQ boost.
+  // (Previously a win was counted 2–3 times and coins didn't match the modal.)
+  const recordSingleWin = (gameId: string | undefined, iqPoints: number, bonusCoins = 0): PlayerStats => {
+    const before = getStoredStats();
+    const winUpdated = recordGameWin(gameId, undefined, false); // +1 won, +25 coins, +50 XP
     const finalStats: PlayerStats = {
-      ...updated,
-      totalGamesWon: Math.max(winUpdated.totalGamesWon, (updated.totalGamesWon || 0) + 1),
-      totalGamesPlayed: Math.max(winUpdated.totalGamesPlayed, updated.totalGamesPlayed),
-      coins: updated.coins,
+      ...winUpdated,
+      iq: (before.iq || 100) + iqPoints,
+      coins: winUpdated.coins + bonusCoins,
     };
     saveStats(finalStats);
     setStats(finalStats);
     syncPlayerProgress(finalStats);
+    return finalStats;
+  };
+
+  // Universal Victory & Level Complete Celebration (Records real wins across all games)
+  const handleLevelCelebration = (iqPoints: number, title: string, subtitle: string, gameId?: string, bonusCoins = 0) => {
+    recordSingleWin(gameId, iqPoints, bonusCoins);
     setCelebrationTitle(title);
     setCelebrationSubtitle(subtitle);
     setCelebrationIQGained(iqPoints);
+    setCelebrationCoins(WIN_COINS + bonusCoins);
     setCelebrationOpen(true);
   };
 
-  const handleMathWin = (score: number) => {
-    recordGameWin('sudoku', score, false);
-    handleLevelCelebration(15, 'MATH GENIUS! 🧮', 'Outstanding arithmetic calculation and speed!', 'sudoku');
+  // Kids games show their own "level cleared" screen, so record the win quietly.
+  const handleQuietWin = (gameId: string) => {
+    recordSingleWin(gameId, 5);
+  };
+
+  const handleMathWin = (_score: number) => {
+    // Daily Challenge: first Maths Puzzle level cleared today earns +100 bonus coins (once per day).
+    const bonus = markDailyChallengeDone() ? DAILY_CHALLENGE_BONUS : 0;
+    handleLevelCelebration(
+      15,
+      bonus ? 'DAILY CHALLENGE DONE! 🧮' : 'MATH GENIUS! 🧮',
+      bonus ? `Maths Puzzle cleared! +${DAILY_CHALLENGE_BONUS} daily bonus coins added.` : 'Outstanding arithmetic calculation and speed!',
+      'sudoku',
+      bonus,
+    );
   };
 
   const handleArrowWin = () => {
@@ -559,9 +594,15 @@ export const App: React.FC = () => {
               <div className={`w-full ${activeGame === '2048' ? 'block' : 'hidden'}`}>
                 <Game2048
                   onWinOrScore={(s) => {
-                    if (s > 100) handleGameActivity('2048');
-                    if (s >= 512 && s % 512 === 0) {
-                      handleLevelCelebration(15, '2048 RUSH ACHIEVED! ⚡', `Huge combo score of ${s}! Numerical logic master.`, '2048');
+                    // Celebrate each time the score CROSSES a 512-point milestone
+                    // (was: only when the score landed exactly on a multiple of 512,
+                    // and every move over 100 pts counted as a new "game played").
+                    const milestone = Math.floor(s / 512);
+                    if (milestone2048Ref.current === null || milestone < milestone2048Ref.current) {
+                      milestone2048Ref.current = milestone; // first move of a session / after restart
+                    } else if (milestone > milestone2048Ref.current) {
+                      milestone2048Ref.current = milestone;
+                      handleLevelCelebration(15, '2048 RUSH ACHIEVED! ⚡', `Crossed ${milestone * 512} points! Numerical logic master.`, '2048');
                     }
                   }}
                   onRequestAd={handleRequestAd}
@@ -572,7 +613,7 @@ export const App: React.FC = () => {
                 <SpillItHub
                   currentIQ={stats.iq || 105}
                   initialTab={(activeSubTab as any) || (activeGame === '2t1l' ? 'two-truths' : 'truth-or-dare')}
-                  onActivity={() => handleGameActivity('spill-it')}
+                  onActivity={noopActivity}
                   onWinLevel={(iq, title, sub) => handleLevelCelebration(iq, title, sub, 'spill-it')}
                   onRequestAd={handleRequestAd}
                   onOpenHowToPlay={handleOpenHowToPlay}
@@ -584,7 +625,7 @@ export const App: React.FC = () => {
                 <MysteryHub
                   currentIQ={stats.iq || 105}
                   initialTab={(activeSubTab as any) || 'crime-scene'}
-                  onActivity={() => handleGameActivity('mystery')}
+                  onActivity={noopActivity}
                   onLevelWin={(iq, title, sub) => handleLevelCelebration(iq, title, sub, 'mystery')}
                   onRequestAd={handleRequestAd}
                   onOpenHowToPlay={handleOpenHowToPlay}
@@ -595,7 +636,7 @@ export const App: React.FC = () => {
               <div className={`w-full ${activeGame === 'tictactoe' ? 'block' : 'hidden'}`}>
                 <TicTacToe
                   onWinOrActivity={() => {
-                    handleGameActivity('tictactoe');
+                    // TicTacToe only calls this when the human player wins (see TicTacToe.tsx)
                     handleLevelCelebration(10, 'TICTACTOE VICTORY! 👑', '3-in-a-row domination! Strategic intellect leveled up.', 'tictactoe');
                   }}
                   onRequestAd={handleRequestAd}
@@ -606,9 +647,7 @@ export const App: React.FC = () => {
                 <MemoryMatch
                   coins={stats.coins}
                   onSpendCoins={handleSpendCoins}
-                  onWin={() => {
-                    handleGameActivity('memory');
-                  }}
+                  onWin={() => handleQuietWin('memory')}
                   onBackToKids={handleBackToKids}
                 />
               </div>
@@ -617,9 +656,7 @@ export const App: React.FC = () => {
                 <BalloonPop
                   coins={stats.coins}
                   onSpendCoins={handleSpendCoins}
-                  onWin={() => {
-                    handleGameActivity('balloon');
-                  }}
+                  onWin={() => handleQuietWin('balloon')}
                   onBackToKids={handleBackToKids}
                 />
               </div>
@@ -629,8 +666,6 @@ export const App: React.FC = () => {
                   coins={stats.coins}
                   onSpendCoins={handleSpendCoins}
                   onWin={(score, accuracy) => {
-                    handleGameActivity('quizup');
-                    recordGameWin('quizup', score, false);
                     handleLevelCelebration(25, 'TRIVIA GENIUS! 💡', `Scored ${score} pts with ${accuracy}% accuracy in Quiz Up!`, 'quizup');
                   }}
                   initialTopic={(activeSubTab as any) || 'all'}
@@ -677,10 +712,7 @@ export const App: React.FC = () => {
               {activeNavTab === 'rewards' && (
                 <RewardsView
                   stats={stats}
-                  onUpdateStats={(newStats) => {
-                    setStats(newStats);
-                    syncPlayerProgress(newStats);
-                  }}
+                  onUpdateStats={applyStats}
                   onRequestAd={handleRequestAd}
                   onBackToHome={() => setActiveNavTab('home')}
                 />
@@ -711,7 +743,7 @@ export const App: React.FC = () => {
         isOpen={isProfileOpen}
         onClose={() => setIsProfileOpen(false)}
         stats={stats}
-        onUpdateStats={(newStats) => setStats(newStats)}
+        onUpdateStats={applyStats}
         onOpenAdmin={() => setIsAdminOpen(true)}
       />
 
@@ -719,7 +751,7 @@ export const App: React.FC = () => {
         isOpen={isAdminOpen}
         onClose={() => setIsAdminOpen(false)}
         stats={stats}
-        onUpdateStats={(newStats) => setStats(newStats)}
+        onUpdateStats={applyStats}
       />
 
       <HowToPlayModal
@@ -735,7 +767,7 @@ export const App: React.FC = () => {
         subtitle={celebrationSubtitle}
         iqGained={celebrationIQGained}
         currentIQ={stats.iq || 105}
-        coinsGained={25}
+        coinsGained={celebrationCoins}
       />
 
       <AdModal

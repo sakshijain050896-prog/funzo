@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { RotateCcw, Trophy, Users, Bot } from 'lucide-react';
 import { sound } from '../../lib/soundEffects';
 import confetti from 'canvas-confetti';
@@ -23,6 +23,9 @@ export const TicTacToe: React.FC<TicTacToeProps> = ({ onWinOrActivity }) => {
   const [scores, setScores] = useState({ X: 0, O: 0, ties: 0 });
   const [winningLine, setWinningLine] = useState<number[] | null>(null);
   const [winner, setWinner] = useState<'X' | 'O' | 'TIE' | null>(null);
+  // Pending AI move; cancelled on restart/mode switch so a stale move can't land on a fresh board
+  const aiTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (aiTimeoutRef.current) clearTimeout(aiTimeoutRef.current); }, []);
 
   const checkWinner = (cells: BoardCell[]) => {
     for (const combo of WINNING_COMBOS) {
@@ -98,7 +101,8 @@ export const TicTacToe: React.FC<TicTacToeProps> = ({ onWinOrActivity }) => {
           sound.playVictory();
           confetti({ particleCount: 60, spread: 70, origin: { y: 0.5 } });
         }
-        if (onWinOrActivity) onWinOrActivity(winResult.winner);
+        // Only reward the human: X vs the AI, or either player in 2-player mode
+        if (onWinOrActivity && (winResult.winner === 'X' || !vsAI)) onWinOrActivity(winResult.winner);
       }
     } else {
       setIsXNext(player === 'O');
@@ -107,13 +111,16 @@ export const TicTacToe: React.FC<TicTacToeProps> = ({ onWinOrActivity }) => {
 
   const handleCellClick = (idx: number) => {
     if (board[idx] || winner) return;
+    // Ignore taps while the AI is thinking (previously this placed an O for the player)
+    if (vsAI && (!isXNext || aiTimeoutRef.current)) return;
 
     const newBoard = [...board];
     newBoard[idx] = isXNext ? 'X' : 'O';
     executeMove(isXNext ? 'X' : 'O', newBoard);
 
     if (vsAI && isXNext && !checkWinner(newBoard)) {
-      setTimeout(() => {
+      aiTimeoutRef.current = setTimeout(() => {
+        aiTimeoutRef.current = null;
         makeAIMove(newBoard);
       }, 350);
     }
@@ -121,6 +128,7 @@ export const TicTacToe: React.FC<TicTacToeProps> = ({ onWinOrActivity }) => {
 
   const handleRestart = () => {
     sound.playTap();
+    if (aiTimeoutRef.current) { clearTimeout(aiTimeoutRef.current); aiTimeoutRef.current = null; }
     setBoard(Array(9).fill(null));
     setIsXNext(true);
     setWinningLine(null);
@@ -203,14 +211,14 @@ export const TicTacToe: React.FC<TicTacToeProps> = ({ onWinOrActivity }) => {
         {/* Winner Overlay Banner */}
         {winner && (
           <div className="absolute inset-0 bg-black/70 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center p-4 z-20 animate-fade-in text-center">
-            <div className="w-12 h-12 rounded-2xl bg-[#fef08a] text-[#854d0e] border-2 border-[#facc15] flex items-center justify-center mb-2 animate-bounce">
-              <Trophy className="w-6 h-6 stroke-[2.5]" />
+            <div className={`w-12 h-12 rounded-2xl bg-[#fef08a] text-[#854d0e] border-2 border-[#facc15] flex items-center justify-center mb-2 ${vsAI && winner === 'O' ? '' : 'animate-bounce'}`}>
+              {vsAI && winner === 'O' ? <Bot className="w-6 h-6 stroke-[2.5]" /> : <Trophy className="w-6 h-6 stroke-[2.5]" />}
             </div>
             <h3 className="text-2xl font-black text-white mb-1">
-              {winner === 'TIE' ? 'Cat’s Game (Tie)!' : `Player ${winner} Won! 👑`}
+              {winner === 'TIE' ? 'Cat’s Game (Tie)!' : vsAI && winner === 'O' ? 'Bot Wins! 🤖' : vsAI ? 'You Won! 👑' : `Player ${winner} Won! 👑`}
             </h3>
             <p className="text-xs text-slate-200 mb-4">
-              {winner === 'TIE' ? 'Well matched logical battle!' : `Brilliant 3-in-a-row victory!`}
+              {winner === 'TIE' ? 'Well matched logical battle!' : vsAI && winner === 'O' ? 'The bot got 3 in a row. Block its lines and try again!' : `Brilliant 3-in-a-row victory!`}
             </p>
             <button
               onClick={handleRestart}

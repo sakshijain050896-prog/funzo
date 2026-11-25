@@ -1,6 +1,20 @@
 import { PlayerStats, ThemeMode } from '../types';
 
 const STATS_KEY = 'funzo_player_stats_v4';
+
+// Calendar day in the player's LOCAL timezone (YYYY-MM-DD). toISOString() is UTC,
+// which made streaks/daily rewards roll over at 5:30 AM in India instead of midnight.
+export const localDateKey = (d: Date = new Date()): string => {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+};
+const yesterdayKey = (): string => {
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  return localDateKey(d);
+};
 const SOUND_KEY = 'funzo_sound_v3';
 const THEME_KEY = 'funzo_theme_v3';
 
@@ -34,7 +48,8 @@ export const getStoredStats = (): PlayerStats => {
         iq: parsed.iq ?? 100,
         streak: parsed.streak || 1,
         lastPlayedDate: parsed.lastPlayedDate || null,
-        totalGamesWon: parsed.totalGamesWon || (parsed.totalGamesPlayed ? Math.max(1, Math.floor(parsed.totalGamesPlayed * 0.5)) : 0),
+        // Real wins only (previously a zero-win player was given max(1, played/2) fake wins)
+        totalGamesWon: parsed.totalGamesWon || 0,
         totalGamesPlayed: parsed.totalGamesPlayed || 0,
         coins: parsed.coins ?? 50,
         bestTimeSeconds: parsed.bestTimeSeconds || null,
@@ -113,7 +128,7 @@ export const recordDailyAttempt = (gameId: string): {
   coinsEarned: number;
 } => {
   const current = getStoredStats();
-  const today = new Date().toISOString().slice(0, 10);
+  const today = localDateKey();
 
   let isNewStreakDay = false;
   let newStreak = current.streak;
@@ -124,7 +139,7 @@ export const recordDailyAttempt = (gameId: string): {
     coinsBonus = 25;
 
     if (current.lastPlayedDate) {
-      const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+      const yesterday = yesterdayKey();
       if (current.lastPlayedDate === yesterday) {
         newStreak += 1;
       } else {
@@ -192,6 +207,51 @@ export const recordGameWin = (
   };
 
   saveStats(updated);
+  return updated;
+};
+
+// ---------------- Once-per-day trackers ----------------
+const todayKey = localDateKey;
+
+export const DAILY_CHALLENGE_KEY = 'funzo_daily_challenge_done_v1';
+const DAILY_REWARD_KEY = 'funzo_daily_reward_claimed_v1';
+
+const readDay = (key: string): string | null => {
+  try { return localStorage.getItem(key); } catch { return null; }
+};
+
+export const isDailyChallengeDoneToday = (): boolean => readDay(DAILY_CHALLENGE_KEY) === todayKey();
+
+/** Marks today's Daily Challenge done. Returns true only the first time today. */
+export const markDailyChallengeDone = (): boolean => {
+  if (isDailyChallengeDoneToday()) return false;
+  try { localStorage.setItem(DAILY_CHALLENGE_KEY, todayKey()); } catch { return false; }
+  return true;
+};
+
+export const isDailyRewardClaimedToday = (): boolean => readDay(DAILY_REWARD_KEY) === todayKey();
+
+/**
+ * Claims today's Daily Bonus Gift: +coins, and counts today toward the streak
+ * (only advances the streak if today wasn't already counted). Once per day.
+ */
+export const claimDailyReward = (coins: number): PlayerStats | null => {
+  if (isDailyRewardClaimedToday()) return null;
+  const current = getStoredStats();
+  const today = todayKey();
+  let streak = current.streak;
+  if (current.lastPlayedDate !== today) {
+    const yesterday = yesterdayKey();
+    streak = current.lastPlayedDate === yesterday ? current.streak + 1 : 1;
+  }
+  const updated: PlayerStats = {
+    ...current,
+    coins: (current.coins || 0) + coins,
+    streak,
+    lastPlayedDate: today,
+  };
+  saveStats(updated);
+  try { localStorage.setItem(DAILY_REWARD_KEY, today); } catch { /* ignore */ }
   return updated;
 };
 

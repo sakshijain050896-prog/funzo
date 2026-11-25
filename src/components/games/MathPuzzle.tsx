@@ -22,6 +22,8 @@ interface Problem {
   hint: string;
 }
 
+const MATH_PASS_CORRECT = 5; // correct answers needed in 60s to clear a Speed level
+
 export const MathPuzzle: React.FC<MathPuzzleProps> = ({
   stats,
   onWin,
@@ -50,6 +52,10 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
   const [operatorSolvedCount, setOperatorSolvedCount] = useState<number>(0);
   const [levelToast, setLevelToast] = useState<string | null>(null);
   const [score, setScore] = useState<number>(0);
+  // Correct answers this round; Speed mode needs MATH_PASS_CORRECT to clear the level
+  const [roundCorrect, setRoundCorrect] = useState<number>(0);
+  const roundCorrectRef = useRef(0);
+  useEffect(() => { roundCorrectRef.current = roundCorrect; }, [roundCorrect]);
   const [streak, setStreak] = useState<number>(0);
   const [bestScore, setBestScore] = useState<number>(() => {
     try {
@@ -84,11 +90,20 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
       // Missing Operator: e.g. 8 [ ? ] 4 = 32
       // Progressive difficulty based on currentLevel:
       const operators: ('+' | '-' | '×' | '÷')[] = ['+', '-', '×', '÷'];
-      const op = operators[Math.floor(Math.random() * operators.length)];
       const scale = Math.max(1, currentLevel);
-      let a = Math.floor(Math.random() * (6 + scale * 4)) + 2;
-      let b = Math.floor(Math.random() * (5 + scale * 3)) + 2;
+      const fits = (x: number, y: number, r: number) =>
+        [x + y, x - y, x * y, x / y].filter((v) => v === r).length;
+      // Regenerate until exactly ONE sign is correct (e.g. 4 ? 2 = 2 fits both − and ÷,
+      // 2 ? 2 = 4 fits both + and ×, which marked a correct tap as wrong).
+      let op: '+' | '-' | '×' | '÷' = '+';
+      let a = 0;
+      let b = 0;
       let result = 0;
+      for (let attempt = 0; attempt < 30; attempt++) {
+      op = operators[Math.floor(Math.random() * operators.length)];
+      a = Math.floor(Math.random() * (6 + scale * 4)) + 2;
+      b = Math.floor(Math.random() * (5 + scale * 3)) + 2;
+      result = 0;
 
       if (op === '+') {
         result = a + b;
@@ -105,6 +120,8 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
         b = Math.floor(Math.random() * (4 + scale * 2)) + 2;
         result = Math.floor(Math.random() * (4 + scale * 2)) + 2;
         a = b * result;
+      }
+      if (fits(a, b, result) === 1) break;
       }
 
       return {
@@ -204,6 +221,7 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
   const resetGame = useCallback(() => {
     sound.playTap();
     setScore(0);
+    setRoundCorrect(0);
     setStreak(0);
     setTimeLeft(60);
     setIsGameOver(false);
@@ -220,6 +238,7 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
       localStorage.setItem('funzo_math_level', '1');
     } catch {}
     setScore(0);
+    setRoundCorrect(0);
     setStreak(0);
     setTimeLeft(60);
     setIsGameOver(false);
@@ -230,21 +249,23 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
 
   // Advance to Next Level (e.g. Level 2, 3, etc.)
   const handlePassToNextLevel = useCallback(() => {
+    if (roundCorrect < MATH_PASS_CORRECT) return; // not cleared
     sound.playTap();
-    if (score > 0) onWin(score);
+    onWin(score);
     const nextLvl = level + 1;
     setLevel(nextLvl);
     try {
       localStorage.setItem('funzo_math_level', nextLvl.toString());
     } catch {}
     setScore(0);
+    setRoundCorrect(0);
     setStreak(0);
     setTimeLeft(60);
     setIsGameOver(false);
     setIsTimerRunning(true);
     setOperatorSolvedCount(0);
     nextProblem(mode, nextLvl);
-  }, [level, score, onWin, mode, nextProblem]);
+  }, [level, score, roundCorrect, onWin, mode, nextProblem]);
 
   // Handle speed timer
   const timerRef = useRef<any>(null);
@@ -256,8 +277,12 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
             clearInterval(timerRef.current);
             setIsGameOver(true);
             setIsTimerRunning(false);
-            sound.playVictory();
-            confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
+            if (roundCorrectRef.current >= MATH_PASS_CORRECT) {
+              sound.playVictory();
+              confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
+            } else {
+              sound.playError();
+            }
             return 0;
           }
           return prev - 1;
@@ -288,6 +313,7 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
       const newStreak = streak + 1;
       setScore(newScore);
       setStreak(newStreak);
+      setRoundCorrect((c) => c + 1);
 
       if (newScore > bestScore) {
         setBestScore(newScore);
@@ -308,6 +334,7 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
           sound.playVictory();
           confetti({ particleCount: 60, spread: 60, origin: { y: 0.5 } });
           setLevelToast(`🚀 LEVEL UP! Welcome to Level ${nextLvl}! (+25 Coins)`);
+          onWin(newScore); // records the win and credits the +25 coins shown in the toast
           setTimeout(() => setLevelToast(null), 3000);
         }
       }
@@ -594,14 +621,20 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
       {isGameOver && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-fade-in">
           <div className="w-full max-w-sm rounded-3xl bg-white dark:bg-[#161a29] border-4 border-black shadow-[6px_6px_0_#000] p-5 sm:p-6 text-center flex flex-col items-center">
-            <span className="text-4xl sm:text-5xl mb-1 animate-bounce">🏆</span>
+            <span className={`text-4xl sm:text-5xl mb-1 ${roundCorrect >= MATH_PASS_CORRECT ? 'animate-bounce' : ''}`}>{roundCorrect >= MATH_PASS_CORRECT ? '🏆' : '⏰'}</span>
             <span className="text-xs font-black uppercase text-[#e52521] font-pixel">TIME UP!</span>
             <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white font-sans mt-0.5">
-              Round Complete!
+              {roundCorrect >= MATH_PASS_CORRECT ? 'Round Complete!' : 'So close!'}
             </h3>
-            <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 font-sans">
-              Level {level} Cleared! 🎉
-            </p>
+            {roundCorrect >= MATH_PASS_CORRECT ? (
+              <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 font-sans">
+                Level {level} Cleared! 🎉 ({roundCorrect} correct)
+              </p>
+            ) : (
+              <p className="text-xs font-bold text-rose-600 dark:text-rose-400 font-sans">
+                You got {roundCorrect} correct. Get {MATH_PASS_CORRECT} right in 60s to clear Level {level}.
+              </p>
+            )}
 
             <div className="w-full grid grid-cols-2 gap-2.5 my-3">
               <div className="p-2.5 rounded-2xl bg-amber-50 dark:bg-[#1f2438] border-2 border-amber-300 dark:border-amber-700/50">
@@ -623,7 +656,8 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
               </button>
             )}
 
-            {/* Primary Action: Pass to Next Level */}
+            {/* Primary Action: Pass to Next Level (only when cleared) / Retry */}
+            {roundCorrect >= MATH_PASS_CORRECT ? (
             <button
               onClick={handlePassToNextLevel}
               className="w-full py-3 rounded-2xl bg-[#00a859] border-b-4 border-[#006633] text-white font-black text-sm shadow-md hover:brightness-110 active:translate-y-0.5 transition flex items-center justify-center gap-2 font-sans mb-2"
@@ -631,6 +665,15 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
               <Play className="w-4 h-4 fill-white" />
               <span>Pass to Level {level + 1} ➔</span>
             </button>
+            ) : (
+            <button
+              onClick={resetGame}
+              className="w-full py-3 rounded-2xl bg-[#00a859] border-b-4 border-[#006633] text-white font-black text-sm shadow-md hover:brightness-110 active:translate-y-0.5 transition flex items-center justify-center gap-2 font-sans mb-2"
+            >
+              <RotateCcw className="w-4 h-4" />
+              <span>Retry Level {level}</span>
+            </button>
+            )}
 
             {/* Secondary Action: Restart from Level 1 */}
             <button

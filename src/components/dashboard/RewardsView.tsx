@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ArrowLeft, Gift, Coins, Zap, CheckCircle2, PlayCircle } from 'lucide-react';
 import { PlayerStats } from '../../types';
 import { sound } from '../../lib/soundEffects';
+import { claimDailyReward, getStoredStats, isDailyRewardClaimedToday } from '../../lib/storage';
 import confetti from 'canvas-confetti';
 
 interface RewardsViewProps {
@@ -17,19 +18,17 @@ export const RewardsView: React.FC<RewardsViewProps> = ({
   onRequestAd,
   onBackToHome,
 }) => {
-  const [claimedDaily, setClaimedDaily] = useState<boolean>(false);
+  // Once per calendar day (persisted), not once per visit to this page.
+  const [claimedDaily, setClaimedDaily] = useState<boolean>(isDailyRewardClaimedToday);
 
   const handleClaimDaily = () => {
     if (claimedDaily) return;
+    const updated = claimDailyReward(150);
+    setClaimedDaily(true);
+    if (!updated) return; // already claimed today (e.g. in another tab)
     sound.playVictory();
     confetti({ particleCount: 70, spread: 70, origin: { y: 0.5 } });
-    const updated = {
-      ...stats,
-      coins: stats.coins + 150,
-      streak: stats.streak + 1,
-    };
     onUpdateStats(updated);
-    setClaimedDaily(true);
   };
 
   const handleWatchAdBonus = () => {
@@ -38,8 +37,9 @@ export const RewardsView: React.FC<RewardsViewProps> = ({
       onRequestAd('Watch Sponsor Video for +250 Funzo Coins', () => {
         sound.playVictory();
         confetti({ particleCount: 80, spread: 80, origin: { y: 0.5 } });
-        const updated = { ...stats, coins: stats.coins + 250 };
-        onUpdateStats(updated);
+        // Read fresh stats at reward time (the ad takes a few seconds)
+        const current = getStoredStats();
+        onUpdateStats({ ...current, coins: (current.coins || 0) + 250 });
       });
     }
   };
@@ -102,7 +102,7 @@ export const RewardsView: React.FC<RewardsViewProps> = ({
                 : 'fz-btn-primary'
             }`}
           >
-            {claimedDaily ? <><CheckCircle2 className="w-4 h-4" /> Gift Claimed</> : <><Coins className="w-4 h-4" /> Claim +150 Coins</>}
+            {claimedDaily ? <><CheckCircle2 className="w-4 h-4" /> Claimed today · back tomorrow</> : <><Coins className="w-4 h-4" /> Claim +150 Coins</>}
           </button>
         </div>
 

@@ -205,6 +205,9 @@ export const ArrowPuzzle: React.FC<ArrowPuzzleProps> = ({ onWin, onRequestAd }) 
     }
     return full;
   });
+  // Live mirror of activeArrows for delayed (post-animation) updates
+  const activeArrowsRef = React.useRef<ArrowTile[]>(activeArrows);
+  activeArrowsRef.current = activeArrows;
   const [flyingArrows, setFlyingArrows] = useState<Record<string, Direction>>({});
   const [blockedTileId, setBlockedTileId] = useState<string | null>(null);
   const [highlightedTileId, setHighlightedTileId] = useState<string | null>(null);
@@ -324,6 +327,7 @@ export const ArrowPuzzle: React.FC<ArrowPuzzleProps> = ({ onWin, onRequestAd }) 
 
   const handleTileClick = (tile: ArrowTile) => {
     if (isLevelSolved || flyingArrows[tile.id]) return;
+    if (!activeArrowsRef.current.some((a) => a.id === tile.id)) return; // already removed
 
     const canFly = checkCanEscape(tile, activeArrows);
 
@@ -337,10 +341,18 @@ export const ArrowPuzzle: React.FC<ArrowPuzzleProps> = ({ onWin, onRequestAd }) 
       // Trigger fly away animation
       setFlyingArrows((prev) => ({ ...prev, [tile.id]: tile.dir }));
 
-      // Remove after animation
+      // Remove after animation. Read the LIVE list from a ref: the closure's
+      // `activeArrows` is a stale snapshot, so tapping several arrows quickly used to
+      // restore already-flown arrows as invisible, unclickable blockers (level stuck).
       setTimeout(() => {
-        const remaining = activeArrows.filter((a) => a.id !== tile.id);
+        const remaining = activeArrowsRef.current.filter((a) => a.id !== tile.id);
+        activeArrowsRef.current = remaining;
         setActiveArrows(remaining);
+        setFlyingArrows((prev) => {
+          const next = { ...prev };
+          delete next[tile.id];
+          return next;
+        });
 
         if (remaining.length === 0) {
           sound.playVictory();

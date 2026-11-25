@@ -74,7 +74,7 @@ export const AdminModal: React.FC<AdminModalProps> = ({
       setPinInput('');
     } else {
       sound.playError();
-      setPinError('Incorrect Owner PIN. (Default PIN: 8899)');
+      setPinError('Incorrect Owner PIN.');
     }
   };
 
@@ -210,7 +210,7 @@ export const AdminModal: React.FC<AdminModalProps> = ({
               <input
                 type="password"
                 maxLength={8}
-                placeholder="Enter PIN (Default: 8899)"
+                placeholder="Enter Owner PIN"
                 value={pinInput}
                 onChange={(e) => setPinInput(e.target.value)}
                 className="w-full py-2.5 px-4 text-center tracking-widest text-lg font-mono font-black rounded-xl bg-slate-100 dark:bg-slate-950 border-2 border-indigo-500 text-slate-900 dark:text-white focus:outline-none"
@@ -229,9 +229,6 @@ export const AdminModal: React.FC<AdminModalProps> = ({
                 {pinError}
               </p>
             )}
-            <span className="text-[10px] text-slate-500 mt-3 font-mono">
-              Default Owner PIN is: <strong className="text-slate-300">8899</strong>
-            </span>
           </div>
         ) : (
           /* ---------------- STAGE 2: UNLOCKED DASHBOARD ---------------- */

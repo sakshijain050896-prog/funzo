@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowRight, Gamepad2, Trophy, Flame, Coins, Calculator, CheckCircle2, Play, Zap } from 'lucide-react';
 import { PlayerStats } from '../../types';
 import { sound } from '../../lib/soundEffects';
+import { isDailyChallengeDoneToday } from '../../lib/storage';
 
 interface DashboardWidgetsProps {
   stats: PlayerStats;
@@ -22,7 +23,9 @@ export const DashboardWidgets: React.FC<DashboardWidgetsProps> = ({
     { label: 'Streak', value: `${stats.streak}d`, icon: Flame, tint: 'from-orange-400/20 to-rose-500/10', ic: 'text-orange-400' },
     { label: 'Coins', value: stats.coins, icon: Coins, tint: 'from-amber-300/25 to-yellow-500/10', ic: 'text-amber-400' },
   ];
-  const completed = stats.totalGamesWon > 0;
+  // Completed = a Maths Puzzle level was cleared TODAY (was: any win ever).
+  // `stats` changes after every win, so this re-reads on each update.
+  const completed = isDailyChallengeDoneToday();
 
   return (
     <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">

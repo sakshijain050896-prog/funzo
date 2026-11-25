@@ -5633,6 +5633,19 @@ function generateProceduralQuestion(
 //    Level 1 draws indices [0..9], Level 2 draws indices [10..19], Level 3 draws [20..29], Level 4 draws [30..39].
 // 3. Retrying the SAME level (e.g. failing Level 1 and clicking Retry):
 //    Deterministically yields the same level's questions so the player can learn and pass!
+// Curated questions for a topic, with the chosen difficulty FIRST (stable order).
+// Difficulty is a preference, not a hard filter: some topics have very few
+// medium questions, and a hard filter would pad rounds with off-topic
+// procedural maths. Ordering keeps every level on-topic and level slices disjoint.
+function curatedForTopic(topic: QuizTopic, difficultyFilter: QuizDifficulty) {
+  const pool = CURATED_QUIZ_QUESTIONS.filter((q) => q.topic === topic);
+  if (difficultyFilter === 'all') return pool;
+  return [
+    ...pool.filter((q) => q.difficulty === difficultyFilter),
+    ...pool.filter((q) => q.difficulty !== difficultyFilter),
+  ];
+}
+
 export function generateQuizRound(
   level: number,
   topic: QuizTopic = 'all',
@@ -5644,7 +5657,7 @@ export function generateQuizRound(
 
   if (topic !== 'all') {
     // A) SPECIFIC TOPIC MODE
-    const topicCurated = CURATED_QUIZ_QUESTIONS.filter((q) => q.topic === topic);
+    const topicCurated = curatedForTopic(topic, difficultyFilter);
     
     // Calculate strictly disjoint level slice
     // Level 1: 0..9, Level 2: 10..19, Level 3: 20..29, Level 4: 30..39
@@ -5713,7 +5726,7 @@ export function generateQuizRound(
 
     for (let i = 0; i < count; i++) {
       const currentTopic = allTopicsList[i % allTopicsList.length];
-      const topicCurated = CURATED_QUIZ_QUESTIONS.filter((q) => q.topic === currentTopic);
+      const topicCurated = curatedForTopic(currentTopic, difficultyFilter);
       
       // Index partitioned strictly by level so Level 1 and Level 2 never share any question!
       const levelOffset = (level - 1) * 2 + Math.floor(i / allTopicsList.length);
@@ -5743,5 +5756,17 @@ export function generateQuizRound(
     }
   }
 
-  return questions;
+  // Shuffle answer positions so the correct option isn't always first.
+  // (Curated questions store the answer as options[0].) Fresh shuffle on
+  // every round start, so retrying a level can't be passed by memorising A/B/C/D.
+  return questions.map((q) => ({ ...q, options: shuffleOptionsRandom(q.options) }));
+}
+
+function shuffleOptionsRandom<T>(array: T[]): T[] {
+  const result = [...array];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
 }
