@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { 
-  Home, Trophy, Gift, User, 
+import {
+  Home, Trophy, Gift, User,
   X
 } from 'lucide-react';
 import { sound } from '../../lib/soundEffects';
@@ -66,9 +66,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Main Sidebar */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-50 w-64 bg-white/95 dark:bg-[#161a29]/95 border-r-4 border-slate-200 dark:border-[#22283a] flex flex-col justify-between p-4 transition-transform duration-300 shadow-xl lg:translate-x-0 ${
-          isMobileOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        className={`fixed top-0 bottom-0 left-0 z-50 w-64 bg-white/95 dark:bg-[#161a29]/95 border-r-4 border-slate-200 dark:border-[#22283a] flex flex-col justify-between p-4 transition-transform duration-300 shadow-xl lg:translate-x-0 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
       >
         <div className="flex flex-col">
           {/* Header Brand */}
@@ -123,11 +122,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     }
                     if (onCloseMobile) onCloseMobile();
                   }}
-                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-black transition-all ${
-                    isActive
-                      ? 'bg-[#ffe4e6] dark:bg-rose-950/60 border-2 border-[#fecdd3] dark:border-rose-800/40 text-[#9f1239] dark:text-[#ffe4e6] shadow-sm active:translate-y-0.5'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 border border-transparent'
-                  }`}
+                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-black transition-all ${isActive
+                    ? 'bg-[#ffe4e6] dark:bg-rose-950/60 border-2 border-[#fecdd3] dark:border-rose-800/40 text-[#9f1239] dark:text-[#ffe4e6] shadow-sm active:translate-y-0.5'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 border border-transparent'
+                    }`}
                 >
                   <div className="flex items-center gap-3">
                     <span className={isActive ? 'text-[#e11d48]' : 'text-[#059669] dark:text-[#6ee7b7]'}>
@@ -161,6 +159,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 sound.playTap();
                 if (onOpenRewards) onOpenRewards();
                 else onSelectTab('rewards');
+                if (onCloseMobile) onCloseMobile();
               }}
               className="w-full py-1.5 rounded-xl bg-[#a7f3d0] hover:bg-[#6ee7b7] border-b-4 border-[#059669] text-[#064e3b] font-black text-[11px] shadow-sm active:translate-y-0.5 transition"
             >

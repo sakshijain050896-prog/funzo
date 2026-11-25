@@ -442,7 +442,7 @@ export const MysteryHub: React.FC<MysteryHubProps> = ({
       {/* ---------------- 3. DETECTIVE RIDDLES ---------------- */}
       {activeTab === 'daily-riddles' && (
         <div className="w-full flex flex-col items-center animate-fade-in text-left">
-          <div className="w-full p-4 rounded-3xl bg-slate-900 border-2 border-slate-800 mb-3 shadow-xl">
+          <div className="w-full p-2.5 sm:p-4 rounded-2xl sm:rounded-3xl bg-slate-900 border-2 border-slate-800 mb-2 shadow-lg">
             <div className="flex items-center justify-between mb-1">
               <span className="text-[10px] uppercase font-bold text-amber-400 tracking-widest">
                 Case Riddle #{riddleIndex + 1} of {DETECTIVE_RIDDLES.length}
@@ -451,17 +451,17 @@ export const MysteryHub: React.FC<MysteryHubProps> = ({
                 +{activeRiddle.rewardIQ} IQ
               </span>
             </div>
-            <h3 className="text-sm font-black text-white mb-1.5">
+            <h3 className="text-xs sm:text-sm font-black text-white mb-1">
               {activeRiddle.title}
             </h3>
-            <p className="text-xs text-slate-300 leading-relaxed">
+            <p className="text-[11px] sm:text-xs text-slate-300 leading-relaxed">
               {activeRiddle.story}
             </p>
           </div>
 
           {/* Interactive Deduction Options (Solve the Riddle!) */}
-          <div className="w-full mb-3">
-            <h4 className="text-[11px] font-black uppercase tracking-wider text-slate-400 mb-1.5 px-0.5">
+          <div className="w-full mb-2">
+            <h4 className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-slate-400 mb-1 px-0.5">
               Detective Deduction: What is your conclusion?
             </h4>
 
@@ -496,13 +496,13 @@ export const MysteryHub: React.FC<MysteryHubProps> = ({
                         setIsRiddleCorrect(false);
                       }
                     }}
-                    className={`w-full p-3 rounded-2xl border-2 text-left text-xs transition active:scale-[0.98] ${optionStyle}`}
+                    className={`w-full p-2.5 sm:p-3 rounded-xl sm:rounded-2xl border-2 text-left text-xs transition active:scale-[0.98] ${optionStyle}`}
                   >
                     <div className="flex items-start gap-2">
                       <span className="w-4 h-4 rounded-full bg-slate-800 flex items-center justify-center text-[9px] font-bold text-slate-400 shrink-0 mt-0.5">
                         {String.fromCharCode(65 + idx)}
                       </span>
-                      <span>{opt}</span>
+                      <span className="leading-snug">{opt}</span>
                     </div>
                   </button>
                 );
@@ -511,48 +511,32 @@ export const MysteryHub: React.FC<MysteryHubProps> = ({
 
             {/* Wrong deduction feedback */}
             {isRiddleCorrect === false && (
-              <div className="mt-2 p-2.5 rounded-xl bg-rose-950/40 border border-rose-500 text-[11px] text-rose-200 animate-fade-in text-center font-semibold">
+              <div className="mt-1.5 p-2 rounded-xl bg-rose-950/40 border border-rose-500 text-[11px] text-rose-200 animate-fade-in text-center font-semibold">
                 ❌ Flawed deduction! Re-read the clues carefully or unlock a hint below.
               </div>
             )}
           </div>
 
-          {/* Forensic Clues Accordion */}
-          <div className="w-full flex flex-col gap-1.5 mb-3">
-            {revealedCluesCount >= 1 && (
-              <div className="p-2.5 rounded-xl bg-slate-900 border border-indigo-500/40 text-xs text-slate-300 animate-fade-in">
-                <strong className="text-indigo-400 block mb-0.5">🔎 Forensic Clue #1:</strong>
-                {activeRiddle.clue1}
-              </div>
-            )}
-            {revealedCluesCount >= 2 && (
-              <div className="p-2.5 rounded-xl bg-slate-900 border border-indigo-500/40 text-xs text-slate-300 animate-fade-in">
-                <strong className="text-indigo-400 block mb-0.5">🔎 Forensic Clue #2:</strong>
-                {activeRiddle.clue2}
-              </div>
-            )}
-          </div>
-
-          {/* Action Buttons */}
-          <div className="w-full flex flex-col gap-2">
+          {/* Action Buttons & Solution */}
+          <div className="w-full flex flex-col gap-1.5">
             {revealedCluesCount < 2 && !showSolution && (
               <button
                 onClick={() => {
                   sound.playTap();
                   setRevealedCluesCount((c) => c + 1);
                 }}
-                className="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold text-xs flex items-center justify-center gap-1.5 transition active:scale-95"
+                className="w-full py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold text-xs flex items-center justify-center gap-1.5 transition active:scale-95"
               >
                 <HelpCircle className="w-3.5 h-3.5" /> Unlock Forensic Clue #{revealedCluesCount + 1}
               </button>
             )}
 
             {showSolution && (
-              <div className="p-3.5 rounded-2xl bg-emerald-950/40 border border-emerald-500 text-xs text-emerald-200 animate-fade-in shadow-xl">
-                <strong className="block text-xs font-bold text-white mb-1 flex items-center gap-1.5">
+              <div className="p-2.5 sm:p-3 rounded-xl sm:rounded-2xl bg-emerald-950/40 border border-emerald-500 text-xs text-emerald-200 animate-fade-in shadow-lg">
+                <strong className="block text-xs font-bold text-white mb-0.5 flex items-center gap-1.5">
                   <span>🎉 Official Detective Case Verdict:</span>
                 </strong>
-                <p className="leading-relaxed mb-3 text-[11px] text-slate-300">{activeRiddle.solution}</p>
+                <p className="leading-snug mb-2 text-[11px] text-slate-300">{activeRiddle.solution}</p>
                 <button
                   onClick={() => {
                     sound.playTap();

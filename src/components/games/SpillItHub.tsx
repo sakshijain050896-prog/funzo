@@ -314,22 +314,19 @@ export const SpillItHub: React.FC<SpillItHubProps> = ({
       {/* ---------------- 2. TWO TRUTHS & ONE LIE (Infinite Dynamic Rounds, Never Repeating) ---------------- */}
       {activeTab === 'two-truths' && (
         <div className="w-full flex flex-col items-center animate-fade-in text-left">
-          <div className="w-full flex items-center justify-between mb-2 text-xs text-slate-500 dark:text-slate-400 font-bold px-1">
-            <span className="text-indigo-400 font-black">Round {twoTruthsRoundNum}</span>
-            <span className="text-yellow-500 dark:text-yellow-400 font-mono">Score: {twoTruthsScore} ⭐️</span>
+          <div className="w-full flex items-center justify-between mb-1 text-xs text-slate-500 dark:text-slate-400 font-bold px-1">
+            <span className="text-indigo-500 dark:text-indigo-400 font-black">Round {twoTruthsRoundNum}</span>
+            <span className="text-amber-500 font-mono">Score: {twoTruthsScore} ⭐️</span>
           </div>
 
-          {/* Instructions banner */}
-          <div className="w-full p-2.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-500/30 mb-2 text-center shadow-sm">
-            <p className="text-xs font-black text-slate-800 dark:text-white">
-              🤥 2 Statements are TRUE. 1 is a <span className="text-rose-500 underline uppercase">LIE</span>!
-            </p>
-            <p className="text-[10px] text-slate-600 dark:text-slate-400 mt-0.5">
-              Read what the person says and tap the statement that is a LIE!
+          {/* Instructions banner - Compact */}
+          <div className="w-full p-1.5 sm:p-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-500/30 mb-2 text-center shadow-xs">
+            <p className="text-[11px] sm:text-xs font-black text-slate-800 dark:text-white">
+              🤥 2 Statements are TRUE. 1 is a <span className="text-rose-500 underline uppercase">LIE</span>! Tap the LIE!
             </p>
           </div>
 
-          <div className="w-full flex flex-col gap-2">
+          <div className="w-full flex flex-col gap-1.5">
             {currentTwoTruths.statements.map((stmt, idx) => {
               const isSelected = twoTruthsSelected === idx;
               const isLie = idx === currentTwoTruths.lieIndex;
@@ -358,13 +355,13 @@ export const SpillItHub: React.FC<SpillItHubProps> = ({
                       sound.playError();
                     }
                   }}
-                  className={`w-full p-3 rounded-2xl border-2 text-left text-xs font-semibold transition active:scale-[0.98] ${borderCol}`}
+                  className={`w-full p-2.5 sm:p-3 rounded-xl sm:rounded-2xl border-2 text-left text-xs font-semibold transition active:scale-[0.98] ${borderCol}`}
                 >
                   <div className="flex items-start gap-2">
                     <span className="w-4 h-4 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-[9px] font-bold text-slate-600 dark:text-slate-400 shrink-0 mt-0.5">
                       {String.fromCharCode(65 + idx)}
                     </span>
-                    <span>{stmt}</span>
+                    <span className="leading-snug">{stmt}</span>
                   </div>
                 </button>
               );
@@ -372,20 +369,20 @@ export const SpillItHub: React.FC<SpillItHubProps> = ({
           </div>
 
           {twoTruthsSelected !== null && (
-            <div className="w-full mt-3 p-3.5 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-xs text-slate-700 dark:text-slate-300 animate-fade-in shadow-lg">
-              <span className="font-bold block text-slate-900 dark:text-white mb-1">
+            <div className="w-full mt-2 p-2.5 sm:p-3 rounded-xl sm:rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-xs text-slate-700 dark:text-slate-300 animate-fade-in shadow-md">
+              <span className="font-bold block text-slate-900 dark:text-white mb-0.5 text-xs">
                 {twoTruthsSelected === currentTwoTruths.lieIndex
                   ? '🎉 Correct! You spotted the lie.'
                   : '❌ Oops! That was a verified true fact.'}
               </span>
-              <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed mb-3">
+              <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-snug mb-2">
                 <strong className="text-rose-500">The Truth: </strong>
                 {currentTwoTruths.explanation}
               </p>
 
               <button
                 onClick={handleNextTwoTruthsRound}
-                className="w-full py-2 rounded-xl bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-500 shadow-md active:scale-95 transition"
+                className="w-full py-2 rounded-xl bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-500 shadow-xs active:scale-95 transition"
               >
                 Next Round ({twoTruthsRoundNum + 1}) →
               </button>

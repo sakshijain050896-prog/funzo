@@ -29,7 +29,24 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
   onSpendCoins,
 }) => {
   const [mode, setMode] = useState<MathMode>('speed');
-  const [level, setLevel] = useState<number>(1);
+  // Initialize level from localStorage so returning users resume at Level 2, 3, etc.
+  const [level, setLevel] = useState<number>(() => {
+    try {
+      const saved = localStorage.getItem('funzo_math_level');
+      const parsed = saved ? parseInt(saved, 10) : 1;
+      return parsed >= 1 ? parsed : 1;
+    } catch {
+      return 1;
+    }
+  });
+
+  // Persist level to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('funzo_math_level', level.toString());
+    } catch {}
+  }, [level]);
+
   const [operatorSolvedCount, setOperatorSolvedCount] = useState<number>(0);
   const [levelToast, setLevelToast] = useState<string | null>(null);
   const [score, setScore] = useState<number>(0);
@@ -183,7 +200,7 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
     setCurrentProblem(generateProblem(currentMode, currentLvl));
   }, [generateProblem]);
 
-  // Restart game
+  // Replay current level
   const resetGame = useCallback(() => {
     sound.playTap();
     setScore(0);
@@ -192,9 +209,42 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
     setIsGameOver(false);
     setIsTimerRunning(true);
     setOperatorSolvedCount(0);
+    nextProblem(mode, level);
+  }, [mode, level, nextProblem]);
+
+  // Restart to Level 1
+  const handleRestartToLevel1 = useCallback(() => {
+    sound.playTap();
     setLevel(1);
+    try {
+      localStorage.setItem('funzo_math_level', '1');
+    } catch {}
+    setScore(0);
+    setStreak(0);
+    setTimeLeft(60);
+    setIsGameOver(false);
+    setIsTimerRunning(true);
+    setOperatorSolvedCount(0);
     nextProblem(mode, 1);
   }, [mode, nextProblem]);
+
+  // Advance to Next Level (e.g. Level 2, 3, etc.)
+  const handlePassToNextLevel = useCallback(() => {
+    sound.playTap();
+    if (score > 0) onWin(score);
+    const nextLvl = level + 1;
+    setLevel(nextLvl);
+    try {
+      localStorage.setItem('funzo_math_level', nextLvl.toString());
+    } catch {}
+    setScore(0);
+    setStreak(0);
+    setTimeLeft(60);
+    setIsGameOver(false);
+    setIsTimerRunning(true);
+    setOperatorSolvedCount(0);
+    nextProblem(mode, nextLvl);
+  }, [level, score, onWin, mode, nextProblem]);
 
   // Handle speed timer
   const timerRef = useRef<any>(null);
@@ -343,23 +393,23 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
       )}
 
       {/* ---------------- TOP CONTROLS & MODE SELECTOR ---------------- */}
-      <div className="w-full flex items-center justify-between gap-2 mb-3 px-1">
-        <div className="flex items-center gap-1 bg-white/80 dark:bg-[#181d2f] p-1 rounded-2xl border-2 border-slate-200 dark:border-slate-700 shadow-sm">
+      <div className="w-full flex items-center justify-between gap-1.5 mb-2.5 px-0.5">
+        <div className="flex items-center gap-1 bg-white/80 dark:bg-[#181d2f] p-1 rounded-2xl border-2 border-slate-200 dark:border-slate-700 shadow-xs">
           <button
             onClick={() => { sound.playTap(); setMode('speed'); resetGame(); }}
-            className={`px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1 transition font-['Fredoka'] ${mode === 'speed'
-              ? 'bg-[#fecdd3] text-[#9f1239] border border-[#fda4af] shadow-sm'
+            className={`px-2.5 py-1 rounded-xl text-xs font-black flex items-center gap-1 transition font-['Fredoka'] ${mode === 'speed'
+              ? 'bg-[#fecdd3] text-[#9f1239] border border-[#fda4af] shadow-xs'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
           >
             <Timer className="w-3.5 h-3.5" />
-            <span>Speed Run (60s)</span>
+            <span>Speed (60s)</span>
           </button>
 
           <button
             onClick={() => { sound.playTap(); setMode('operator'); resetGame(); }}
-            className={`px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1 transition font-['Fredoka'] ${mode === 'operator'
-              ? 'bg-[#a7f3d0] text-[#065f46] border border-[#6ee7b7] shadow-sm'
+            className={`px-2.5 py-1 rounded-xl text-xs font-black flex items-center gap-1 transition font-['Fredoka'] ${mode === 'operator'
+              ? 'bg-[#a7f3d0] text-[#065f46] border border-[#6ee7b7] shadow-xs'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
           >
@@ -368,76 +418,89 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
           </button>
         </div>
 
-        <button
-          onClick={resetGame}
-          className="p-2 rounded-2xl bg-white dark:bg-[#181d2f] border-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-[#e11d48] transition active:scale-95 shadow-sm"
-          title="Restart Puzzle"
-        >
-          <RotateCcw className="w-4 h-4" />
-        </button>
+        <div className="flex items-center gap-1.5">
+          {level > 1 && (
+            <button
+              onClick={handleRestartToLevel1}
+              className="px-2.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 border border-rose-300 dark:border-rose-800 text-rose-600 dark:text-rose-300 text-[11px] font-black transition flex items-center gap-1 active:scale-95 shadow-xs font-['Fredoka']"
+              title="Reset progress back to Level 1"
+            >
+              <RotateCcw className="w-3 h-3" />
+              <span>Reset Lvl 1</span>
+            </button>
+          )}
+
+          <button
+            onClick={resetGame}
+            className="p-1.5 sm:p-2 rounded-2xl bg-white dark:bg-[#181d2f] border-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-[#e11d48] transition active:scale-95 shadow-xs"
+            title="Replay Current Level"
+          >
+            <RotateCcw className="w-4 h-4" />
+          </button>
+        </div>
       </div>
 
       {/* ---------------- STATS DASHBOARD BAR ---------------- */}
-      <div className="w-full grid grid-cols-3 gap-2 mb-3">
+      <div className="w-full grid grid-cols-3 gap-1.5 sm:gap-2 mb-2.5">
         {/* Score */}
-        <div className="p-2.5 rounded-2xl bg-white/95 dark:bg-[#181d2f]/95 border-2 border-slate-200 dark:border-slate-700/60 shadow-sm text-center">
+        <div className="p-2 sm:p-2.5 rounded-2xl bg-white/95 dark:bg-[#181d2f]/95 border-2 border-slate-200 dark:border-slate-700/60 shadow-xs text-center">
           <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 font-['Fredoka'] block">SCORE</span>
-          <span className="text-base sm:text-lg font-black text-slate-900 dark:text-white font-pixel leading-none">
+          <span className="text-sm sm:text-base font-black text-slate-900 dark:text-white font-pixel leading-none">
             {score}
           </span>
         </div>
 
-        {/* Timer or Level */}
-        <div className="p-2.5 rounded-2xl bg-white/95 dark:bg-[#181d2f]/95 border-2 border-slate-200 dark:border-slate-700/60 shadow-sm text-center">
+        {/* Level Display (Always visible) */}
+        <div className="p-2 sm:p-2.5 rounded-2xl bg-white/95 dark:bg-[#181d2f]/95 border-2 border-slate-200 dark:border-slate-700/60 shadow-xs text-center">
+          <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 font-['Fredoka'] block">LEVEL {level}</span>
+          <span className="text-xs sm:text-sm font-black text-slate-900 dark:text-white font-['Fredoka'] leading-none">
+            {mode === 'operator' ? `${operatorSolvedCount % 5}/5 Solved` : 'Stage Active'}
+          </span>
+        </div>
+
+        {/* Timer or Streak */}
+        <div className="p-2 sm:p-2.5 rounded-2xl bg-white/95 dark:bg-[#181d2f]/95 border-2 border-slate-200 dark:border-slate-700/60 shadow-xs text-center">
           {mode === 'speed' ? (
             <>
               <span className="text-[10px] font-bold text-rose-500 font-['Fredoka'] block flex items-center justify-center gap-0.5">
                 <Timer className="w-3 h-3" /> TIME
               </span>
-              <span className={`text-base sm:text-lg font-black font-pixel leading-none ${timeLeft <= 10 ? 'text-[#e11d48] animate-pulse' : 'text-slate-900 dark:text-white'}`}>
+              <span className={`text-sm sm:text-base font-black font-pixel leading-none ${timeLeft <= 10 ? 'text-[#e11d48] animate-pulse' : 'text-slate-900 dark:text-white'}`}>
                 {timeLeft}s
               </span>
             </>
           ) : (
             <>
-              <span className="text-[10px] font-bold text-emerald-600 font-['Fredoka'] block">LEVEL {level}</span>
-              <span className="text-xs sm:text-sm font-black text-slate-900 dark:text-white font-['Fredoka'] leading-none">
-                {operatorSolvedCount % 5}/5 Solved
+              <span className="text-[10px] font-bold text-amber-500 font-['Fredoka'] block flex items-center justify-center gap-0.5">
+                <Flame className="w-3 h-3 fill-amber-500 text-amber-500" /> STREAK
+              </span>
+              <span className="text-sm sm:text-base font-black text-amber-600 dark:text-amber-400 font-pixel leading-none">
+                {streak}🔥
               </span>
             </>
           )}
         </div>
-
-        {/* Streak */}
-        <div className="p-2.5 rounded-2xl bg-white/95 dark:bg-[#181d2f]/95 border-2 border-slate-200 dark:border-slate-700/60 shadow-sm text-center">
-          <span className="text-[10px] font-bold text-amber-500 font-['Fredoka'] block flex items-center justify-center gap-0.5">
-            <Flame className="w-3 h-3 fill-amber-500 text-amber-500" /> STREAK
-          </span>
-          <span className="text-base sm:text-lg font-black text-amber-600 dark:text-amber-400 font-pixel leading-none">
-            {streak}🔥
-          </span>
-        </div>
       </div>
 
       {/* ---------------- COIN BOOSTERS BAR ---------------- */}
-      <div className="w-full flex items-center justify-between gap-1.5 mb-3 p-2 rounded-2xl bg-white/95 dark:bg-[#181d2f]/95 border-2 border-slate-200 dark:border-slate-800 shadow-xs font-['Fredoka']">
+      <div className="w-full flex items-center justify-between gap-1 mb-2.5 p-1.5 sm:p-2 rounded-2xl bg-white/95 dark:bg-[#181d2f]/95 border-2 border-slate-200 dark:border-slate-800 shadow-xs font-['Fredoka']">
         <div className="flex items-center gap-1 pl-1">
-          <span className="text-sm">🪙</span>
+          <span className="text-xs">🪙</span>
           <span className="text-xs font-black text-slate-800 dark:text-slate-200">
             {stats.coins ?? 0}
           </span>
         </div>
 
-        <div className="flex items-center gap-1.5 flex-wrap justify-end">
+        <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap justify-end">
           {/* Booster 1: 50:50 Eliminator (10 Coins) */}
           <button
             onClick={handleFiftyFifty}
             disabled={selectedOption !== null || isGameOver || hiddenOptions.length > 0}
-            className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-[#e0e7ff] hover:bg-[#c7d2fe] border border-[#c7d2fe] text-[#4338ca] font-black text-xs shadow-xs active:scale-95 transition disabled:opacity-40"
+            className="flex items-center gap-0.5 sm:gap-1 px-2 py-0.5 rounded-lg bg-[#e0e7ff] hover:bg-[#c7d2fe] border border-[#c7d2fe] text-[#4338ca] font-black text-[11px] sm:text-xs shadow-xs active:scale-95 transition disabled:opacity-40"
             title="Remove 2 incorrect choices (Costs 10 Coins)"
           >
             <span>✂️ 50:50</span>
-            <span className="px-1.5 py-0.5 rounded-md bg-[#c7d2fe] dark:bg-[#312e81]/40 text-[10px]">10🪙</span>
+            <span className="px-1 py-0.2 rounded bg-[#c7d2fe] dark:bg-[#312e81]/40 text-[9px]">10🪙</span>
           </button>
 
           {/* Booster 2: +20s Time (15 Coins - in Speed mode) */}
@@ -445,11 +508,11 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
             <button
               onClick={handleAddTimeBoost}
               disabled={isGameOver}
-              className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-[#dcfce7] hover:bg-[#bbf7d0] border border-[#bbf7d0] text-[#065f46] font-black text-xs shadow-xs active:scale-95 transition disabled:opacity-40"
+              className="flex items-center gap-0.5 sm:gap-1 px-2 py-0.5 rounded-lg bg-[#dcfce7] hover:bg-[#bbf7d0] border border-[#bbf7d0] text-[#065f46] font-black text-[11px] sm:text-xs shadow-xs active:scale-95 transition disabled:opacity-40"
               title="Add +20s to speed timer (Costs 15 Coins)"
             >
               <span>⏳ +20s</span>
-              <span className="px-1.5 py-0.5 rounded-md bg-[#bbf7d0] dark:bg-[#064e3b]/40 text-[10px]">15🪙</span>
+              <span className="px-1 py-0.2 rounded bg-[#bbf7d0] dark:bg-[#064e3b]/40 text-[9px]">15🪙</span>
             </button>
           )}
 
@@ -457,49 +520,47 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
           <button
             onClick={handleAutoSolve}
             disabled={selectedOption !== null || isGameOver}
-            className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-[#fef9c3] hover:bg-[#fef08a] border border-[#fef08a] text-[#854d0e] font-black text-xs shadow-xs active:scale-95 transition disabled:opacity-40"
+            className="flex items-center gap-0.5 sm:gap-1 px-2 py-0.5 rounded-lg bg-[#fef9c3] hover:bg-[#fef08a] border border-[#fef08a] text-[#854d0e] font-black text-[11px] sm:text-xs shadow-xs active:scale-95 transition disabled:opacity-40"
             title="Auto-solve current equation with full points (Costs 25 Coins)"
           >
             <span>⚡ Solve</span>
-            <span className="px-1.5 py-0.5 rounded-md bg-[#fef08a] dark:bg-[#713f12]/40 text-[10px]">25🪙</span>
+            <span className="px-1 py-0.2 rounded bg-[#fef08a] dark:bg-[#713f12]/40 text-[9px]">25🪙</span>
           </button>
         </div>
       </div>
 
-      {/* ---------------- MAIN EQUATION QUESTION BOARD ---------------- */}
-      <div className="w-full p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[#c7d2fe] via-[#a5b4fc] to-[#818cf8] dark:from-[#1e2746] dark:via-[#263156] dark:to-[#313f6d] border-4 border-[#a5b4fc] dark:border-indigo-700/60 shadow-md flex flex-col items-center justify-center text-center relative overflow-hidden mb-4 min-h-[170px] sm:min-h-[200px]">
+      {/* ---------------- MAIN EQUATION QUESTION BOARD - Compact for Mobile ---------------- */}
+      <div className="w-full p-4 sm:p-7 rounded-3xl bg-gradient-to-br from-[#c7d2fe] via-[#a5b4fc] to-[#818cf8] dark:from-[#1e2746] dark:via-[#263156] dark:to-[#313f6d] border-3 sm:border-4 border-[#a5b4fc] dark:border-indigo-700/60 shadow-md flex flex-col items-center justify-center text-center relative overflow-hidden mb-2.5 min-h-[110px] sm:min-h-[160px]">
         {/* Soft Question mark pattern */}
-        <div className="absolute top-2 left-3 text-white/20 font-pixel text-xl select-none">?</div>
-        <div className="absolute top-2 right-3 text-white/20 font-pixel text-xl select-none">?</div>
-        <div className="absolute bottom-2 left-3 text-white/20 font-pixel text-xl select-none">?</div>
-        <div className="absolute bottom-2 right-3 text-white/20 font-pixel text-xl select-none">?</div>
+        <div className="absolute top-1.5 left-2.5 text-white/20 font-pixel text-base select-none">?</div>
+        <div className="absolute top-1.5 right-2.5 text-white/20 font-pixel text-base select-none">?</div>
 
-        <span className="text-xs font-black uppercase tracking-wider text-[#1e1b4b] dark:text-[#e0e7ff] font-['Fredoka'] mb-1">
-          {mode === 'operator' ? 'Find the Missing Sign' : 'Solve the Equation'}
+        <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-[#1e1b4b] dark:text-[#e0e7ff] font-['Fredoka'] mb-0.5">
+          Level {level} • {mode === 'operator' ? 'Find the Missing Sign' : 'Solve the Equation'}
         </span>
 
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white font-['Fredoka'] tracking-wide drop-shadow-sm select-none my-2">
+        <h2 className="text-2xl sm:text-4xl font-black text-white font-['Fredoka'] tracking-wide drop-shadow-sm select-none my-1 sm:my-2">
           {currentProblem.question}
         </h2>
 
         {/* Hint toggle */}
         {showHint ? (
-          <p className="text-xs font-black text-[#1e1b4b] mt-2 font-['Fredoka'] bg-white/50 px-3 py-1 rounded-full animate-fade-in shadow-sm">
+          <p className="text-[11px] sm:text-xs font-black text-[#1e1b4b] mt-1 font-['Fredoka'] bg-white/60 px-3 py-0.5 rounded-full animate-fade-in shadow-xs">
             💡 {currentProblem.hint}
           </p>
         ) : (
           <button
             onClick={handleHintClick}
-            className="mt-2 text-xs font-bold text-white/90 hover:text-white flex items-center gap-1 font-['Fredoka'] transition"
+            className="mt-1 text-[11px] sm:text-xs font-bold text-white/90 hover:text-white flex items-center gap-1 font-['Fredoka'] transition"
           >
-            <Lightbulb className="w-3.5 h-3.5 text-yellow-200" />
+            <Lightbulb className="w-3 h-3 text-yellow-200" />
             <span>Need a hint? ({freeHints} free)</span>
           </button>
         )}
       </div>
 
-      {/* ---------------- 4 BIG TACTILE ANSWER BUTTONS ---------------- */}
-      <div className="w-full grid grid-cols-2 gap-3 sm:gap-4 mb-3">
+      {/* ---------------- 4 TACTILE ANSWER BUTTONS (2x2 Grid) ---------------- */}
+      <div className="w-full grid grid-cols-2 gap-2 sm:gap-3.5 mb-2.5">
         {currentProblem.options.map((opt, idx) => {
           const isSelected = selectedOption === opt;
           const isHiddenByBooster = hiddenOptions.includes(opt);
@@ -509,9 +570,9 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
             btnStyle = 'opacity-20 pointer-events-none line-through bg-slate-100 dark:bg-slate-900 border-dashed border-slate-300 dark:border-slate-800 text-slate-400';
           } else if (isSelected) {
             if (isCorrect) {
-              btnStyle = 'bg-[#a7f3d0] text-[#064e3b] border-[#34d399] scale-[1.02] shadow-sm';
+              btnStyle = 'bg-[#a7f3d0] text-[#064e3b] border-[#34d399] scale-[1.02] shadow-xs';
             } else {
-              btnStyle = 'bg-[#fecdd3] text-[#9f1239] border-[#f43f5e] animate-shake shadow-sm';
+              btnStyle = 'bg-[#fecdd3] text-[#9f1239] border-[#f43f5e] animate-shake shadow-xs';
             }
           }
 
@@ -520,10 +581,10 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
               key={idx}
               disabled={selectedOption !== null || isGameOver || isHiddenByBooster}
               onClick={() => handleSelectOption(opt)}
-              className={`py-4 sm:py-5 px-3 rounded-2xl sm:rounded-3xl border-2 shadow-sm active:translate-y-0.5 transition text-xl sm:text-2xl lg:text-3xl font-black font-['Fredoka'] flex items-center justify-center gap-2 select-none ${btnStyle}`}
+              className={`py-3 sm:py-4 px-2.5 rounded-2xl border-2 shadow-xs active:translate-y-0.5 transition text-lg sm:text-2xl font-black font-['Fredoka'] flex items-center justify-center gap-2 select-none ${btnStyle}`}
             >
               <span>{opt}</span>
-              {isSelected && isCorrect && <CheckCircle2 className="w-5 h-5 text-[#064e3b] inline" />}
+              {isSelected && isCorrect && <CheckCircle2 className="w-4 h-4 text-[#064e3b] inline" />}
             </button>
           );
         })}
@@ -532,42 +593,52 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
       {/* ---------------- GAME OVER / ROUND COMPLETE MODAL ---------------- */}
       {isGameOver && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-fade-in">
-          <div className="w-full max-w-sm rounded-3xl bg-white dark:bg-[#161a29] border-4 border-black shadow-[6px_6px_0_#000] p-6 text-center flex flex-col items-center">
-            <span className="text-5xl mb-2 animate-bounce">🏆</span>
+          <div className="w-full max-w-sm rounded-3xl bg-white dark:bg-[#161a29] border-4 border-black shadow-[6px_6px_0_#000] p-5 sm:p-6 text-center flex flex-col items-center">
+            <span className="text-4xl sm:text-5xl mb-1 animate-bounce">🏆</span>
             <span className="text-xs font-black uppercase text-[#e52521] font-pixel">TIME UP!</span>
-            <h3 className="text-2xl font-black text-slate-900 dark:text-white font-['Fredoka'] mt-1">
-              Math Round Complete!
+            <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white font-['Fredoka'] mt-0.5">
+              Round Complete!
             </h3>
+            <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 font-['Fredoka']">
+              Level {level} Cleared! 🎉
+            </p>
 
-            <div className="w-full grid grid-cols-2 gap-3 my-4">
-              <div className="p-3 rounded-2xl bg-amber-50 dark:bg-[#1f2438] border-2 border-amber-300 dark:border-amber-700/50">
-                <span className="text-xs text-slate-500 font-bold block font-['Fredoka']">FINAL SCORE</span>
-                <span className="text-2xl font-black text-amber-600 dark:text-amber-400 font-pixel">{score}</span>
+            <div className="w-full grid grid-cols-2 gap-2.5 my-3">
+              <div className="p-2.5 rounded-2xl bg-amber-50 dark:bg-[#1f2438] border-2 border-amber-300 dark:border-amber-700/50">
+                <span className="text-[11px] text-slate-500 font-bold block font-['Fredoka']">FINAL SCORE</span>
+                <span className="text-xl font-black text-amber-600 dark:text-amber-400 font-pixel">{score}</span>
               </div>
-              <div className="p-3 rounded-2xl bg-emerald-50 dark:bg-[#1f2438] border-2 border-emerald-300 dark:border-emerald-700/50">
-                <span className="text-xs text-slate-500 font-bold block font-['Fredoka']">BEST SCORE</span>
-                <span className="text-2xl font-black text-[#00a859] dark:text-[#43b047] font-pixel">{bestScore}</span>
+              <div className="p-2.5 rounded-2xl bg-emerald-50 dark:bg-[#1f2438] border-2 border-emerald-300 dark:border-emerald-700/50">
+                <span className="text-[11px] text-slate-500 font-bold block font-['Fredoka']">BEST SCORE</span>
+                <span className="text-xl font-black text-[#00a859] dark:text-[#43b047] font-pixel">{bestScore}</span>
               </div>
             </div>
 
             {onSpendCoins && (
               <button
                 onClick={handleOvertimeRevive}
-                className="w-full py-3 rounded-2xl bg-[#fef9c3] hover:bg-[#fef08a] border-b-4 border-[#ca8a04] text-[#854d0e] font-black text-xs shadow-md active:translate-y-0.5 transition flex items-center justify-center gap-2 font-['Fredoka'] mb-2.5"
+                className="w-full py-2.5 rounded-xl bg-[#fef9c3] hover:bg-[#fef08a] border-b-3 border-[#ca8a04] text-[#854d0e] font-black text-xs shadow-xs active:translate-y-0.5 transition flex items-center justify-center gap-1.5 font-['Fredoka'] mb-2"
               >
                 <span>💖 Continue with +25s Overtime (20 🪙)</span>
               </button>
             )}
 
+            {/* Primary Action: Pass to Next Level */}
             <button
-              onClick={() => {
-                if (score > 0) onWin(score);
-                resetGame();
-              }}
-              className="w-full py-3 rounded-2xl bg-[#00a859] border-b-4 border-[#006633] text-white font-black text-sm shadow-md hover:brightness-110 active:translate-y-0.5 transition flex items-center justify-center gap-2 font-['Fredoka']"
+              onClick={handlePassToNextLevel}
+              className="w-full py-3 rounded-2xl bg-[#00a859] border-b-4 border-[#006633] text-white font-black text-sm shadow-md hover:brightness-110 active:translate-y-0.5 transition flex items-center justify-center gap-2 font-['Fredoka'] mb-2"
             >
               <Play className="w-4 h-4 fill-white" />
-              <span>Play Again ▶</span>
+              <span>Pass to Level {level + 1} ➔</span>
+            </button>
+
+            {/* Secondary Action: Restart from Level 1 */}
+            <button
+              onClick={handleRestartToLevel1}
+              className="w-full py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs transition flex items-center justify-center gap-1.5 font-['Fredoka']"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Restart from Level 1 🔄</span>
             </button>
           </div>
         </div>

@@ -379,7 +379,11 @@ export const App: React.FC = () => {
         }}
         onOpenProfile={() => setIsProfileOpen(true)}
         onOpenAdmin={() => setIsAdminOpen(true)}
-        onOpenRewards={() => setActiveNavTab('rewards')}
+        onOpenRewards={() => {
+          setActiveNavTab('rewards');
+          setActiveGame(null);
+          setIsMobileSidebarOpen(false);
+        }}
         isMobileOpen={isMobileSidebarOpen}
         onCloseMobile={() => setIsMobileSidebarOpen(false)}
       />
@@ -582,7 +586,11 @@ export const App: React.FC = () => {
                     stats={stats}
                     onOpenStats={() => setIsStatsOpen(true)}
                     onOpenLeaderboard={() => setActiveNavTab('leaderboard')}
-                    onOpenRewards={() => setActiveNavTab('rewards')}
+                    onOpenRewards={() => {
+          setActiveNavTab('rewards');
+          setActiveGame(null);
+          setIsMobileSidebarOpen(false);
+        }}
                     onPlayDailyChallenge={() => handleLaunchGame('sudoku')}
                   />
                 </div>

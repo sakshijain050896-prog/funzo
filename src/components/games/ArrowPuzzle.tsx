@@ -301,6 +301,27 @@ export const ArrowPuzzle: React.FC<ArrowPuzzleProps> = ({ onWin, onRequestAd }) 
     return false;
   };
 
+  const advancingRef = React.useRef<boolean>(false);
+
+  const handleNextLevel = useCallback(() => {
+    sound.playTap();
+    advancingRef.current = false;
+    setLevelNum((prevLvl) => {
+      const nextLvl = Math.min(10000, prevLvl + 1);
+      try {
+        localStorage.setItem('funzo_arrow_level', nextLvl.toString());
+        localStorage.removeItem('funzo_arrow_active_ids');
+      } catch {}
+      setMaxUnlockedLevel((prevMax) => Math.max(prevMax, nextLvl));
+      return nextLvl;
+    });
+    setIsLevelSolved(false);
+    setFlyingArrows({});
+    setBlockedTileId(null);
+    setHighlightedTileId(null);
+    setMoves(0);
+  }, []);
+
   const handleTileClick = (tile: ArrowTile) => {
     if (isLevelSolved || flyingArrows[tile.id]) return;
 
@@ -325,13 +346,20 @@ export const ArrowPuzzle: React.FC<ArrowPuzzleProps> = ({ onWin, onRequestAd }) 
           sound.playVictory();
           confetti({ particleCount: 75, spread: 80, origin: { y: 0.5 } });
           setIsLevelSolved(true);
-          const nextLvl = Math.min(10000, levelNum + 1);
-          setMaxUnlockedLevel((prev) => Math.max(prev, nextLvl));
+          advancingRef.current = true;
+
           // Reward: +1 Free Hint every 5 levels
           if (levelNum % 5 === 0) {
             setFreeHints((h) => h + 1);
           }
           onWin();
+
+          // Auto advance to next round after 1200ms so the player is never stuck
+          setTimeout(() => {
+            if (advancingRef.current) {
+              handleNextLevel();
+            }
+          }, 1200);
         }
       }, 320);
     } else {
@@ -392,7 +420,7 @@ export const ArrowPuzzle: React.FC<ArrowPuzzleProps> = ({ onWin, onRequestAd }) 
     setIsLevelSolved(false);
   };
 
-  const handleNextLevel = () => {
+  const handleNavNextLevel = () => {
     if (levelNum < maxUnlockedLevel) {
       sound.playTap();
       setLevelNum((lvl) => Math.min(maxUnlockedLevel, lvl + 1));
@@ -448,7 +476,7 @@ export const ArrowPuzzle: React.FC<ArrowPuzzleProps> = ({ onWin, onRequestAd }) 
             <ChevronLeft className="w-4 h-4" />
           </button>
           <button
-            onClick={handleNextLevel}
+            onClick={handleNavNextLevel}
             disabled={levelNum >= maxUnlockedLevel}
             className="p-2 rounded-xl btn-tactile-slate disabled:opacity-30 text-slate-700 dark:text-slate-300 transition"
             title={levelNum >= maxUnlockedLevel ? "Solve current level to advance!" : "Next Level"}
@@ -548,13 +576,7 @@ export const ArrowPuzzle: React.FC<ArrowPuzzleProps> = ({ onWin, onRequestAd }) 
               {levelNum % 5 === 0 && <span className="block text-amber-500 font-bold mt-1">🎁 +1 Bonus Hint Earned!</span>}
             </p>
             <button
-              onClick={() => {
-                sound.playTap();
-                const nextLvl = Math.min(10000, levelNum + 1);
-                setMaxUnlockedLevel((prev) => Math.max(prev, nextLvl));
-                setLevelNum(nextLvl);
-                setIsLevelSolved(false);
-              }}
+              onClick={handleNextLevel}
               className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-black text-xs shadow-lg shadow-cyan-500/30 active:scale-95 transition flex items-center gap-1.5"
             >
               <span>Play Level {levelNum + 1}</span>
