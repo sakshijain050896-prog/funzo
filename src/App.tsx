@@ -7,7 +7,6 @@ import { GameKey } from './components/dashboard/PopularGames';
 import { DashboardWidgets } from './components/dashboard/DashboardWidgets';
 import { LeaderboardView } from './components/dashboard/LeaderboardView';
 import { RewardsView } from './components/dashboard/RewardsView';
-import { HomeHero } from './components/dashboard/HomeHero';
 import { getGameArt } from './components/dashboard/GameArt';
 
 // Game Components
@@ -644,14 +643,6 @@ export const App: React.FC = () => {
             <>
               {activeNavTab === 'home' && (
                 <div className="w-full flex flex-col animate-fade-in">
-                  {/* Featured hero (hidden while searching) */}
-                  {searchQuery.trim().length === 0 && (
-                    <HomeHero
-                      stats={stats}
-                      onSelectGame={handleLaunchGame}
-                      onBrowseQuizTopics={() => setActiveCategory('quiz')}
-                    />
-                  )}
 
                   {/* All Game Genres & Games Catalog with Live Search & Filter */}
                   <AllGamesCatalog

@@ -157,31 +157,34 @@
       linear-gradient(90deg, rgba(15,18,40,.04) 1px, transparent 1px);
   }
 
-  /* ---------- Reel cards ---------- */
-  .fz-reel {
-    position: relative;
-    isolation: isolate;
-    border-radius: 1.5rem;
-    overflow: hidden;
-    box-shadow: 0 18px 40px -20px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.07);
-    transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease;
+  /* ---------- App-style game icons (squircle) ---------- */
+  .fz-squircle {
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 0C88 0 100 12 100 50S88 100 50 100 0 88 0 50 12 0 50 0Z'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 0C88 0 100 12 100 50S88 100 50 100 0 88 0 50 12 0 50 0Z'/%3E%3C/svg%3E");
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
     transform: translateZ(0);
   }
-  .fz-reel:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 28px 56px -20px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.14), 0 0 40px -8px var(--reel-glow, rgba(139,92,246,.6));
+  .fz-game-icon-wrap {
+    display: block;
+    filter: drop-shadow(0 10px 14px rgba(0,0,0,.35)) drop-shadow(0 0 0 transparent);
+    transition: transform .3s cubic-bezier(.2,.8,.2,1.3), filter .3s ease;
   }
-  .fz-reel:active { transform: translateY(-2px) scale(.985); }
-  .fz-reel .fz-reel-art { transition: transform .6s cubic-bezier(.2,.8,.2,1); }
-  .fz-reel:hover .fz-reel-art { transform: scale(1.07); }
-  .fz-reel .fz-reel-play { transition: transform .3s cubic-bezier(.2,.8,.2,1.4), background .2s; }
-  .fz-reel:hover .fz-reel-play { transform: scale(1.12); }
-  .fz-reel::after {
-    content: ''; position: absolute; inset: 0; z-index: 3; pointer-events: none;
-    background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,.14) 50%, transparent 60%);
-    transform: translateX(-120%);
+  .fz-game-icon:hover .fz-game-icon-wrap {
+    transform: translateY(-5px) scale(1.04);
+    filter: drop-shadow(0 14px 18px rgba(0,0,0,.4)) drop-shadow(0 0 16px var(--icon-glow, rgba(139,92,246,.6)));
   }
-  .fz-reel:hover::after { animation: shimmer 1.2s ease-out; }
+  .fz-game-icon:active .fz-game-icon-wrap { transform: scale(.94); transition-duration: .1s; }
+  .fz-game-icon:focus-visible .fz-game-icon-wrap { filter: drop-shadow(0 0 0 2px var(--fz-accent)) drop-shadow(0 0 14px var(--icon-glow)); }
+  .fz-game-icon-play {
+    opacity: 0; transform: scale(.6);
+    transition: opacity .2s ease, transform .3s cubic-bezier(.2,.8,.2,1.5);
+  }
+  .fz-game-icon:hover .fz-game-icon-play,
+  .fz-game-icon:focus-visible .fz-game-icon-play { opacity: 1; transform: scale(1); }
+  @media (hover: none) {
+    .fz-game-icon-play { opacity: 1; transform: scale(1); }
+  }
 }
 
 /* =====================================================================

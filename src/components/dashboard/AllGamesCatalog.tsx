@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Sparkles, Search, LayoutGrid, Lightbulb, Brain, Flame, Smile, LucideIcon } from 'lucide-react';
-import { ReelCard } from './GameArt';
+import { GameIconTile } from './GameArt';
 import { GameKey } from './PopularGames';
 import { sound } from '../../lib/soundEffects';
 
@@ -376,11 +376,11 @@ export const AllGamesCatalog: React.FC<AllGamesCatalogProps> = ({
         </span>
       </div>
 
-      {/* ---------------- REEL CARD GRID ---------------- */}
+      {/* ---------------- GAME ICON GRID ---------------- */}
       {filteredGames.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 w-full">
+        <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-8 gap-x-3 gap-y-5 sm:gap-x-5 sm:gap-y-7 w-full justify-items-center">
           {filteredGames.map((game, idx) => (
-            <ReelCard
+            <GameIconTile
               key={`${game.id}-${game.subTab || idx}`}
               game={game}
               index={idx}

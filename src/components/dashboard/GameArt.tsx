@@ -114,51 +114,6 @@ const MotifLayer: React.FC<{ motif: Motif; uid: string }> = ({ motif, uid }) => 
   }
 };
 
-/** Full-bleed artwork for a game (used by reel cards & hero). */
-export const GameArtwork: React.FC<{ spec: GameArtSpec; className?: string; iconSize?: 'md' | 'lg' }> = ({
-  spec, className = '', iconSize = 'md',
-}) => {
-  const uid = useId().replace(/:/g, '');
-  const Icon = spec.icon;
-  return (
-    <div className={`absolute inset-0 ${className}`}>
-      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 200 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-        <defs>
-          <linearGradient id={`bg-${uid}`} x1="0" y1="0" x2="0.35" y2="1">
-            <stop offset="0%" stopColor={spec.from} />
-            <stop offset="48%" stopColor={spec.via} />
-            <stop offset="100%" stopColor={spec.to} />
-          </linearGradient>
-          <radialGradient id={`hl-${uid}`} cx="0.25" cy="0.1" r="0.7">
-            <stop offset="0%" stopColor="rgba(255,255,255,0.45)" />
-            <stop offset="100%" stopColor="rgba(255,255,255,0)" />
-          </radialGradient>
-        </defs>
-        <rect width="200" height="300" fill={`url(#bg-${uid})`} />
-        <MotifLayer motif={spec.motif} uid={uid} />
-        <rect width="200" height="300" fill={`url(#hl-${uid})`} />
-        {spec.glyph && (
-          <text
-            x="100" y="150" textAnchor="middle" dominantBaseline="middle"
-            fontFamily="Sora, sans-serif" fontWeight="800"
-            fontSize={spec.glyph.length > 3 ? 64 : spec.glyph.length > 1 ? 92 : 150}
-            fill="rgba(255,255,255,0.13)" letterSpacing="-4"
-          >
-            {spec.glyph}
-          </text>
-        )}
-      </svg>
-
-      {/* Floating glass icon orb */}
-      <div className="absolute inset-x-0 top-[24%] flex justify-center">
-        <div className={`relative ${iconSize === 'lg' ? 'w-24 h-24 sm:w-28 sm:h-28' : 'w-16 h-16 sm:w-[72px] sm:h-[72px]'} rounded-[28%] bg-white/15 border border-white/30 backdrop-blur-md shadow-[0_20px_40px_-12px_rgba(0,0,0,.55),inset_0_1px_0_rgba(255,255,255,.45)] flex items-center justify-center animate-float`}>
-          <Icon className={`${iconSize === 'lg' ? 'w-12 h-12 sm:w-14 sm:h-14' : 'w-8 h-8 sm:w-9 sm:h-9'} text-white drop-shadow-[0_4px_10px_rgba(0,0,0,.35)]`} strokeWidth={1.75} />
-        </div>
-      </div>
-    </div>
-  );
-};
-
 const GENRE_LABEL_SHORT: Record<string, string> = {
   quiz: 'Trivia',
   brain: 'Brain',
@@ -166,14 +121,58 @@ const GENRE_LABEL_SHORT: Record<string, string> = {
   kids: 'Kids',
 };
 
-interface ReelCardProps {
+/** Square artwork for an app-style game icon. */
+const IconArtwork: React.FC<{ spec: GameArtSpec }> = ({ spec }) => {
+  const uid = useId().replace(/:/g, '');
+  const Icon = spec.icon;
+  return (
+    <>
+      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <linearGradient id={`bg-${uid}`} x1="0" y1="0" x2="0.6" y2="1">
+            <stop offset="0%" stopColor={spec.from} />
+            <stop offset="55%" stopColor={spec.via} />
+            <stop offset="100%" stopColor={spec.to} />
+          </linearGradient>
+          <radialGradient id={`hl-${uid}`} cx="0.3" cy="0.15" r="0.75">
+            <stop offset="0%" stopColor="rgba(255,255,255,0.5)" />
+            <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+          </radialGradient>
+        </defs>
+        <rect width="200" height="200" fill={`url(#bg-${uid})`} />
+        <MotifLayer motif={spec.motif} uid={uid} />
+        <rect width="200" height="200" fill={`url(#hl-${uid})`} />
+        {spec.glyph && (
+          <text
+            x="100" y="112" textAnchor="middle" dominantBaseline="middle"
+            fontFamily="Sora, sans-serif" fontWeight="800"
+            fontSize={spec.glyph.length > 3 ? 62 : spec.glyph.length > 1 ? 88 : 150}
+            fill="rgba(255,255,255,0.14)" letterSpacing="-4"
+          >
+            {spec.glyph}
+          </text>
+        )}
+      </svg>
+      <div className="absolute inset-0 flex items-center justify-center">
+        <Icon
+          className="w-[46%] h-[46%] text-white drop-shadow-[0_6px_12px_rgba(0,0,0,.35)] transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6"
+          strokeWidth={1.6}
+        />
+      </div>
+      {/* glossy top sheen */}
+      <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/20 to-transparent pointer-events-none" />
+    </>
+  );
+};
+
+interface GameIconTileProps {
   game: GameCatalogItem;
   onPlay: () => void;
   index?: number;
 }
 
-/** Vertical, story-style "reel" card for a game. */
-export const ReelCard: React.FC<ReelCardProps> = ({ game, onPlay, index = 0 }) => {
+/** Compact, app-store style game icon: glowing squircle artwork with the title below. */
+export const GameIconTile: React.FC<GameIconTileProps> = ({ game, onPlay, index = 0 }) => {
   const spec = getGameArt(game.id, game.subTab);
   const title = game.title.replace(/^Quiz Up:\s*/, '');
   const isTopic = game.title.startsWith('Quiz Up:');
@@ -182,44 +181,25 @@ export const ReelCard: React.FC<ReelCardProps> = ({ game, onPlay, index = 0 }) =
     <button
       type="button"
       onClick={onPlay}
-      className="fz-reel group w-full aspect-[3/4.3] text-left animate-fade-in focus:outline-none"
-      style={{ ['--reel-glow' as any]: spec.glow, animationDelay: `${Math.min(index, 12) * 40}ms` }}
+      className="fz-game-icon group w-full flex flex-col items-center text-center animate-fade-in focus:outline-none"
+      style={{ ['--icon-glow' as any]: spec.glow, animationDelay: `${Math.min(index, 14) * 30}ms` }}
       aria-label={`Play ${game.title}`}
     >
-      <GameArtwork spec={spec} className="fz-reel-art" />
-
-      {/* Reel progress segments */}
-      <div className="absolute top-2.5 inset-x-3 z-[2] flex gap-1">
-        <span className="h-[3px] flex-1 rounded-full bg-white/25 overflow-hidden">
-          <span className="block h-full w-full origin-left bg-white/90 animate-reel-progress" style={{ animationDelay: `${(index % 5) * 0.6}s` }} />
+      <span className="fz-game-icon-wrap relative w-full max-w-[112px] aspect-square">
+        <span className="fz-squircle absolute inset-0 overflow-hidden">
+          <IconArtwork spec={spec} />
         </span>
-        <span className="h-[3px] flex-1 rounded-full bg-white/25" />
-        <span className="h-[3px] flex-1 rounded-full bg-white/25" />
-      </div>
-
-      {/* Genre chip */}
-      <div className="absolute top-5 left-3 z-[2] flex items-center gap-1.5">
-        <span className="px-2 py-[3px] rounded-full bg-black/30 backdrop-blur-md border border-white/20 text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.12em] text-white">
-          {isTopic ? 'Quiz Up' : GENRE_LABEL_SHORT[game.genre] || game.genreLabel}
+        {/* play badge */}
+        <span className="fz-game-icon-play absolute -bottom-0.5 -right-0.5 w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white text-slate-950 flex items-center justify-center shadow-[0_6px_16px_-4px_rgba(0,0,0,.6)] ring-2 ring-[#f5f5fb] dark:ring-[#0a0b14]">
+          <Play className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 fill-current translate-x-[1px]" />
         </span>
-      </div>
-
-      {/* Bottom scrim + meta */}
-      <div className="absolute inset-x-0 bottom-0 z-[2] pt-16 p-3 sm:p-3.5 bg-gradient-to-t from-black/85 via-black/45 to-transparent">
-        <div className="flex items-end justify-between gap-2">
-          <div className="min-w-0">
-            <h3 className="font-display text-[13px] sm:text-[15px] font-bold leading-tight text-white line-clamp-2 drop-shadow">
-              {title}
-            </h3>
-            <p className="mt-0.5 text-[10px] sm:text-[11px] font-medium text-white/70 truncate">
-              {game.tag}
-            </p>
-          </div>
-          <span className="fz-reel-play shrink-0 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white text-slate-950 flex items-center justify-center shadow-[0_8px_20px_-6px_rgba(0,0,0,.6)]">
-            <Play className="w-4 h-4 fill-current translate-x-[1px]" />
-          </span>
-        </div>
-      </div>
+      </span>
+      <span className="mt-2 w-full px-0.5 text-[11px] sm:text-[13px] font-semibold leading-tight text-slate-900 dark:text-white line-clamp-2">
+        {title}
+      </span>
+      <span className="mt-0.5 text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400 dark:text-slate-500 truncate w-full">
+        {isTopic ? 'Quiz Up' : GENRE_LABEL_SHORT[game.genre] || game.genreLabel}
+      </span>
     </button>
   );
 };
