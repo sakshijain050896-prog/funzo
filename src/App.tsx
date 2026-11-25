@@ -41,6 +41,12 @@ import {
 } from './lib/storage';
 import { syncPlayerProgress } from './lib/authService';
 import { sound } from './lib/soundEffects';
+import { 
+  subscribeToInstallPrompt, 
+  promptInstallApp, 
+  registerBackButtonHandler, 
+  triggerHaptic 
+} from './lib/mobileApp';
 import { PlayerStats, ThemeMode, AppNotification } from './types';
 import { ArrowLeft, HelpCircle, Flame } from 'lucide-react';
 
@@ -135,6 +141,31 @@ export const App: React.FC = () => {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [notifications, setNotifications] = useState<AppNotification[]>(loadNotifications);
   const [streakToast, setStreakToast] = useState<string | null>(null);
+  const [canInstallPwa, setCanInstallPwa] = useState<boolean>(false);
+
+  // Subscribe to PWA Installation Availability
+  useEffect(() => {
+    return subscribeToInstallPrompt((canInstall) => {
+      setCanInstallPwa(canInstall);
+    });
+  }, []);
+
+  // Native Android Hardware Back-Button Management
+  useEffect(() => {
+    return registerBackButtonHandler(() => {
+      if (isProfileOpen) { setIsProfileOpen(false); return true; }
+      if (isStatsOpen) { setIsStatsOpen(false); return true; }
+      if (isAdminOpen) { setIsAdminOpen(false); return true; }
+      if (isHowToPlayOpen) { setIsHowToPlayOpen(false); return true; }
+      if (isNotificationsOpen) { setIsNotificationsOpen(false); return true; }
+      if (isMobileSidebarOpen) { setIsMobileSidebarOpen(false); return true; }
+      if (activeGame !== null) {
+        setActiveGame(null);
+        return true;
+      }
+      return false;
+    });
+  }, [isProfileOpen, isStatsOpen, isAdminOpen, isHowToPlayOpen, isNotificationsOpen, isMobileSidebarOpen, activeGame]);
 
   const saveNotificationsState = (updated: AppNotification[]) => {
     setNotifications(updated);
@@ -248,6 +279,7 @@ export const App: React.FC = () => {
   }, []);
 
   const handleToggleSound = () => {
+    triggerHaptic();
     const next = !soundEnabled;
     setSoundEnabled(next);
     sound.enabled = next;
@@ -391,6 +423,8 @@ export const App: React.FC = () => {
         }}
         isMobileOpen={isMobileSidebarOpen}
         onCloseMobile={() => setIsMobileSidebarOpen(false)}
+        canInstallApp={canInstallPwa}
+        onInstallApp={promptInstallApp}
       />
 
       {/* 2. Main Content Wrapper */}
@@ -412,6 +446,8 @@ export const App: React.FC = () => {
           onSearchChange={setSearchQuery}
           theme={theme}
           onToggleTheme={handleToggleTheme}
+          canInstallApp={canInstallPwa}
+          onInstallApp={promptInstallApp}
         />
 
         {/* Streak Notification Toast */}

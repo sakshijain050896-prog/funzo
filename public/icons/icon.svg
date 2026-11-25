@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bgGrad" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#ff4b4b" />
+      <stop offset="60%" stop-color="#e52521" />
+      <stop offset="100%" stop-color="#991b1b" />
+    </radialGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="16" stdDeviation="16" flood-color="#000000" flood-opacity="0.35" />
+    </filter>
+  </defs>
+
+  <!-- Squircle App Background -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)" />
+
+  <!-- Inner Soft Golden Highlight -->
+  <rect x="16" y="16" width="480" height="480" rx="96" fill="none" stroke="#fbbf24" stroke-width="8" opacity="0.4" />
+
+  <!-- Mushroom Cap -->
+  <g filter="url(#shadow)">
+    <!-- Main Cap Shape -->
+    <path d="M 106 280 C 86 160, 200 90, 256 90 C 312 90, 426 160, 406 280 C 400 305, 370 315, 340 310 C 290 300, 222 300, 172 310 C 142 315, 112 305, 106 280 Z" fill="#ffffff" />
+    <path d="M 116 270 C 98 170, 205 105, 256 105 C 307 105, 414 170, 396 270 C 390 290, 365 300, 338 295 C 290 286, 222 286, 174 295 C 147 300, 122 290, 116 270 Z" fill="#dc2626" />
+
+    <!-- Mushroom White Spots -->
+    <ellipse cx="256" cy="180" rx="48" ry="44" fill="#ffffff" />
+    <ellipse cx="140" cy="220" rx="28" ry="32" fill="#ffffff" />
+    <ellipse cx="372" cy="220" rx="28" ry="32" fill="#ffffff" />
+
+    <!-- Mushroom Face/Stem -->
+    <path d="M 175 300 C 175 300, 185 390, 256 390 C 327 390, 337 300, 337 300 C 310 308, 202 308, 175 300 Z" fill="#fed7aa" stroke="#7c2d12" stroke-width="8" stroke-linejoin="round" />
+
+    <!-- Cute Eyes -->
+    <ellipse cx="225" cy="335" rx="10" ry="18" fill="#1e293b" />
+    <ellipse cx="287" cy="335" rx="10" ry="18" fill="#1e293b" />
+    <!-- Eye Sparkles -->
+    <circle cx="223" cy="328" r="4" fill="#ffffff" />
+    <circle cx="285" cy="328" r="4" fill="#ffffff" />
+
+    <!-- Rosy Cheeks -->
+    <ellipse cx="195" cy="355" rx="12" ry="7" fill="#f87171" opacity="0.7" />
+    <ellipse cx="317" cy="355" rx="12" ry="7" fill="#f87171" opacity="0.7" />
+
+    <!-- Cute Smile -->
+    <path d="M 244 358 Q 256 368 268 358" fill="none" stroke="#7c2d12" stroke-width="4" stroke-linecap="round" />
+  </g>
+
+  <!-- Golden Stars Bottom Banner -->
+  <g fill="#fef08a" stroke="#ca8a04" stroke-width="2">
+    <!-- Center Star -->
+    <polygon points="256,410 264,430 286,430 268,443 275,463 256,450 237,463 244,443 226,430 248,430" transform="scale(0.85) translate(45, 45)" />
+  </g>
+</svg>

@@ -16,6 +16,8 @@ interface TopBarProps {
   onSearchChange: (q: string) => void;
   theme: ThemeMode;
   onToggleTheme: () => void;
+  canInstallApp?: boolean;
+  onInstallApp?: () => void;
 }
 
 export const TopBar: React.FC<TopBarProps> = ({
@@ -31,6 +33,8 @@ export const TopBar: React.FC<TopBarProps> = ({
   onSearchChange,
   theme,
   onToggleTheme,
+  canInstallApp = false,
+  onInstallApp,
 }) => {
   const avatar = CARTOON_AVATARS.find((a) => a.id === stats.avatarId) || CARTOON_AVATARS[0];
   const currentUser = getCurrentUser();
@@ -96,8 +100,20 @@ export const TopBar: React.FC<TopBarProps> = ({
           </button>
         </div>
 
-        {/* Right: Quick Controls (Sound, Theme, Notifications, Profile) */}
+        {/* Right: Quick Controls (Install, Sound, Theme, Notifications, Profile) */}
         <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+          {/* Install Mobile App Pill (When Available) */}
+          {canInstallApp && (
+            <button
+              onClick={onInstallApp}
+              className="flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-slate-950 font-black text-xs shadow-sm border-b-2 border-orange-700 active:translate-y-0.5 transition shrink-0 animate-pulse"
+              title="Install Funzo App to your Phone Home Screen!"
+            >
+              <span>📲</span>
+              <span className="hidden md:inline font-['Fredoka']">Install App</span>
+            </button>
+          )}
+
           {/* Sound Toggle Button - Green when ON, Red when OFF */}
           <button
             onClick={onToggleSound}
