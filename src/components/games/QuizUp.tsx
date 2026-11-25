@@ -42,6 +42,7 @@ const DIFFICULTY_CONFIG: { id: QuizDifficulty; label: string; emoji: string }[] 
 ];
 
 const QUESTION_TIME_LIMIT = 15; // 15 seconds per question
+const PASS_REQUIRED_CORRECT = 7; // Criteria: At least 7 out of 10 correct answers (70%) to pass to next level
 
 export const QuizUp: React.FC<QuizUpProps> = ({
   coins: _coins = 100,
@@ -50,12 +51,27 @@ export const QuizUp: React.FC<QuizUpProps> = ({
   initialTopic = 'all',
   stats: _stats,
 }) => {
-  // Topic, Difficulty & Level State
+  // Topic, Difficulty & Level State (with localStorage persistence)
   const [activeTopic, setActiveTopic] = useState<QuizTopic>(initialTopic);
   const [activeDifficulty, setActiveDifficulty] = useState<QuizDifficulty>('all');
-  const [level, setLevel] = useState<number>(1);
+  const [level, setLevel] = useState<number>(() => {
+    try {
+      const saved = localStorage.getItem('funzo_quizup_level');
+      const parsed = saved ? parseInt(saved, 10) : 1;
+      return parsed >= 1 ? parsed : 1;
+    } catch {
+      return 1;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('funzo_quizup_level', level.toString());
+    } catch {}
+  }, [level]);
+
   const [questions, setQuestions] = useState<QuizQuestion[]>(() =>
-    generateQuizRound(1, initialTopic, 10, 'all')
+    generateQuizRound(level, initialTopic, 10, 'all')
   );
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
@@ -247,10 +263,11 @@ export const QuizUp: React.FC<QuizUpProps> = ({
     } else {
       // Level Complete
       setIsLevelFinished(true);
-      const totalCorrect = correctAnswersCount + (selectedOption === currentQ?.answer ? 0 : 0);
+      const totalCorrect = correctAnswersCount;
       const accuracy = Math.round((totalCorrect / questions.length) * 100);
+      const hasPassed = totalCorrect >= PASS_REQUIRED_CORRECT;
 
-      if (accuracy >= 70) {
+      if (hasPassed) {
         sound.playVictory();
         confetti({
           particleCount: 80,
@@ -258,12 +275,11 @@ export const QuizUp: React.FC<QuizUpProps> = ({
           origin: { y: 0.6 },
           colors: ['#34d399', '#38bdf8', '#f472b6', '#fbbf24'],
         });
+        if (onWin) {
+          onWin(score, accuracy);
+        }
       } else {
-        sound.playVictory();
-      }
-
-      if (onWin) {
-        onWin(score, accuracy);
+        sound.playError();
       }
     }
   };
@@ -399,13 +415,22 @@ export const QuizUp: React.FC<QuizUpProps> = ({
                 <span className="tracking-wide uppercase">LVL {level}</span>
               </div>
 
+              {level > 1 && (
+                <button
+                  onClick={() => startNewLevel(1, activeTopic, activeDifficulty)}
+                  className="px-1.5 py-0.5 rounded text-[10px] font-bold text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 hover:bg-rose-50 dark:hover:bg-rose-950/30"
+                  title="Reset to Level 1"
+                >
+                  ↺ Lvl 1
+                </button>
+              )}
+
               <div className="flex items-center gap-1">
                 <span className="text-[11px] sm:text-xs font-black text-slate-800 dark:text-white">
                   Q{currentIndex + 1}<span className="text-slate-400 font-normal">/10</span>
                 </span>
-                <span className="hidden sm:inline text-[11px] text-slate-400">•</span>
-                <span className="hidden sm:inline text-[11px] font-bold text-amber-600 dark:text-amber-400 truncate max-w-[120px]">
-                  {currentQ?.topicLabel}
+                <span className="text-[10px] sm:text-[11px] font-bold px-1.5 py-0.5 rounded-md bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700/60">
+                  🎯 {correctAnswersCount}/7 to Pass
                 </span>
               </div>
             </div>
@@ -589,111 +614,185 @@ export const QuizUp: React.FC<QuizUpProps> = ({
           </div>
         </div>
       ) : (
-        /* 4. LEVEL FINISHED SUMMARY & PASS TO NEXT LEVEL */
-        <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-md rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700 shadow-xl flex flex-col items-center text-center gap-6 animate-scale-in">
-          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center text-3xl sm:text-4xl shadow-inner border border-amber-300">
-            🏆
-          </div>
+        /* 4. LEVEL FINISHED SUMMARY & PASS CRITERIA VERIFICATION */
+        (() => {
+          const hasPassed = correctAnswersCount >= PASS_REQUIRED_CORRECT;
+          return (
+            <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-md rounded-3xl p-5 sm:p-8 border border-slate-200 dark:border-slate-700 shadow-xl flex flex-col items-center text-center gap-5 sm:gap-6 animate-scale-in">
+              <div
+                className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center text-3xl sm:text-4xl shadow-inner border ${
+                  hasPassed
+                    ? 'bg-emerald-100 dark:bg-emerald-900/40 border-emerald-300'
+                    : 'bg-rose-100 dark:bg-rose-900/40 border-rose-300 animate-shake'
+                }`}
+              >
+                {hasPassed ? '🏆' : '❌'}
+              </div>
 
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center justify-center gap-2">
-              <span className="px-3 py-1 rounded-xl bg-amber-400 text-slate-900 font-black text-xs uppercase shadow-sm">
-                LEVEL {level} CLEARED
-              </span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white">
-              Level {level} Completed! 🎉
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-              Outstanding performance! Level {level + 1} is now unlocked and ready.
-            </p>
-          </div>
+              <div className="flex flex-col gap-1.5">
+                <div className="flex items-center justify-center gap-2">
+                  <span
+                    className={`px-3 py-1 rounded-xl text-xs font-black uppercase shadow-xs ${
+                      hasPassed
+                        ? 'bg-emerald-400 text-slate-900'
+                        : 'bg-rose-500 text-white'
+                    }`}
+                  >
+                    {hasPassed ? `LEVEL ${level} CLEARED` : `LEVEL ${level} NOT CLEARED`}
+                  </span>
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white font-['Fredoka']">
+                  {hasPassed ? `Level ${level} Passed! 🎉` : 'Passing Criteria Not Met!'}
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-md">
+                  {hasPassed ? (
+                    <span>
+                      Outstanding performance! You answered <strong>{correctAnswersCount}/10</strong> correctly (70%+). Level {level + 1} is now unlocked!
+                    </span>
+                  ) : (
+                    <span>
+                      You answered <strong>{correctAnswersCount} / 10</strong> questions correctly. You need at least <strong>{PASS_REQUIRED_CORRECT} out of 10 correct answers (70%)</strong> to pass and unlock Level {level + 1}.
+                    </span>
+                  )}
+                </p>
+              </div>
 
-          {/* Stats Badges */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full max-w-lg">
-            <div className="bg-sky-50 dark:bg-sky-950/40 p-3 rounded-2xl border border-sky-200 dark:border-sky-800 flex flex-col items-center">
-              <span className="text-[11px] font-bold text-sky-600 dark:text-sky-300 uppercase">Score</span>
-              <span className="text-lg sm:text-xl font-extrabold text-sky-800 dark:text-sky-100">{score}</span>
-            </div>
+              {/* Stats Badges */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 w-full max-w-lg">
+                <div className="bg-sky-50 dark:bg-sky-950/40 p-2.5 sm:p-3 rounded-2xl border border-sky-200 dark:border-sky-800 flex flex-col items-center">
+                  <span className="text-[10px] sm:text-[11px] font-bold text-sky-600 dark:text-sky-300 uppercase">Score</span>
+                  <span className="text-base sm:text-xl font-extrabold text-sky-800 dark:text-sky-100">{score}</span>
+                </div>
 
-            <div className="bg-emerald-50 dark:bg-emerald-950/40 p-3 rounded-2xl border border-emerald-200 dark:border-emerald-800 flex flex-col items-center">
-              <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-300 uppercase">Accuracy</span>
-              <span className="text-lg sm:text-xl font-extrabold text-emerald-800 dark:text-emerald-100">
-                {Math.round((correctAnswersCount / questions.length) * 100)}%
-              </span>
-            </div>
-
-            <div className="bg-amber-50 dark:bg-amber-950/40 p-3 rounded-2xl border border-amber-200 dark:border-amber-800 flex flex-col items-center">
-              <span className="text-[11px] font-bold text-amber-600 dark:text-amber-300 uppercase">Best Streak</span>
-              <span className="text-lg sm:text-xl font-extrabold text-amber-800 dark:text-amber-100">
-                {highestStreak}x 🔥
-              </span>
-            </div>
-
-            <div className="bg-purple-50 dark:bg-purple-950/40 p-3 rounded-2xl border border-purple-200 dark:border-purple-800 flex flex-col items-center">
-              <span className="text-[11px] font-bold text-purple-600 dark:text-purple-300 uppercase">IQ Gained</span>
-              <span className="text-lg sm:text-xl font-extrabold text-purple-800 dark:text-purple-100">+25 IQ</span>
-            </div>
-          </div>
-
-          {/* Level Review List */}
-          <div className="w-full max-w-xl flex flex-col gap-2 text-left">
-            <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-              Level {level} Questions Review:
-            </h4>
-            <div className="max-h-56 overflow-y-auto pr-1 flex flex-col gap-2 custom-scrollbar">
-              {levelHistory.map((item, i) => (
                 <div
-                  key={i}
-                  className={`p-3 rounded-xl border text-xs flex items-start gap-2.5 ${
-                    item.isCorrect
-                      ? 'bg-emerald-50/60 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800/40'
-                      : 'bg-rose-50/60 dark:bg-rose-950/20 border-rose-200 dark:border-rose-800/40'
+                  className={`p-2.5 sm:p-3 rounded-2xl border flex flex-col items-center ${
+                    hasPassed
+                      ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800'
+                      : 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800'
                   }`}
                 >
-                  <span className="shrink-0 mt-0.5">
-                    {item.isCorrect ? '✅' : '❌'}
+                  <span
+                    className={`text-[10px] sm:text-[11px] font-bold uppercase ${
+                      hasPassed ? 'text-emerald-600 dark:text-emerald-300' : 'text-rose-600 dark:text-rose-300'
+                    }`}
+                  >
+                    Correct
                   </span>
-                  <div className="flex-1 flex flex-col gap-0.5">
-                    <span className="font-bold text-slate-800 dark:text-slate-200">
-                      {item.question.question}
-                    </span>
-                    <span className="text-slate-500 dark:text-slate-400">
-                      Ans: <strong className="text-emerald-700 dark:text-emerald-300">{item.question.answer}</strong>
-                      {item.userAnswer && !item.isCorrect && (
-                        <span> • You picked: <span className="text-rose-600">{item.userAnswer}</span></span>
-                      )}
-                    </span>
-                  </div>
+                  <span
+                    className={`text-base sm:text-xl font-extrabold ${
+                      hasPassed ? 'text-emerald-800 dark:text-emerald-100' : 'text-rose-800 dark:text-rose-100'
+                    }`}
+                  >
+                    {correctAnswersCount} / 10
+                  </span>
                 </div>
-              ))}
+
+                <div className="bg-amber-50 dark:bg-amber-950/40 p-2.5 sm:p-3 rounded-2xl border border-amber-200 dark:border-amber-800 flex flex-col items-center">
+                  <span className="text-[10px] sm:text-[11px] font-bold text-amber-600 dark:text-amber-300 uppercase">Best Streak</span>
+                  <span className="text-base sm:text-xl font-extrabold text-amber-800 dark:text-amber-100">
+                    {highestStreak}x 🔥
+                  </span>
+                </div>
+
+                <div className="bg-purple-50 dark:bg-purple-950/40 p-2.5 sm:p-3 rounded-2xl border border-purple-200 dark:border-purple-800 flex flex-col items-center">
+                  <span className="text-[10px] sm:text-[11px] font-bold text-purple-600 dark:text-purple-300 uppercase">Status</span>
+                  <span
+                    className={`text-xs sm:text-sm font-extrabold ${
+                      hasPassed ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'
+                    }`}
+                  >
+                    {hasPassed ? 'Passed ✅' : 'Failed ❌'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Level Review List */}
+              <div className="w-full max-w-xl flex flex-col gap-2 text-left">
+                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                  Level {level} Questions Review:
+                </h4>
+                <div className="max-h-48 overflow-y-auto pr-1 flex flex-col gap-1.5 custom-scrollbar">
+                  {levelHistory.map((item, i) => (
+                    <div
+                      key={i}
+                      className={`p-2.5 rounded-xl border text-xs flex items-start gap-2 ${
+                        item.isCorrect
+                          ? 'bg-emerald-50/60 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800/40'
+                          : 'bg-rose-50/60 dark:bg-rose-950/20 border-rose-200 dark:border-rose-800/40'
+                      }`}
+                    >
+                      <span className="shrink-0 mt-0.5">{item.isCorrect ? '✅' : '❌'}</span>
+                      <div className="flex-1 flex flex-col gap-0.5">
+                        <span className="font-bold text-slate-800 dark:text-slate-200">
+                          {item.question.question}
+                        </span>
+                        <span className="text-slate-500 dark:text-slate-400">
+                          Ans: <strong className="text-emerald-700 dark:text-emerald-300">{item.question.answer}</strong>
+                          {item.userAnswer && !item.isCorrect && (
+                            <span>
+                              {' '}• You picked: <span className="text-rose-600">{item.userAnswer}</span>
+                            </span>
+                          )}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Action Buttons: PASS TO NEXT LEVEL (Only when criteria met!) */}
+              <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+                {hasPassed ? (
+                  <>
+                    <button
+                      onClick={() => {
+                        const nextLevel = level + 1;
+                        sound.playVictory();
+                        startNewLevel(nextLevel, activeTopic, activeDifficulty);
+                        showToast(`🎉 Welcome to Level ${nextLevel}!`);
+                      }}
+                      className="flex items-center gap-2 bg-[#bae6fd] hover:bg-[#7dd3fc] text-[#0369a1] font-black px-7 py-3 rounded-2xl border-b-4 border-[#38bdf8] shadow-md hover:shadow-lg active:translate-y-0.5 transition-all text-sm font-['Fredoka']"
+                    >
+                      <span>Pass to Level {level + 1}</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+
+                    <button
+                      onClick={() => startNewLevel(level, activeTopic, activeDifficulty)}
+                      className="flex items-center gap-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold px-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-600 transition-all text-sm font-['Fredoka']"
+                    >
+                      <RotateCcw className="w-4 h-4" />
+                      <span>Replay Level {level}</span>
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => {
+                        sound.playTap();
+                        startNewLevel(level, activeTopic, activeDifficulty);
+                      }}
+                      className="flex items-center gap-2 bg-rose-500 hover:bg-rose-600 text-white font-black px-7 py-3 rounded-2xl border-b-4 border-rose-700 shadow-md hover:shadow-lg active:translate-y-0.5 transition-all text-sm font-['Fredoka']"
+                    >
+                      <RotateCcw className="w-4 h-4" />
+                      <span>Retry Level {level} 🔄</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        sound.playTap();
+                        startNewLevel(1, activeTopic, activeDifficulty);
+                      }}
+                      className="flex items-center gap-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold px-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-600 transition-all text-sm font-['Fredoka']"
+                    >
+                      <span>Restart from Level 1 ↺</span>
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
-          </div>
-
-          {/* Action Buttons: PASS TO NEXT LEVEL */}
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-            <button
-              onClick={() => {
-                const nextLevel = level + 1;
-                sound.playVictory();
-                startNewLevel(nextLevel, activeTopic, activeDifficulty);
-                showToast(`🎉 Welcome to Level ${nextLevel}!`);
-              }}
-              className="flex items-center gap-2 bg-[#bae6fd] hover:bg-[#7dd3fc] text-[#0369a1] font-black px-7 py-3 rounded-2xl border-b-4 border-[#38bdf8] shadow-md hover:shadow-lg active:translate-y-0.5 transition-all text-sm"
-            >
-              <span>Pass to Level {level + 1}</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-
-            <button
-              onClick={() => startNewLevel(level, activeTopic, activeDifficulty)}
-              className="flex items-center gap-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold px-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-600 transition-all text-sm"
-            >
-              <RotateCcw className="w-4 h-4" />
-              <span>Replay Level {level}</span>
-            </button>
-          </div>
-        </div>
+          );
+        })()
       )}
     </div>
   );
