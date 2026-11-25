@@ -3,7 +3,7 @@ import confetti from 'canvas-confetti';
 import {
   Flame, RotateCcw, ArrowRight,
   CheckCircle2, XCircle, Zap, Scissors, Clock,
-  Trophy, Brain, Sparkles
+  Trophy, Brain, Sparkles, Award
 } from 'lucide-react';
 import {
   QuizTopic,
@@ -50,10 +50,10 @@ export const QuizUp: React.FC<QuizUpProps> = ({
   initialTopic = 'all',
   stats: _stats,
 }) => {
-  // Topic, Difficulty & Round State
+  // Topic, Difficulty & Level State
   const [activeTopic, setActiveTopic] = useState<QuizTopic>(initialTopic);
   const [activeDifficulty, setActiveDifficulty] = useState<QuizDifficulty>('all');
-  const [roundNumber, setRoundNumber] = useState<number>(1);
+  const [level, setLevel] = useState<number>(1);
   const [questions, setQuestions] = useState<QuizQuestion[]>(() =>
     generateQuizRound(1, initialTopic, 10, 'all')
   );
@@ -67,10 +67,10 @@ export const QuizUp: React.FC<QuizUpProps> = ({
   const [streak, setStreak] = useState<number>(0);
   const [highestStreak, setHighestStreak] = useState<number>(0);
   const [correctAnswersCount, setCorrectAnswersCount] = useState<number>(0);
-  const [isRoundFinished, setIsRoundFinished] = useState<boolean>(false);
+  const [isLevelFinished, setIsLevelFinished] = useState<boolean>(false);
 
-  // Round History for Review
-  const [roundHistory, setRoundHistory] = useState<{
+  // Level History for Review
+  const [levelHistory, setLevelHistory] = useState<{
     question: QuizQuestion;
     userAnswer: string | null;
     isCorrect: boolean;
@@ -99,12 +99,12 @@ export const QuizUp: React.FC<QuizUpProps> = ({
     }, 2500);
   };
 
-  // Start new round
-  const startNewRound = useCallback(
-    (round: number, topic: QuizTopic, diff: QuizDifficulty = activeDifficulty) => {
-      const newQuestions = generateQuizRound(round, topic, 10, diff);
+  // Start new level
+  const startNewLevel = useCallback(
+    (lvl: number, topic: QuizTopic, diff: QuizDifficulty = activeDifficulty) => {
+      const newQuestions = generateQuizRound(lvl, topic, 10, diff);
       setQuestions(newQuestions);
-      setRoundNumber(round);
+      setLevel(lvl);
       setCurrentIndex(0);
       setSelectedOption(null);
       setIsAnswered(false);
@@ -113,8 +113,8 @@ export const QuizUp: React.FC<QuizUpProps> = ({
       setStreak(0);
       setHighestStreak(0);
       setCorrectAnswersCount(0);
-      setIsRoundFinished(false);
-      setRoundHistory([]);
+      setIsLevelFinished(false);
+      setLevelHistory([]);
       setEliminatedOptions([]);
       setTimeLeft(QUESTION_TIME_LIMIT);
       setIsTimerActive(true);
@@ -124,18 +124,18 @@ export const QuizUp: React.FC<QuizUpProps> = ({
 
   // Switch Topic
   const handleSelectTopic = (topic: QuizTopic) => {
-    if (topic === activeTopic && !isRoundFinished) return;
+    if (topic === activeTopic && !isLevelFinished) return;
     sound.playTap();
     setActiveTopic(topic);
-    startNewRound(1, topic, activeDifficulty);
+    startNewLevel(1, topic, activeDifficulty);
   };
 
   // Switch Difficulty Level
   const handleSelectDifficulty = (diff: QuizDifficulty) => {
-    if (diff === activeDifficulty && !isRoundFinished) return;
+    if (diff === activeDifficulty && !isLevelFinished) return;
     sound.playTap();
     setActiveDifficulty(diff);
-    startNewRound(1, activeTopic, diff);
+    startNewLevel(1, activeTopic, diff);
   };
 
   // Reset timer on next question
@@ -148,7 +148,7 @@ export const QuizUp: React.FC<QuizUpProps> = ({
 
   // Timer Countdown Effect
   useEffect(() => {
-    if (!isTimerActive || isAnswered || isRoundFinished) {
+    if (!isTimerActive || isAnswered || isLevelFinished) {
       if (timerRef.current) clearInterval(timerRef.current);
       return;
     }
@@ -170,7 +170,7 @@ export const QuizUp: React.FC<QuizUpProps> = ({
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [isTimerActive, isAnswered, isRoundFinished, currentIndex]);
+  }, [isTimerActive, isAnswered, isLevelFinished, currentIndex]);
 
   // Handle Question Timeout
   const handleTimeOut = () => {
@@ -181,7 +181,7 @@ export const QuizUp: React.FC<QuizUpProps> = ({
     setIsTimerActive(false);
     setStreak(0);
 
-    setRoundHistory((prev) => [
+    setLevelHistory((prev) => [
       ...prev,
       {
         question: currentQ,
@@ -211,10 +211,7 @@ export const QuizUp: React.FC<QuizUpProps> = ({
       if (newStreak > highestStreak) setHighestStreak(newStreak);
       setCorrectAnswersCount((prev) => prev + 1);
 
-      // Score Calculation:
-      // Base: 100 pts
-      // Time Bonus: up to 150 pts (10 pts per sec left)
-      // Streak Multiplier: 1.0x (1-2), 1.5x (3-4), 2.0x (5+)
+      // Score Calculation
       const streakMultiplier = newStreak >= 5 ? 2.0 : newStreak >= 3 ? 1.5 : 1.0;
       const questionScore = Math.round((100 + timeLeft * 10) * streakMultiplier);
       setScore((prev) => prev + questionScore);
@@ -224,7 +221,7 @@ export const QuizUp: React.FC<QuizUpProps> = ({
     }
 
     // Record History
-    setRoundHistory((prev) => [
+    setLevelHistory((prev) => [
       ...prev,
       {
         question: currentQ,
@@ -248,8 +245,8 @@ export const QuizUp: React.FC<QuizUpProps> = ({
       setEliminatedOptions([]);
       resetQuestionTimer();
     } else {
-      // Round Complete
-      setIsRoundFinished(true);
+      // Level Complete
+      setIsLevelFinished(true);
       const totalCorrect = correctAnswersCount + (selectedOption === currentQ?.answer ? 0 : 0);
       const accuracy = Math.round((totalCorrect / questions.length) * 100);
 
@@ -391,25 +388,26 @@ export const QuizUp: React.FC<QuizUpProps> = ({
       </div>
 
       {/* 2. MAIN GAME AREA */}
-      {!isRoundFinished ? (
+      {!isLevelFinished ? (
         <div className="flex flex-col gap-4">
           {/* Header Stats Bar */}
           <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md rounded-2xl p-3 sm:p-4 border border-slate-200/80 dark:border-slate-700 shadow-sm flex flex-wrap items-center justify-between gap-3">
-            {/* Left: Question Counter & Topic */}
-            <div className="flex items-center gap-2">
-              <span className="text-xl sm:text-2xl">{currentQ?.topicEmoji || '💡'}</span>
+            {/* Left: Prominent Level Badge & Topic */}
+            <div className="flex items-center gap-2.5">
+              {/* Prominent LEVEL Badge */}
+              <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-slate-900 font-black text-xs sm:text-sm shadow-sm border border-amber-300">
+                <Award className="w-4 h-4 text-slate-900" />
+                <span className="tracking-wide uppercase">LEVEL {level}</span>
+              </div>
+
               <div>
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <span className="text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
                     {currentQ?.topicLabel || 'General Knowledge'}
                   </span>
 
-                  {/* Difficulty Tag */}
-                  {currentQ?.question.includes('TRICKY:') ? (
-                    <span className="text-[10px] bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-200 px-2 py-0.5 rounded-md font-bold uppercase tracking-wider border border-amber-300 dark:border-amber-700 animate-pulse">
-                      🧠 Tricky
-                    </span>
-                  ) : currentQ?.difficulty === 'easy' ? (
+                  {/* Clean Difficulty Badge */}
+                  {currentQ?.difficulty === 'easy' ? (
                     <span className="text-[10px] bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-200 px-2 py-0.5 rounded-md font-bold uppercase tracking-wider border border-emerald-300 dark:border-emerald-700">
                       🌱 Easy
                     </span>
@@ -419,8 +417,9 @@ export const QuizUp: React.FC<QuizUpProps> = ({
                     </span>
                   )}
                 </div>
+
                 <h3 className="text-sm sm:text-base font-extrabold text-slate-800 dark:text-white">
-                  Question {currentIndex + 1} <span className="text-slate-400 font-normal">/ 10</span>
+                  Level {level} • Question {currentIndex + 1} <span className="text-slate-400 font-normal">/ 10</span>
                 </h3>
               </div>
             </div>
@@ -468,7 +467,7 @@ export const QuizUp: React.FC<QuizUpProps> = ({
             {/* Question Text */}
             <div className="flex flex-col gap-1.5">
               <span className="text-xs font-semibold text-slate-400 tracking-wide uppercase">
-                Round {roundNumber} • Question {currentIndex + 1}
+                Level {level} • Question {currentIndex + 1}
               </span>
               <h2 className="text-lg sm:text-2xl font-black text-slate-800 dark:text-white leading-snug">
                 {currentQ?.question}
@@ -553,7 +552,7 @@ export const QuizUp: React.FC<QuizUpProps> = ({
                     onClick={handleNextQuestion}
                     className="flex items-center gap-2 bg-[#bae6fd] hover:bg-[#7dd3fc] text-[#0369a1] font-extrabold px-5 py-2.5 rounded-xl border-b-3 border-[#38bdf8] shadow-sm hover:shadow-md active:translate-y-0.5 transition-all text-xs sm:text-sm"
                   >
-                    <span>{currentIndex + 1 < questions.length ? 'Next Question' : 'Complete Round'}</span>
+                    <span>{currentIndex + 1 < questions.length ? 'Next Question' : 'Complete Level'}</span>
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
@@ -609,18 +608,23 @@ export const QuizUp: React.FC<QuizUpProps> = ({
           </div>
         </div>
       ) : (
-        /* 4. ROUND FINISHED SUMMARY */
+        /* 4. LEVEL FINISHED SUMMARY & PASS TO NEXT LEVEL */
         <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-md rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700 shadow-xl flex flex-col items-center text-center gap-6 animate-scale-in">
           <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center text-3xl sm:text-4xl shadow-inner border border-amber-300">
             🏆
           </div>
 
           <div className="flex flex-col gap-1">
+            <div className="flex items-center justify-center gap-2">
+              <span className="px-3 py-1 rounded-xl bg-amber-400 text-slate-900 font-black text-xs uppercase shadow-sm">
+                LEVEL {level} CLEARED
+              </span>
+            </div>
             <h2 className="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white">
-              Round {roundNumber} Completed!
+              Level {level} Completed! 🎉
             </h2>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-              Outstanding trivia performance across knowledge categories!
+              Outstanding performance! Level {level + 1} is now unlocked and ready.
             </p>
           </div>
 
@@ -651,13 +655,13 @@ export const QuizUp: React.FC<QuizUpProps> = ({
             </div>
           </div>
 
-          {/* Round Review List */}
+          {/* Level Review List */}
           <div className="w-full max-w-xl flex flex-col gap-2 text-left">
             <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-              Questions Review:
+              Level {level} Questions Review:
             </h4>
             <div className="max-h-56 overflow-y-auto pr-1 flex flex-col gap-2 custom-scrollbar">
-              {roundHistory.map((item, i) => (
+              {levelHistory.map((item, i) => (
                 <div
                   key={i}
                   className={`p-3 rounded-xl border text-xs flex items-start gap-2.5 ${
@@ -685,22 +689,27 @@ export const QuizUp: React.FC<QuizUpProps> = ({
             </div>
           </div>
 
-          {/* Action Buttons */}
+          {/* Action Buttons: PASS TO NEXT LEVEL */}
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
             <button
-              onClick={() => startNewRound(roundNumber + 1, activeTopic, activeDifficulty)}
-              className="flex items-center gap-2 bg-[#bae6fd] hover:bg-[#7dd3fc] text-[#0369a1] font-black px-6 py-3 rounded-2xl border-b-4 border-[#38bdf8] shadow-md hover:shadow-lg active:translate-y-0.5 transition-all text-sm"
+              onClick={() => {
+                const nextLevel = level + 1;
+                sound.playVictory();
+                startNewLevel(nextLevel, activeTopic, activeDifficulty);
+                showToast(`🎉 Welcome to Level ${nextLevel}!`);
+              }}
+              className="flex items-center gap-2 bg-[#bae6fd] hover:bg-[#7dd3fc] text-[#0369a1] font-black px-7 py-3 rounded-2xl border-b-4 border-[#38bdf8] shadow-md hover:shadow-lg active:translate-y-0.5 transition-all text-sm"
             >
-              <span>Next Round (Round {roundNumber + 1})</span>
+              <span>Pass to Level {level + 1}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
 
             <button
-              onClick={() => startNewRound(roundNumber, activeTopic, activeDifficulty)}
+              onClick={() => startNewLevel(level, activeTopic, activeDifficulty)}
               className="flex items-center gap-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold px-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-600 transition-all text-sm"
             >
               <RotateCcw className="w-4 h-4" />
-              <span>Replay Round</span>
+              <span>Replay Level {level}</span>
             </button>
           </div>
         </div>
