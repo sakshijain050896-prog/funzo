@@ -76,12 +76,36 @@ export const getStoredStats = (): PlayerStats => {
   };
 };
 
+// When local progress last changed (used to pick the newer copy when resuming a cloud session)
+export const PROGRESS_UPDATED_AT_KEY = 'funzo_progress_updated_at';
+
 export const saveStats = (stats: PlayerStats) => {
   if (typeof window === 'undefined') return;
   try {
     localStorage.setItem(STATS_KEY, JSON.stringify(stats));
+    localStorage.setItem(PROGRESS_UPDATED_AT_KEY, new Date().toISOString());
   } catch (e) {
     console.error('Error saving stats to localStorage', e);
+  }
+};
+
+/**
+ * One-time fix for counters inflated by old bugs (fake wins, wins counted 2-3x,
+ * every 2048 move / party card counted as a game). Resets Won and Played to 0
+ * once per device; coins, IQ, level, streak and game progress are kept.
+ */
+const STATS_RESET_FLAG = 'funzo_stats_reset_v1';
+export const runOneTimeStatsReset = () => {
+  if (typeof window === 'undefined') return;
+  try {
+    if (localStorage.getItem(STATS_RESET_FLAG)) return;
+    if (localStorage.getItem(STATS_KEY)) {
+      const s = getStoredStats();
+      saveStats({ ...s, totalGamesWon: 0, totalGamesPlayed: 0 });
+    }
+    localStorage.setItem(STATS_RESET_FLAG, new Date().toISOString());
+  } catch {
+    /* storage unavailable */
   }
 };
 

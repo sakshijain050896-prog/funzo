@@ -1,13 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  X, ShieldAlert, Download, Upload, Trash2, 
-  Search, Edit3, Check, Trophy, 
-  Lock, FolderOpen, Terminal
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+  X, ShieldAlert, Download, Upload, Trash2, Search, Edit3, Check,
+  Trophy, Lock, Loader2, RefreshCw,
 } from 'lucide-react';
 import { PlayerStats } from '../types';
-import { getAllAccounts, UserAccount } from '../lib/authService';
 import { sound } from '../lib/soundEffects';
-import { saveStats } from '../lib/storage';
+import { getStoredStats } from '../lib/storage';
+import {
+  isCloudEnabled,
+  useAuthUser,
+  checkIsAdmin,
+  adminListPlayers,
+  adminUpdatePlayer,
+  adminDeletePlayer,
+  adminRestorePlayers,
+  applyOwnRowIfCurrent,
+  AdminPlayerRow,
+} from '../lib/authService';
 
 interface AdminModalProps {
   isOpen: boolean;
@@ -16,149 +25,131 @@ interface AdminModalProps {
   onUpdateStats: (newStats: PlayerStats) => void;
 }
 
-const DEFAULT_ADMIN_PIN = '8899';
-const ADMIN_PIN_STORAGE_KEY = 'funzo_admin_pin_v1';
+// Access is decided by the database (public.is_admin()), not by anything in
+// this file: non-admins get no rows back and every write is rejected by RLS.
+export const AdminModal: React.FC<AdminModalProps> = ({ isOpen, onClose, stats, onUpdateStats }) => {
+  const { user } = useAuthUser();
+  const [access, setAccess] = useState<'checking' | 'granted' | 'denied'>('checking');
+  const [players, setPlayers] = useState<AdminPlayerRow[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeTab, setActiveTab] = useState<'users' | 'tools'>('users');
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [edit, setEdit] = useState({ level: 1, iq: 100, coins: 0, arrow: 1 });
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
 
-export const AdminModal: React.FC<AdminModalProps> = ({
-  isOpen,
-  onClose,
-  stats,
-  onUpdateStats,
-}) => {
-  const [isUnlocked, setIsUnlocked] = useState<boolean>(false);
-  const [pinInput, setPinInput] = useState<string>('');
-  const [pinError, setPinError] = useState<string | null>(null);
+  const showToast = (msg: string, ok = true) => {
+    setToast({ msg, ok });
+    setTimeout(() => setToast(null), 3500);
+  };
 
-  // Accounts state
-  const [accounts, setAccounts] = useState<Record<string, UserAccount>>({});
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [activeTab, setActiveTab] = useState<'users' | 'tools' | 'files'>('users');
+  const loadPlayers = useCallback(async () => {
+    setLoading(true);
+    const res = await adminListPlayers();
+    setLoading(false);
+    if (res.ok) setPlayers(res.data);
+    else showToast(res.message, false);
+  }, []);
 
-  // Editing state
-  const [editingUserId, setEditingUserId] = useState<string | null>(null);
-  const [editLevel, setEditLevel] = useState<number>(1);
-  const [editIQ, setEditIQ] = useState<number>(105);
-  const [editCoins, setEditCoins] = useState<number>(100);
-  const [editArrowLevel, setEditArrowLevel] = useState<number>(1);
-  const [successToast, setSuccessToast] = useState<string | null>(null);
-
-  // Load current PIN and accounts
   useEffect(() => {
-    if (isOpen) {
-      loadAccounts();
+    let alive = true;
+    if (!isOpen) return;
+    setAccess('checking');
+    if (!isCloudEnabled || !user) {
+      setAccess('denied');
+      return;
     }
-  }, [isOpen]);
+    checkIsAdmin().then((ok) => {
+      if (!alive) return;
+      setAccess(ok ? 'granted' : 'denied');
+      if (ok) loadPlayers();
+    });
+    return () => {
+      alive = false;
+    };
+  }, [isOpen, user, loadPlayers]);
 
-  const getAdminPin = (): string => {
-    try {
-      return localStorage.getItem(ADMIN_PIN_STORAGE_KEY) || DEFAULT_ADMIN_PIN;
-    } catch {
-      return DEFAULT_ADMIN_PIN;
-    }
-  };
-
-  const loadAccounts = () => {
-    const data = getAllAccounts();
-    setAccounts(data);
-  };
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
+    if (isOpen) window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
-  // PIN Unlock Handler
-  const handleUnlock = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (pinInput.trim() === getAdminPin()) {
-      sound.playVictory();
-      setIsUnlocked(true);
-      setPinError(null);
-      setPinInput('');
-    } else {
-      sound.playError();
-      setPinError('Incorrect Owner PIN.');
-    }
+  const startEdit = (p: AdminPlayerRow) => {
+    setEditingId(p.user_id);
+    setEdit({
+      level: p.stats?.level ?? 1,
+      iq: p.stats?.iq ?? 100,
+      coins: p.stats?.coins ?? 0,
+      arrow: p.arrow_level || 1,
+    });
   };
 
-  // Toast helper
-  const showToast = (msg: string) => {
-    setSuccessToast(msg);
-    setTimeout(() => setSuccessToast(null), 3000);
-  };
-
-  // 1. MANUALLY EDIT USER DATA
-  const handleStartEdit = (user: UserAccount) => {
-    setEditingUserId(user.id);
-    setEditLevel(user.stats.level);
-    setEditIQ(user.stats.iq);
-    setEditCoins(user.stats.coins);
-    setEditArrowLevel(user.arrowLevel || 1);
-  };
-
-  const handleSaveUserEdit = (userId: string) => {
+  const saveEdit = async (p: AdminPlayerRow) => {
+    const nextStats: PlayerStats = {
+      ...(p.stats || getStoredStats()),
+      level: Math.max(1, Math.floor(Number(edit.level) || 1)),
+      iq: Math.max(0, Math.floor(Number(edit.iq) || 0)),
+      coins: Math.max(0, Math.floor(Number(edit.coins) || 0)),
+    };
+    const arrow = Math.min(10000, Math.max(1, Math.floor(Number(edit.arrow) || 1)));
+    const res = await adminUpdatePlayer(p.user_id, { stats: nextStats, arrow_level: arrow });
+    if (!res.ok) return showToast(res.message, false);
     sound.playVictory();
-    const updated = { ...accounts };
-    if (updated[userId]) {
-      updated[userId].stats.level = Number(editLevel);
-      updated[userId].stats.iq = Number(editIQ);
-      updated[userId].stats.coins = Number(editCoins);
-      updated[userId].arrowLevel = Number(editArrowLevel);
-      localStorage.setItem('funzo_cloud_accounts_v2', JSON.stringify(updated));
-      setAccounts(updated);
+    const updatedRow = { ...p, stats: nextStats, arrow_level: arrow };
+    setPlayers((list) => list.map((x) => (x.user_id === p.user_id ? updatedRow : x)));
+    const own = applyOwnRowIfCurrent(updatedRow);
+    if (own) onUpdateStats(own);
+    setEditingId(null);
+    showToast(`${p.username} updated.`);
+  };
 
-      // If active current player was modified, update live state
-      const currentRaw = localStorage.getItem('funzo_active_session_v2');
-      if (currentRaw && JSON.parse(currentRaw).userId === userId) {
-        saveStats(updated[userId].stats);
-        localStorage.setItem('funzo_arrow_level', editArrowLevel.toString());
-        onUpdateStats(updated[userId].stats);
+  const deletePlayer = async (p: AdminPlayerRow) => {
+    const res = await adminDeletePlayer(p.user_id);
+    setConfirmDeleteId(null);
+    if (!res.ok) return showToast(res.message, false);
+    setPlayers((list) => list.filter((x) => x.user_id !== p.user_id));
+    showToast(`Progress for ${p.username} deleted.`);
+  };
+
+  const exportBackup = () => {
+    const blob = new Blob([JSON.stringify(players, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `funzo_players_backup_${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    showToast(`Exported ${players.length} players.`);
+  };
+
+  const importBackup = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async () => {
+      try {
+        const parsed = JSON.parse(String(reader.result));
+        const rows = Array.isArray(parsed) ? parsed : [];
+        const res = await adminRestorePlayers(rows);
+        if (!res.ok) return showToast(res.message, false);
+        showToast(`Restored ${res.data} players.`);
+        loadPlayers();
+      } catch {
+        showToast('That file is not a valid Funzo backup.', false);
       }
-      showToast(`User ${updated[userId].username} updated successfully!`);
-    }
-    setEditingUserId(null);
+    };
+    reader.readAsText(file, 'UTF-8');
   };
 
-  // 2. DELETE USER
-  const handleDeleteUser = (userId: string) => {
-    if (confirm('Are you sure you want to permanently delete this user account?')) {
-      const updated = { ...accounts };
-      delete updated[userId];
-      localStorage.setItem('funzo_cloud_accounts_v2', JSON.stringify(updated));
-      setAccounts(updated);
-      showToast('User deleted from database.');
-    }
-  };
-
-  // 3. EXPORT ALL DATA TO JSON FILE
-  const handleExportData = () => {
-    const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(accounts, null, 2));
-    const dlAnchorElem = document.createElement('a');
-    dlAnchorElem.setAttribute('href', dataStr);
-    dlAnchorElem.setAttribute('download', `funzo_users_backup_${new Date().toISOString().slice(0, 10)}.json`);
-    dlAnchorElem.click();
-    showToast('Database exported to JSON file on your machine!');
-  };
-
-  // 4. IMPORT DATA
-  const handleImportData = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const fileReader = new FileReader();
-    if (e.target.files && e.target.files[0]) {
-      fileReader.readAsText(e.target.files[0], 'UTF-8');
-      fileReader.onload = (event) => {
-        try {
-          const parsed = JSON.parse(event.target?.result as string);
-          localStorage.setItem('funzo_cloud_accounts_v2', JSON.stringify(parsed));
-          setAccounts(parsed);
-          showToast('Database restored successfully from file!');
-        } catch {
-          alert('Invalid backup JSON file.');
-        }
-      };
-    }
-  };
-
-  // 5. GOD MODE: INSTANTLY UNLOCK 10,000 LEVELS & 200 IQ FOR OWNER
-  const handleGodMode = () => {
+  const godMode = async () => {
+    if (!user) return;
     sound.playVictory();
-    localStorage.setItem('funzo_arrow_level', '10000');
+    try { localStorage.setItem('funzo_arrow_level', '10000'); } catch { /* ignore */ }
     const newStats: PlayerStats = {
       ...stats,
       level: 100,
@@ -167,380 +158,207 @@ export const AdminModal: React.FC<AdminModalProps> = ({
       coins: stats.coins + 50000,
       streak: Math.max(stats.streak, 30),
     };
-    saveStats(newStats);
-    onUpdateStats(newStats);
-    showToast('🚀 GOD MODE ACTIVATED: Arrow Level 10,000 & 200 IQ Applied!');
+    onUpdateStats(newStats); // saves locally + syncs to your account
+    showToast('God Mode applied to your account (testing only).');
   };
 
-  const accountList = Object.values(accounts);
-  const filteredAccounts = accountList.filter((a) => {
-    const q = searchQuery.toLowerCase();
-    return (
-      a.username.toLowerCase().includes(q) ||
-      (a.phone && a.phone.includes(q)) ||
-      (a.email && a.email.toLowerCase().includes(q))
-    );
-  });
+  const q = searchQuery.trim().toLowerCase();
+  const filtered = players.filter((p) => !q || p.username.toLowerCase().includes(q) || (p.email || '').toLowerCase().includes(q));
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-3 sm:p-4 animate-fade-in overflow-y-auto">
-      <div className="relative w-full max-w-xl rounded-3xl bg-white dark:bg-[#1a2c35] border-2 border-slate-200 dark:border-[#2b4554] p-5 sm:p-6 shadow-2xl text-left my-4 text-slate-900 dark:text-white">
-        
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-white transition"
-          title="Close Admin Panel"
-        >
-          <X className="w-5 h-5" />
+  const shell = (children: React.ReactNode) => (
+    <div onClick={onClose} className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-3 sm:p-4 animate-fade-in overflow-y-auto">
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-xl rounded-[1.75rem] bg-white dark:bg-[#13152a] border border-slate-900/10 dark:border-white/10 p-5 sm:p-6 shadow-2xl text-left my-4 text-slate-900 dark:text-white animate-scale-in"
+        role="dialog"
+        aria-label="Admin panel"
+      >
+        <button onClick={onClose} className="absolute top-4 right-4 w-9 h-9 rounded-xl fz-btn-ghost flex items-center justify-center" aria-label="Close admin panel" title="Close">
+          <X className="w-4 h-4" />
         </button>
+        {children}
+      </div>
+    </div>
+  );
 
-        {/* ---------------- STAGE 1: PIN GATE ---------------- */}
-        {!isUnlocked ? (
-          <div className="flex flex-col items-center text-center py-6">
-            <div className="w-14 h-14 rounded-2xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-500 dark:text-indigo-400 flex items-center justify-center mb-3">
-              <Lock className="w-7 h-7" />
-            </div>
-            <h3 className="text-xl font-black text-slate-900 dark:text-white mb-1">Owner &amp; Admin Panel</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mb-4 max-w-xs">
-              Enter your Owner Security PIN to view user accounts, live game levels, and make manual changes.
-            </p>
+  if (access !== 'granted') {
+    return shell(
+      <div className="flex flex-col items-center text-center py-6">
+        <div className="w-14 h-14 rounded-2xl bg-violet-500/15 border border-violet-500/30 text-violet-500 flex items-center justify-center mb-3">
+          {access === 'checking' ? <Loader2 className="w-7 h-7 animate-spin" /> : <Lock className="w-7 h-7" />}
+        </div>
+        <h3 className="font-display text-xl font-bold mb-1">Owner &amp; Admin Panel</h3>
+        <p className="text-sm text-slate-500 dark:text-slate-400 max-w-xs">
+          {access === 'checking'
+            ? 'Checking your access…'
+            : !isCloudEnabled
+            ? 'The admin panel needs cloud accounts, which are not connected yet.'
+            : !user
+            ? 'Sign in with the owner account (Profile → Sign in) to open this panel.'
+            : 'This account does not have admin access.'}
+        </p>
+      </div>
+    );
+  }
 
-            <form onSubmit={handleUnlock} className="flex flex-col items-center gap-2.5 w-full max-w-xs">
+  return shell(
+    <div>
+      <div className="mb-4 pr-10">
+        <h3 className="font-display text-lg font-bold flex items-center gap-2">
+          <ShieldAlert className="w-5 h-5 text-violet-500" /> Owner Control Center
+        </h3>
+        <p className="text-xs text-slate-500 dark:text-slate-400">Signed in as {user?.email}. Every action is checked by the server.</p>
+      </div>
+
+      {toast && (
+        <div className={`p-2.5 rounded-xl text-xs font-semibold mb-3 flex items-center gap-2 border ${toast.ok ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-700 dark:text-emerald-300' : 'bg-rose-500/10 border-rose-500/30 text-rose-700 dark:text-rose-300'}`}>
+          <Check className="w-4 h-4" /> {toast.msg}
+        </div>
+      )}
+
+      <div className="grid grid-cols-2 gap-1 p-1 rounded-xl bg-slate-900/[0.04] dark:bg-white/[0.05] mb-4 text-xs font-semibold">
+        <button onClick={() => setActiveTab('users')} className={`h-9 rounded-lg transition ${activeTab === 'users' ? 'bg-white dark:bg-white/10 shadow-sm' : 'text-slate-500 dark:text-slate-400'}`}>
+          Players ({players.length})
+        </button>
+        <button onClick={() => setActiveTab('tools')} className={`h-9 rounded-lg transition ${activeTab === 'tools' ? 'bg-white dark:bg-white/10 shadow-sm' : 'text-slate-500 dark:text-slate-400'}`}>
+          God Mode &amp; Backup
+        </button>
+      </div>
+
+      {activeTab === 'users' && (
+        <div>
+          <div className="flex gap-2 mb-3">
+            <div className="relative flex-1">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
-                type="password"
-                maxLength={8}
-                placeholder="Enter Owner PIN"
-                value={pinInput}
-                onChange={(e) => setPinInput(e.target.value)}
-                className="w-full py-2.5 px-4 text-center tracking-widest text-lg font-mono font-black rounded-xl bg-slate-100 dark:bg-slate-950 border-2 border-indigo-500 text-slate-900 dark:text-white focus:outline-none"
-                autoFocus
+                type="text"
+                placeholder="Search by name or email"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full h-10 pl-9 pr-3 rounded-xl bg-slate-900/[0.04] dark:bg-white/[0.05] border border-slate-900/10 dark:border-white/10 text-sm focus:outline-none focus:border-violet-500/60"
               />
-              <button
-                type="submit"
-                className="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs shadow-md transition active:scale-95"
-              >
-                Unlock Admin Dashboard →
-              </button>
-            </form>
-
-            {pinError && (
-              <p className="text-xs text-rose-400 font-semibold mt-2.5 animate-shake">
-                {pinError}
-              </p>
-            )}
+            </div>
+            <button onClick={loadPlayers} className="w-10 h-10 rounded-xl fz-btn-ghost flex items-center justify-center" title="Refresh" aria-label="Refresh">
+              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            </button>
           </div>
-        ) : (
-          /* ---------------- STAGE 2: UNLOCKED DASHBOARD ---------------- */
-          <div>
-            {/* Header */}
-            <div className="flex items-center justify-between mb-3 border-b border-slate-800 pb-3">
-              <div>
-                <h3 className="text-lg font-black text-white flex items-center gap-2">
-                  <ShieldAlert className="w-5 h-5 text-indigo-400" />
-                  <span>Funzo Owner Control Center</span>
-                </h3>
-                <p className="text-[11px] text-slate-400">
-                  Full visibility of user logins, gameplay progress, and manual overrides.
-                </p>
+
+          <div className="flex flex-col gap-2 max-h-[55vh] overflow-y-auto pr-0.5">
+            {loading && players.length === 0 ? (
+              <div className="p-6 text-center text-sm text-slate-500"><Loader2 className="w-5 h-5 animate-spin inline" /></div>
+            ) : filtered.length === 0 ? (
+              <div className="p-6 text-center text-slate-500 text-sm rounded-2xl bg-slate-900/[0.03] dark:bg-white/[0.03]">
+                No players yet. Players appear here after they create an account.
               </div>
-              <button
-                onClick={() => setIsUnlocked(false)}
-                className="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white text-[11px] font-bold"
-              >
-                Lock Panel
-              </button>
-            </div>
-
-            {/* Notification Toast */}
-            {successToast && (
-              <div className="p-2 rounded-xl bg-emerald-950/80 border border-emerald-500 text-emerald-200 text-xs font-bold mb-3 flex items-center gap-2">
-                <Check className="w-4 h-4 text-emerald-400" />
-                <span>{successToast}</span>
-              </div>
-            )}
-
-            {/* Navigation Tabs */}
-            <div className="grid grid-cols-3 gap-1 p-0.5 bg-slate-950 rounded-xl mb-4 text-xs font-bold">
-              <button
-                onClick={() => setActiveTab('users')}
-                className={`py-2 rounded-lg transition ${
-                  activeTab === 'users' ? 'bg-indigo-600 text-white font-black' : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                👥 Players Roster ({accountList.length})
-              </button>
-              <button
-                onClick={() => setActiveTab('tools')}
-                className={`py-2 rounded-lg transition ${
-                  activeTab === 'tools' ? 'bg-indigo-600 text-white font-black' : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                🛠️ God Mode &amp; Backup
-              </button>
-              <button
-                onClick={() => setActiveTab('files')}
-                className={`py-2 rounded-lg transition ${
-                  activeTab === 'files' ? 'bg-indigo-600 text-white font-black' : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                📂 Codebase Sitemap
-              </button>
-            </div>
-
-            {/* ---------------- TAB 1: USERS ROSTER ---------------- */}
-            {activeTab === 'users' && (
-              <div>
-                {/* Search Bar */}
-                <div className="relative mb-3">
-                  <Search className="w-4 h-4 text-slate-500 absolute left-3 top-2.5" />
-                  <input
-                    type="text"
-                    placeholder="Search player by phone number or username..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full py-2 pl-9 pr-3 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs font-bold focus:border-indigo-500 focus:outline-none"
-                  />
-                </div>
-
-                {/* Users List */}
-                <div className="flex flex-col gap-2 max-h-72 overflow-y-auto pr-0.5">
-                  {filteredAccounts.length === 0 ? (
-                    <div className="p-6 text-center text-slate-500 text-xs rounded-2xl bg-slate-950/60 border border-slate-800">
-                      No registered accounts found yet. Users appear here when they log in via Phone OTP, Password, or Google!
+            ) : (
+              filtered.map((p) => (
+                <div key={p.user_id} className="p-3 rounded-2xl bg-slate-900/[0.03] dark:bg-white/[0.03] border border-slate-900/5 dark:border-white/[0.06]">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="text-sm font-bold truncate">{p.username}</p>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">{p.email}</p>
+                      <p className="text-[10px] text-slate-400">
+                        Last active {new Date(p.updated_at).toLocaleString()}
+                      </p>
                     </div>
-                  ) : (
-                    filteredAccounts.map((user) => (
-                      <div
-                        key={user.id}
-                        className="p-3 rounded-2xl bg-slate-950 border border-slate-800 hover:border-slate-700 transition"
-                      >
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <div className="flex items-center gap-1.5">
-                              <span className="text-xs font-black text-white">{user.username}</span>
-                              <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-indigo-500/20 text-indigo-400 uppercase font-bold">
-                                {user.authType}
-                              </span>
-                            </div>
-                            <div className="text-[11px] text-slate-400 flex items-center gap-2 mt-0.5 font-mono">
-                              {user.phone && <span>📱 {user.phone}</span>}
-                              {user.email && <span>✉️ {user.email}</span>}
-                            </div>
-                          </div>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <button onClick={() => startEdit(p)} className="w-8 h-8 rounded-lg bg-violet-500/10 text-violet-600 dark:text-violet-300 flex items-center justify-center" title="Edit" aria-label={`Edit ${p.username}`}>
+                        <Edit3 className="w-3.5 h-3.5" />
+                      </button>
+                      <button onClick={() => setConfirmDeleteId(p.user_id)} className="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-300 flex items-center justify-center" title="Delete progress" aria-label={`Delete ${p.username}`}>
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
 
-                          <div className="flex items-center gap-1.5">
-                            <button
-                              onClick={() => handleStartEdit(user)}
-                              className="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 text-xs"
-                              title="Edit user values"
-                            >
-                              <Edit3 className="w-3.5 h-3.5" />
-                            </button>
-                            <button
-                              onClick={() => handleDeleteUser(user.id)}
-                              className="p-1.5 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 text-xs"
-                              title="Delete user"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                        </div>
-
-                        {/* Player Metrics Pill Bar */}
-                        <div className="grid grid-cols-4 gap-1.5 mt-2 pt-2 border-t border-slate-800/80 text-[10px] font-mono text-center">
-                          <div className="p-1 rounded bg-slate-900">
-                            <span className="text-slate-500 block">Arrow Lvl</span>
-                            <span className="text-cyan-400 font-bold">{user.arrowLevel || 1}</span>
-                          </div>
-                          <div className="p-1 rounded bg-slate-900">
-                            <span className="text-slate-500 block">Mind IQ</span>
-                            <span className="text-amber-400 font-bold">{user.stats.iq}</span>
-                          </div>
-                          <div className="p-1 rounded bg-slate-900">
-                            <span className="text-slate-500 block">Player Lvl</span>
-                            <span className="text-purple-400 font-bold">Lvl {user.stats.level}</span>
-                          </div>
-                          <div className="p-1 rounded bg-slate-900">
-                            <span className="text-slate-500 block">Coins</span>
-                            <span className="text-yellow-400 font-bold">{user.stats.coins}</span>
-                          </div>
-                        </div>
-
-                        {/* Games History Breakdown */}
-                        {user.stats.gamesPlayedHistory && (
-                          <div className="mt-1.5 text-[9px] text-slate-500">
-                            <strong>Games Played: </strong>
-                            {Object.entries(user.stats.gamesPlayedHistory).map(([k, v]) => `${k}: ${v}`).join(' · ')}
-                          </div>
-                        )}
-
-                        {/* Inline Edit Form */}
-                        {editingUserId === user.id && (
-                          <div className="mt-2.5 p-2.5 rounded-xl bg-slate-900 border border-indigo-500 text-xs">
-                            <strong className="block text-indigo-400 mb-1.5">
-                              Manual Override for {user.username}:
-                            </strong>
-                            <div className="grid grid-cols-2 gap-2 mb-2">
-                              <div>
-                                <label className="text-[10px] text-slate-400 block">Arrow Level (1-10000):</label>
-                                <input
-                                  type="number"
-                                  value={editArrowLevel}
-                                  onChange={(e) => setEditArrowLevel(Number(e.target.value))}
-                                  className="w-full px-2 py-1 bg-slate-950 border border-slate-700 rounded text-white font-bold"
-                                />
-                              </div>
-                              <div>
-                                <label className="text-[10px] text-slate-400 block">Player IQ:</label>
-                                <input
-                                  type="number"
-                                  value={editIQ}
-                                  onChange={(e) => setEditIQ(Number(e.target.value))}
-                                  className="w-full px-2 py-1 bg-slate-950 border border-slate-700 rounded text-white font-bold"
-                                />
-                              </div>
-                              <div>
-                                <label className="text-[10px] text-slate-400 block">Player Level:</label>
-                                <input
-                                  type="number"
-                                  value={editLevel}
-                                  onChange={(e) => setEditLevel(Number(e.target.value))}
-                                  className="w-full px-2 py-1 bg-slate-950 border border-slate-700 rounded text-white font-bold"
-                                />
-                              </div>
-                              <div>
-                                <label className="text-[10px] text-slate-400 block">Coins Balance:</label>
-                                <input
-                                  type="number"
-                                  value={editCoins}
-                                  onChange={(e) => setEditCoins(Number(e.target.value))}
-                                  className="w-full px-2 py-1 bg-slate-950 border border-slate-700 rounded text-white font-bold"
-                                />
-                              </div>
-                            </div>
-                            <div className="flex gap-1.5">
-                              <button
-                                onClick={() => handleSaveUserEdit(user.id)}
-                                className="flex-1 py-1 rounded bg-emerald-600 text-white font-bold text-xs"
-                              >
-                                Save Changes
-                              </button>
-                              <button
-                                onClick={() => setEditingUserId(null)}
-                                className="px-3 py-1 rounded bg-slate-800 text-slate-400 text-xs"
-                              >
-                                Cancel
-                              </button>
-                            </div>
-                          </div>
-                        )}
+                  <div className="grid grid-cols-4 gap-1.5 mt-2 text-[10px] text-center">
+                    {[
+                      ['Arrow Lvl', p.arrow_level || 1],
+                      ['IQ', p.stats?.iq ?? '-'],
+                      ['Level', p.stats?.level ?? '-'],
+                      ['Coins', p.stats?.coins ?? '-'],
+                    ].map(([k, v]) => (
+                      <div key={String(k)} className="p-1.5 rounded-lg bg-white dark:bg-white/[0.04]">
+                        <span className="text-slate-500 block">{k}</span>
+                        <span className="font-bold">{v}</span>
                       </div>
-                    ))
+                    ))}
+                  </div>
+
+                  {confirmDeleteId === p.user_id && (
+                    <div className="mt-2.5 p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-xs">
+                      <p className="font-semibold text-rose-700 dark:text-rose-300 mb-2">Delete all saved progress for {p.username}? This cannot be undone.</p>
+                      <div className="flex gap-1.5">
+                        <button onClick={() => deletePlayer(p)} className="flex-1 h-8 rounded-lg bg-rose-600 text-white font-bold">Delete</button>
+                        <button onClick={() => setConfirmDeleteId(null)} className="px-3 h-8 rounded-lg fz-btn-ghost">Cancel</button>
+                      </div>
+                    </div>
+                  )}
+
+                  {editingId === p.user_id && (
+                    <div className="mt-2.5 p-2.5 rounded-xl border border-violet-500/40 text-xs">
+                      <div className="grid grid-cols-2 gap-2 mb-2">
+                        {([
+                          ['arrow', 'Arrow Level (1-10000)'],
+                          ['iq', 'IQ'],
+                          ['level', 'Player Level'],
+                          ['coins', 'Coins'],
+                        ] as const).map(([key, label]) => (
+                          <label key={key} className="block">
+                            <span className="text-[10px] text-slate-500 block mb-0.5">{label}</span>
+                            <input
+                              type="number"
+                              value={edit[key]}
+                              onChange={(e) => setEdit((s) => ({ ...s, [key]: Number(e.target.value) }))}
+                              className="w-full h-8 px-2 rounded-lg bg-slate-900/[0.04] dark:bg-white/[0.06] border border-slate-900/10 dark:border-white/10 font-bold"
+                            />
+                          </label>
+                        ))}
+                      </div>
+                      <div className="flex gap-1.5">
+                        <button onClick={() => saveEdit(p)} className="flex-1 h-8 rounded-lg fz-btn-primary font-bold">Save</button>
+                        <button onClick={() => setEditingId(null)} className="px-3 h-8 rounded-lg fz-btn-ghost">Cancel</button>
+                      </div>
+                    </div>
                   )}
                 </div>
-              </div>
-            )}
-
-            {/* ---------------- TAB 2: GOD MODE & BACKUP TOOLS ---------------- */}
-            {activeTab === 'tools' && (
-              <div className="flex flex-col gap-3">
-                {/* God Mode Card */}
-                <div className="p-3.5 rounded-2xl bg-gradient-to-r from-purple-950/60 to-indigo-950/60 border border-purple-500/40">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Trophy className="w-5 h-5 text-amber-400" />
-                    <span className="text-sm font-black text-white">Owner God Mode</span>
-                  </div>
-                  <p className="text-xs text-slate-300 mb-3 leading-relaxed">
-                    Instantly sets your device to <strong>Arrow Escape Max Level</strong>, unlocks <strong>200 IQ (Cosmic Deity)</strong>, and grants <strong>+50,000 Coins</strong> for immediate testing.
-                  </p>
-                  <button
-                    onClick={handleGodMode}
-                    className="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-purple-600 text-slate-950 font-black text-xs shadow-md transition active:scale-95"
-                  >
-                    Activate God Mode 🚀
-                  </button>
-                </div>
-
-                {/* Database Backup & Export */}
-                <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800">
-                  <span className="text-xs font-black text-white block mb-1">
-                    📥 Download Full User Database Backup
-                  </span>
-                  <p className="text-[11px] text-slate-400 mb-2.5">
-                    Save a complete JSON snapshot of all registered players and levels to your computer.
-                  </p>
-                  <button
-                    onClick={handleExportData}
-                    className="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-indigo-300 font-bold text-xs flex items-center justify-center gap-1.5 transition"
-                  >
-                    <Download className="w-4 h-4" /> Export All Accounts to JSON
-                  </button>
-                </div>
-
-                {/* Restore Database */}
-                <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800">
-                  <span className="text-xs font-black text-white block mb-1">
-                    📤 Restore Database from JSON Backup
-                  </span>
-                  <p className="text-[11px] text-slate-400 mb-2.5">
-                    Upload a previously exported backup file to restore accounts.
-                  </p>
-                  <label className="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer">
-                    <Upload className="w-4 h-4" /> Select Backup File
-                    <input
-                      type="file"
-                      accept=".json"
-                      onChange={handleImportData}
-                      className="hidden"
-                    />
-                  </label>
-                </div>
-              </div>
-            )}
-
-            {/* ---------------- TAB 3: CODEBASE SITEMAP ---------------- */}
-            {activeTab === 'files' && (
-              <div className="flex flex-col gap-2.5 text-xs">
-                <div className="p-3 rounded-2xl bg-slate-950 border border-slate-800">
-                  <span className="font-black text-indigo-400 block mb-1 flex items-center gap-1.5">
-                    <FolderOpen className="w-4 h-4" /> Project Files Location on Your Machine
-                  </span>
-                  <p className="text-[11px] text-slate-300 font-mono bg-slate-900 p-2 rounded-xl border border-slate-800 select-all mb-2">
-                    C:\Users\Aman Dayma\Desktop\FunzoGamePortal
-                  </p>
-                  <p className="text-[11px] text-slate-400 leading-relaxed">
-                    You can open this folder in VS Code anytime to modify questions, game rules, and designs.
-                  </p>
-                </div>
-
-                <div className="p-3 rounded-2xl bg-slate-950 border border-slate-800">
-                  <span className="font-black text-white block mb-1">
-                    Where to Make Manual Changes:
-                  </span>
-                  <ul className="text-[11px] text-slate-300 flex flex-col gap-1.5">
-                    <li>• <strong>Games:</strong> <code className="text-cyan-400">src/components/games/ArrowPuzzle.tsx</code>, <code className="text-cyan-400">MysteryHub.tsx</code>, <code className="text-cyan-400">SpillItHub.tsx</code></li>
-                    <li>• <strong>Questions &amp; Facts:</strong> <code className="text-amber-400">src/data/spillItData.ts</code>, <code className="text-amber-400">src/data/mysteryData.ts</code></li>
-                    <li>• <strong>Auth &amp; Database:</strong> <code className="text-purple-400">src/lib/authService.ts</code>, <code className="text-purple-400">src/lib/storage.ts</code></li>
-                  </ul>
-                </div>
-
-                <div className="p-3 rounded-2xl bg-slate-950 border border-slate-800">
-                  <span className="font-black text-white block mb-1 flex items-center gap-1.5">
-                    <Terminal className="w-4 h-4 text-emerald-400" /> Auto-Deploying to Live URL
-                  </span>
-                  <p className="text-[11px] text-slate-400 leading-relaxed">
-                    After saving any changes, run:
-                  </p>
-                  <code className="block bg-slate-900 p-2 rounded-xl border border-slate-800 text-[11px] text-emerald-300 font-mono mt-1">
-                    npx vercel --prod
-                  </code>
-                </div>
-              </div>
+              ))
             )}
           </div>
-        )}
-      </div>
+        </div>
+      )}
+
+      {activeTab === 'tools' && (
+        <div className="flex flex-col gap-3">
+          <div className="p-4 rounded-2xl bg-gradient-to-br from-violet-500/15 to-fuchsia-500/10 border border-violet-500/30">
+            <div className="flex items-center gap-2 mb-1">
+              <Trophy className="w-5 h-5 text-amber-500" />
+              <span className="text-sm font-bold">Owner God Mode (testing)</span>
+            </div>
+            <p className="text-xs text-slate-600 dark:text-slate-300 mb-3">
+              Sets <b>your own</b> account to Arrow level 10,000, IQ 200, level 100 and adds 50,000 coins. Note: this also puts you at the top of the leaderboard.
+            </p>
+            <button onClick={godMode} className="w-full h-10 rounded-xl fz-btn-primary text-xs font-bold">Activate God Mode</button>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-slate-900/[0.03] dark:bg-white/[0.03] border border-slate-900/5 dark:border-white/[0.06]">
+            <p className="text-sm font-bold mb-1">Download player backup</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">JSON snapshot of every player's saved progress (includes emails, so keep it private).</p>
+            <button onClick={exportBackup} className="w-full h-10 rounded-xl fz-btn-ghost text-xs font-semibold flex items-center justify-center gap-2">
+              <Download className="w-4 h-4" /> Export {players.length} players
+            </button>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-slate-900/[0.03] dark:bg-white/[0.03] border border-slate-900/5 dark:border-white/[0.06]">
+            <p className="text-sm font-bold mb-1">Restore from backup</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">Overwrites saved progress for the players in the file (accounts must still exist).</p>
+            <label className="w-full h-10 rounded-xl fz-btn-ghost text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer">
+              <Upload className="w-4 h-4" /> Choose backup file
+              <input type="file" accept=".json,application/json" onChange={importBackup} className="hidden" />
+            </label>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

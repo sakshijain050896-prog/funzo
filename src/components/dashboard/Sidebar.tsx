@@ -6,7 +6,6 @@ import {
 import { sound } from '../../lib/soundEffects';
 
 import { PlayerStats, CARTOON_AVATARS } from '../../types';
-import { getCurrentUser } from '../../lib/authService';
 import { FunzoMark, AvatarBadge } from '../ui/Brand';
 
 export type DashboardNavTab = 'home' | 'leaderboard' | 'rewards' | 'profile';
@@ -39,8 +38,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onOpenInstallModal,
 }) => {
   const [logoClicks, setLogoClicks] = useState<number>(0);
-  const currentUser = getCurrentUser();
-  const displayName = stats?.username || (currentUser ? currentUser.username : 'Player');
+  const displayName = stats?.username || 'Player';
   const avatar = CARTOON_AVATARS.find((a) => a.id === stats?.avatarId) || CARTOON_AVATARS[0];
 
   const handleLogoClick = () => {

@@ -617,7 +617,7 @@ export const GENERAL_TWO_TRUTHS_ROUNDS: GeneralTwoTruthsItem[] = [
 // Dynamic Two Truths & One Lie round generator (Relatable general conversational format)
 export function generateTwoTruthsRound(roundNum: number, usedLieIndices: Set<number>): TwoTruthsRound {
   const totalRounds = GENERAL_TWO_TRUTHS_ROUNDS.length;
-  let idx = (roundNum - 1) % totalRounds;
+  let idx = (((roundNum - 1) % totalRounds) + totalRounds) % totalRounds; // safe for roundNum < 1
 
   // If already used in this session and we have unused ones, pick next
   if (usedLieIndices.has(idx) && usedLieIndices.size < totalRounds) {

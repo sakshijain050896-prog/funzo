@@ -1,378 +1,419 @@
-// Unified Authentication & Cloud Progress Persistence Service
-// Supports Phone Number + OTP, Password System, and Google Authentication.
-// Automatically backs up and restores player levels, IQ, coins, and game milestones.
+// Funzo authentication & cloud progress (Supabase Auth: email + password).
+//
+// - Passwords are handled entirely by Supabase Auth (hashed server-side).
+// - Each player's progress lives in public.player_progress, protected by
+//   Row Level Security so a player can only read/write their own row.
+// - Admin rights are checked on the server (public.is_admin()).
+// - Without Supabase configured (VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY),
+//   the app runs in guest mode with progress stored on the device only.
 
+import { useEffect, useState } from 'react';
+import type { User } from '@supabase/supabase-js';
 import { PlayerStats } from '../types';
-import { saveStats, getStoredStats } from './storage';
+import { saveStats, getStoredStats, PROGRESS_UPDATED_AT_KEY } from './storage';
+import { supabase, isSupabaseConfigured } from './supabase';
 
-export interface UserAccount {
+export const isCloudEnabled = isSupabaseConfigured;
+
+export interface AuthUser {
   id: string;
-  authType: 'phone' | 'password' | 'google';
-  phone?: string;
-  email?: string;
+  email: string;
+}
+
+export interface CloudProgressRow {
+  user_id: string;
   username: string;
-  avatarId: string;
-  passwordHash?: string;
-  createdAt: string;
-  lastLoginAt: string;
+  avatar_id: string;
   stats: PlayerStats;
-  arrowLevel: number;
+  arrow_level: number;
+  game_state: Record<string, string>;
+  updated_at: string;
 }
 
-const ACCOUNTS_DB_KEY = 'funzo_cloud_accounts_v2';
-const ACTIVE_SESSION_KEY = 'funzo_active_session_v2';
+export interface AdminPlayerRow extends CloudProgressRow {
+  email: string;
+  created_at: string;
+  last_sign_in_at: string | null;
+}
 
-// In-memory OTP store (phone -> { otp, expiresAt })
-const PENDING_OTPS = new Map<string, { otp: string; expiresAt: number }>();
+export interface LeaderboardRow {
+  username: string;
+  avatar_id: string;
+  level: number;
+  wins: number;
+  coins: number;
+  streak: number;
+  points: number;
+  is_me: boolean;
+}
 
-// Load all registered cloud accounts
-export function getAllAccounts(): Record<string, UserAccount> {
-  if (typeof window === 'undefined') return {};
+type Result<T = undefined> = { ok: true; data: T; message?: string } | { ok: false; message: string };
+
+// ---------------------------------------------------------------------------
+// Device keys synced to the cloud alongside stats (per-game progress)
+// ---------------------------------------------------------------------------
+const ARROW_LEVEL_KEY = 'funzo_arrow_level';
+const SYNCED_GAME_KEYS = [
+  'funzo_quizup_level',
+  'funzo_math_level',
+  'funzo_math_highscore',
+  'funzo_2048_best',
+  'funzo_arrow_max_level',
+  'funzo_arrow_hints',
+  'funzo_mystery_max_case',
+];
+
+// Legacy demo-auth storage (contained base64 "passwords"); removed on upgrade.
+const LEGACY_KEYS = ['funzo_cloud_accounts_v2', 'funzo_active_session_v2'];
+try {
+  if (typeof window !== 'undefined') LEGACY_KEYS.forEach((k) => localStorage.removeItem(k));
+} catch {
+  /* ignore */
+}
+
+const readArrowLevel = (): number => {
   try {
-    const raw = localStorage.getItem(ACCOUNTS_DB_KEY);
-    return raw ? JSON.parse(raw) : {};
+    const n = parseInt(localStorage.getItem(ARROW_LEVEL_KEY) || '1', 10);
+    return Number.isFinite(n) && n >= 1 ? Math.min(n, 10000) : 1;
   } catch {
-    return {};
+    return 1;
   }
-}
+};
 
-// Save all accounts back to persistent DB
-function saveAllAccounts(accounts: Record<string, UserAccount>) {
-  if (typeof window === 'undefined') return;
+const readGameState = (): Record<string, string> => {
+  const out: Record<string, string> = {};
   try {
-    localStorage.setItem(ACCOUNTS_DB_KEY, JSON.stringify(accounts));
-  } catch (err) {
-    console.error('Failed to save accounts database', err);
-  }
-}
-
-// Get current logged-in user
-export function getCurrentUser(): UserAccount | null {
-  if (typeof window === 'undefined') return null;
-  try {
-    const raw = localStorage.getItem(ACTIVE_SESSION_KEY);
-    if (!raw) return null;
-    const session = JSON.parse(raw);
-    const accounts = getAllAccounts();
-    return accounts[session.userId] || session.user || null;
+    for (const k of SYNCED_GAME_KEYS) {
+      const v = localStorage.getItem(k);
+      if (v !== null) out[k] = v;
+    }
   } catch {
+    /* ignore */
+  }
+  return out;
+};
+
+const applyCloudRowLocally = (row: CloudProgressRow) => {
+  const stats: PlayerStats = {
+    ...getStoredStats(),
+    ...row.stats,
+    username: row.username || row.stats?.username || 'Player',
+    avatarId: row.avatar_id || row.stats?.avatarId || 'fox',
+  };
+  saveStats(stats);
+  try {
+    localStorage.setItem(ARROW_LEVEL_KEY, String(row.arrow_level || 1));
+    for (const [k, v] of Object.entries(row.game_state || {})) {
+      if (SYNCED_GAME_KEYS.includes(k) && typeof v === 'string') localStorage.setItem(k, v);
+    }
+    localStorage.setItem(PROGRESS_UPDATED_AT_KEY, row.updated_at || new Date().toISOString());
+  } catch {
+    /* ignore */
+  }
+  return stats;
+};
+
+const friendlyError = (msg?: string): string => {
+  const m = (msg || '').toLowerCase();
+  if (m.includes('invalid login credentials')) return 'Wrong email or password.';
+  if (m.includes('email not confirmed')) return 'Please confirm your email first (check your inbox).';
+  if (m.includes('user already registered') || m.includes('already been registered')) return 'An account with this email already exists. Try signing in.';
+  if (m.includes('password should be') || m.includes('weak password')) return 'Password is too weak. Use at least 8 characters.';
+  if (m.includes('rate limit') || m.includes('too many')) return 'Too many attempts. Please wait a minute and try again.';
+  if (m.includes('unable to validate email') || m.includes('invalid email')) return 'Please enter a valid email address.';
+  if (m.includes('failed to fetch') || m.includes('network')) return 'Network error. Check your connection and try again.';
+  return msg || 'Something went wrong. Please try again.';
+};
+
+const notConfigured = (): { ok: false; message: string } => ({
+  ok: false,
+  message: 'Cloud sign-in is not available yet. Your progress is saved on this device.',
+});
+
+// ---------------------------------------------------------------------------
+// Auth state (tiny store + React hook)
+// ---------------------------------------------------------------------------
+let currentUser: AuthUser | null = null;
+let authReady = !isCloudEnabled;
+const listeners = new Set<() => void>();
+const recoveryListeners = new Set<() => void>();
+// The recovery event can fire before React subscribes (Supabase parses the URL on load)
+let pendingRecovery =
+  typeof window !== 'undefined' && /type=recovery/.test(window.location.hash + window.location.search);
+const emit = () => listeners.forEach((l) => l());
+
+const toAuthUser = (u: User | null | undefined): AuthUser | null =>
+  u ? { id: u.id, email: u.email || '' } : null;
+
+if (supabase) {
+  supabase.auth.getSession().then(({ data }) => {
+    currentUser = toAuthUser(data.session?.user);
+    authReady = true;
+    emit();
+  });
+  supabase.auth.onAuthStateChange((event, session) => {
+    currentUser = toAuthUser(session?.user);
+    authReady = true;
+    if (event === 'PASSWORD_RECOVERY') {
+      if (recoveryListeners.size) recoveryListeners.forEach((l) => l());
+      else pendingRecovery = true;
+    }
+    emit();
+  });
+}
+
+export const getAuthUser = (): AuthUser | null => currentUser;
+
+export function useAuthUser(): { user: AuthUser | null; ready: boolean } {
+  const [, force] = useState(0);
+  useEffect(() => {
+    const l = () => force((n) => n + 1);
+    listeners.add(l);
+    return () => {
+      listeners.delete(l);
+    };
+  }, []);
+  return { user: currentUser, ready: authReady };
+}
+
+/** Fires when the user lands back on the site from a "reset password" email. */
+export function onPasswordRecovery(cb: () => void): () => void {
+  recoveryListeners.add(cb);
+  if (pendingRecovery && isCloudEnabled) {
+    pendingRecovery = false;
+    setTimeout(cb, 0);
+  }
+  return () => {
+    recoveryListeners.delete(cb);
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Cloud progress
+// ---------------------------------------------------------------------------
+async function fetchOwnProgress(userId: string): Promise<CloudProgressRow | null> {
+  if (!supabase) return null;
+  const { data, error } = await supabase
+    .from('player_progress')
+    .select('user_id, username, avatar_id, stats, arrow_level, game_state, updated_at')
+    .eq('user_id', userId)
+    .maybeSingle();
+  if (error) throw error;
+  return (data as CloudProgressRow) || null;
+}
+
+async function pushProgress(userId: string, stats: PlayerStats): Promise<void> {
+  if (!supabase) return;
+  const { error } = await supabase.from('player_progress').upsert(
+    {
+      user_id: userId,
+      username: (stats.username || 'Player').slice(0, 24),
+      avatar_id: stats.avatarId || 'fox',
+      stats,
+      arrow_level: readArrowLevel(),
+      game_state: readGameState(),
+    },
+    { onConflict: 'user_id' }
+  );
+  if (error) throw error;
+}
+
+/**
+ * Reconcile device progress with the account.
+ *  - 'login'  (just signed in / signed up): the account's saved progress wins,
+ *             so signing in on a new device restores it. A brand-new account
+ *             adopts the progress already on this device.
+ *  - 'resume' (app reopened with an existing session): the newer copy wins.
+ * Returns the stats to show, or null if nothing changed locally.
+ */
+export async function reconcileProgress(mode: 'login' | 'resume'): Promise<PlayerStats | null> {
+  const user = currentUser;
+  if (!supabase || !user) return null;
+  try {
+    const row = await fetchOwnProgress(user.id);
+    const local = getStoredStats();
+    if (!row) {
+      await pushProgress(user.id, local);
+      return null;
+    }
+    if (mode === 'login') return applyCloudRowLocally(row);
+    const localAt = Date.parse(localStorage.getItem(PROGRESS_UPDATED_AT_KEY) || '') || 0;
+    const cloudAt = Date.parse(row.updated_at) || 0;
+    if (cloudAt > localAt) return applyCloudRowLocally(row);
+    await pushProgress(user.id, local);
+    return null;
+  } catch (e) {
+    console.error('Progress sync failed', e);
     return null;
   }
 }
 
-// Save active session
-function setActiveSession(user: UserAccount | null) {
-  if (typeof window === 'undefined') return;
+let syncTimer: ReturnType<typeof setTimeout> | null = null;
+let pendingStats: PlayerStats | null = null;
+
+/** Debounced cloud save of the latest stats (no-op for guests). */
+export function syncPlayerProgress(updatedStats: PlayerStats, _arrowLevel?: number) {
+  if (!supabase || !currentUser) return;
+  pendingStats = updatedStats;
+  if (syncTimer) clearTimeout(syncTimer);
+  syncTimer = setTimeout(flushSync, 1500);
+}
+
+async function flushSync() {
+  syncTimer = null;
+  const user = currentUser;
+  const stats = pendingStats;
+  pendingStats = null;
+  if (!user || !stats) return;
   try {
-    if (user) {
-      localStorage.setItem(ACTIVE_SESSION_KEY, JSON.stringify({ userId: user.id, user, loggedInAt: Date.now() }));
-    } else {
-      localStorage.removeItem(ACTIVE_SESSION_KEY);
+    await pushProgress(user.id, stats);
+  } catch (e) {
+    console.error('Cloud save failed', e);
+  }
+}
+
+if (typeof window !== 'undefined') {
+  // Don't lose the last few seconds of progress when the tab is hidden/closed
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden' && syncTimer) {
+      clearTimeout(syncTimer);
+      flushSync();
     }
-  } catch (err) {
-    console.error('Failed to set active session', err);
-  }
+  });
 }
 
-// Helper to get saved arrow puzzle level
-function getStoredArrowLevel(): number {
-  try {
-    const raw = localStorage.getItem('funzo_arrow_level');
-    return raw ? parseInt(raw, 10) || 1 : 1;
-  } catch {
-    return 1;
+// ---------------------------------------------------------------------------
+// Email + password auth
+// ---------------------------------------------------------------------------
+const siteUrl = () => (typeof window !== 'undefined' ? window.location.origin : undefined);
+
+export async function signUpWithEmail(email: string, password: string, username: string): Promise<Result<{ needsConfirmation: boolean; stats: PlayerStats | null }>> {
+  if (!supabase) return notConfigured();
+  if (password.length < 8) return { ok: false, message: 'Password must be at least 8 characters.' };
+  const cleanName = (username || '').trim().slice(0, 24) || 'Player';
+  const { data, error } = await supabase.auth.signUp({
+    email: email.trim(),
+    password,
+    options: { data: { username: cleanName }, emailRedirectTo: siteUrl() },
+  });
+  if (error) return { ok: false, message: friendlyError(error.message) };
+  // Email enumeration protection returns a user with no identities for existing emails
+  if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+    return { ok: false, message: 'An account with this email already exists. Try signing in.' };
   }
+  if (!data.session) {
+    return { ok: true, data: { needsConfirmation: true, stats: null }, message: 'Check your email to confirm your account, then sign in.' };
+  }
+  currentUser = toAuthUser(data.user);
+  // New account: keep this device's progress, with the chosen name
+  const local = { ...getStoredStats(), username: cleanName };
+  saveStats(local);
+  const stats = (await reconcileProgress('login')) || local;
+  return { ok: true, data: { needsConfirmation: false, stats }, message: 'Account created! Your progress is now saved to the cloud.' };
 }
 
-// Helper to restore arrow puzzle level
-function setStoredArrowLevel(lvl: number) {
-  try {
-    localStorage.setItem('funzo_arrow_level', lvl.toString());
-  } catch {
-    // storage not available
-  }
+export async function signInWithEmail(email: string, password: string): Promise<Result<{ stats: PlayerStats | null }>> {
+  if (!supabase) return notConfigured();
+  const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+  if (error) return { ok: false, message: friendlyError(error.message) };
+  currentUser = toAuthUser(data.user);
+  const stats = await reconcileProgress('login');
+  return { ok: true, data: { stats }, message: 'Signed in! Your progress has been restored.' };
 }
 
-// ---------------- 1. PHONE NUMBER + OTP AUTH ----------------
-export function requestPhoneOtp(phone: string): { success: boolean; otp?: string; message: string } {
-  const cleanPhone = phone.trim().replace(/[\s-]/g, '');
-  if (!cleanPhone || cleanPhone.length < 10) {
-    return { success: false, message: 'Please enter a valid 10-digit mobile number.' };
-  }
-
-  // Generate 6-digit OTP
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
-  const expiresAt = Date.now() + 5 * 60 * 1000; // 5 minutes validity
-  PENDING_OTPS.set(cleanPhone, { otp, expiresAt });
-
-  return {
-    success: true,
-    otp,
-    message: `OTP sent to ${cleanPhone}! (Demo OTP code: ${otp})`,
-  };
+export async function sendPasswordReset(email: string): Promise<Result> {
+  if (!supabase) return notConfigured();
+  if (!email.trim()) return { ok: false, message: 'Enter your email address first.' };
+  const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo: siteUrl() });
+  if (error) return { ok: false, message: friendlyError(error.message) };
+  return { ok: true, data: undefined, message: 'If an account exists for this email, a reset link is on its way.' };
 }
 
-export function verifyPhoneOtp(
-  phone: string, 
-  enteredOtp: string
-): { success: boolean; user?: UserAccount; message: string; isNewUser: boolean } {
-  const cleanPhone = phone.trim().replace(/[\s-]/g, '');
-  const stored = PENDING_OTPS.get(cleanPhone);
-
-  // Allow test OTP '123456' or the generated OTP
-  const isValid = (stored && stored.otp === enteredOtp.trim() && Date.now() <= stored.expiresAt) || enteredOtp.trim() === '123456';
-
-  if (!isValid) {
-    return { success: false, message: 'Invalid or expired OTP. Please try again.', isNewUser: false };
-  }
-
-  PENDING_OTPS.delete(cleanPhone);
-
-  const accounts = getAllAccounts();
-  const accountId = `user_phone_${cleanPhone}`;
-  let user = accounts[accountId];
-  let isNewUser = false;
-
-  if (user) {
-    // RESTORE SAVED STATS & ARROW LEVEL FROM DATABASE!
-    user.lastLoginAt = new Date().toISOString();
-    saveStats(user.stats);
-    setStoredArrowLevel(user.arrowLevel || 1);
-  } else {
-    // First time login: Create cloud account from current stats
-    isNewUser = true;
-    const currentStats = getStoredStats();
-    const currentArrowLvl = getStoredArrowLevel();
-
-    user = {
-      id: accountId,
-      authType: 'phone',
-      phone: cleanPhone,
-      username: `Player_${cleanPhone.slice(-4)}`,
-      avatarId: 'lion',
-      createdAt: new Date().toISOString(),
-      lastLoginAt: new Date().toISOString(),
-      stats: currentStats,
-      arrowLevel: currentArrowLvl,
-    };
-  }
-
-  accounts[accountId] = user;
-  saveAllAccounts(accounts);
-  setActiveSession(user);
-  syncToSupabase(user);
-
-  return {
-    success: true,
-    user,
-    message: isNewUser ? 'Welcome to Funzo! Account created.' : `Welcome back, ${user.username}! Level ${user.stats.level} restored.`,
-    isNewUser,
-  };
+export async function updatePassword(newPassword: string): Promise<Result> {
+  if (!supabase) return notConfigured();
+  if (newPassword.length < 8) return { ok: false, message: 'Password must be at least 8 characters.' };
+  const { error } = await supabase.auth.updateUser({ password: newPassword });
+  if (error) return { ok: false, message: friendlyError(error.message) };
+  return { ok: true, data: undefined, message: 'Password updated.' };
 }
 
-// ---------------- 2. PASSWORD LOGIN & SIGN UP ----------------
-export function registerWithPassword(
-  identifier: string,
-  pass: string,
-  username: string
-): { success: boolean; user?: UserAccount; message: string } {
-  const cleanId = identifier.trim().toLowerCase();
-  if (!cleanId || cleanId.length < 3) {
-    return { success: false, message: 'Username or Phone must be at least 3 characters.' };
-  }
-  if (!pass || pass.length < 4) {
-    return { success: false, message: 'Password must be at least 4 characters.' };
-  }
-
-  const accounts = getAllAccounts();
-  const accountId = `user_pwd_${cleanId}`;
-
-  if (accounts[accountId]) {
-    return { success: false, message: 'An account with this username/phone already exists. Please log in.' };
-  }
-
-  const currentStats = getStoredStats();
-  const currentArrowLvl = getStoredArrowLevel();
-
-  const user: UserAccount = {
-    id: accountId,
-    authType: 'password',
-    phone: cleanId.match(/^\d+$/) ? cleanId : undefined,
-    username: username.trim() || cleanId,
-    avatarId: 'fox',
-    passwordHash: btoa(pass), // Basic obfuscation for client-side storage
-    createdAt: new Date().toISOString(),
-    lastLoginAt: new Date().toISOString(),
-    stats: currentStats,
-    arrowLevel: currentArrowLvl,
-  };
-
-  accounts[accountId] = user;
-  saveAllAccounts(accounts);
-  setActiveSession(user);
-  syncToSupabase(user);
-
-  return {
-    success: true,
-    user,
-    message: `Account created successfully! Welcome, ${user.username}!`,
-  };
-}
-
-export function loginWithPassword(
-  identifier: string,
-  pass: string
-): { success: boolean; user?: UserAccount; message: string } {
-  const cleanId = identifier.trim().toLowerCase();
-  const accounts = getAllAccounts();
-  const accountId = `user_pwd_${cleanId}`;
-  const user = accounts[accountId];
-
-  if (!user || user.passwordHash !== btoa(pass)) {
-    return { success: false, message: 'Incorrect username, phone, or password.' };
-  }
-
-  user.lastLoginAt = new Date().toISOString();
-  // RESTORE PLAYER STATS & ARROW LEVEL!
-  saveStats(user.stats);
-  setStoredArrowLevel(user.arrowLevel || 1);
-
-  accounts[accountId] = user;
-  saveAllAccounts(accounts);
-  setActiveSession(user);
-  syncToSupabase(user);
-
-  return {
-    success: true,
-    user,
-    message: `Welcome back, ${user.username}! Level ${user.stats.level} restored.`,
-  };
-}
-
-// ---------------- 3. GOOGLE AUTHENTICATION ----------------
-export function loginWithGoogle(
-  customProfile?: { email: string; name: string }
-): { success: boolean; user: UserAccount; message: string } {
-  const email = customProfile?.email || 'player.google@gmail.com';
-  const name = customProfile?.name || 'Google Gamer';
-  const accountId = `user_google_${email.replace(/[@.]/g, '_')}`;
-
-  const accounts = getAllAccounts();
-  let user = accounts[accountId];
-  let isNew = false;
-
-  if (user) {
-    user.lastLoginAt = new Date().toISOString();
-    saveStats(user.stats);
-    setStoredArrowLevel(user.arrowLevel || 1);
-  } else {
-    isNew = true;
-    const currentStats = getStoredStats();
-    const currentArrowLvl = getStoredArrowLevel();
-
-    user = {
-      id: accountId,
-      authType: 'google',
-      email,
-      username: name,
-      avatarId: 'panda',
-      createdAt: new Date().toISOString(),
-      lastLoginAt: new Date().toISOString(),
-      stats: currentStats,
-      arrowLevel: currentArrowLvl,
-    };
-  }
-
-  accounts[accountId] = user;
-  saveAllAccounts(accounts);
-  setActiveSession(user);
-  syncToSupabase(user);
-
-  return {
-    success: true,
-    user,
-    message: isNew ? `Signed in with Google as ${name}!` : `Welcome back, ${name}! Progress restored.`,
-  };
-}
-
-// ---------------- 4. CLOUD SYNC & LOGOUT ----------------
-import { supabase } from './supabase';
-
-export async function syncToSupabase(user: UserAccount) {
+export async function signOut(): Promise<void> {
   if (!supabase) return;
-  try {
-    await supabase.from('funzo_users').upsert({
-      id: user.id,
-      auth_type: user.authType,
-      phone: user.phone || null,
-      email: user.email || null,
-      username: user.username,
-      avatar_id: user.avatarId,
-      level: user.stats.level || 1,
-      xp: user.stats.xp || 0,
-      iq: user.stats.iq || 105,
-      coins: user.stats.coins || 100,
-      streak: user.stats.streak || 1,
-      arrow_level: user.arrowLevel || 1,
-      updated_at: new Date().toISOString(),
-    });
-  } catch (err) {
-    console.warn('Supabase sync skipped or failed', err);
+  if (syncTimer) {
+    clearTimeout(syncTimer);
+    await flushSync();
   }
+  await supabase.auth.signOut();
+  currentUser = null;
+  emit();
 }
 
-export function updateCurrentUserProfile(newUsername: string, newAvatarId: string): UserAccount | null {
-  const cleanName = newUsername.trim() || 'Player';
-  const currentStats = getStoredStats();
-  const updatedStats: PlayerStats = {
-    ...currentStats,
-    username: cleanName,
-    avatarId: newAvatarId,
-  };
-  saveStats(updatedStats);
-
-  const currentUser = getCurrentUser();
-  if (currentUser) {
-    const accounts = getAllAccounts();
-    const account = accounts[currentUser.id] || currentUser;
-    account.username = cleanName;
-    account.avatarId = newAvatarId;
-    account.stats = updatedStats;
-    account.lastLoginAt = new Date().toISOString();
-    accounts[currentUser.id] = account;
-    saveAllAccounts(accounts);
-    setActiveSession(account);
-
-    // Sync to Supabase
-    syncToSupabase(account);
-
-    return account;
+// ---------------------------------------------------------------------------
+// Leaderboard
+// ---------------------------------------------------------------------------
+export async function fetchLeaderboard(limit = 50): Promise<LeaderboardRow[] | null> {
+  if (!supabase) return null;
+  const { data, error } = await supabase.rpc('get_leaderboard', { limit_n: limit });
+  if (error) {
+    console.error('Leaderboard failed', error);
+    return null;
   }
-  return null;
+  return (data as LeaderboardRow[]) || [];
 }
 
-export function syncPlayerProgress(updatedStats: PlayerStats, arrowLevel?: number) {
-  const currentUser = getCurrentUser();
-  if (!currentUser) return;
-
-  const accounts = getAllAccounts();
-  const account = accounts[currentUser.id];
-  if (!account) return;
-
-  account.stats = updatedStats;
-  if (arrowLevel !== undefined) {
-    account.arrowLevel = arrowLevel;
-  }
-  account.lastLoginAt = new Date().toISOString();
-
-  accounts[currentUser.id] = account;
-  saveAllAccounts(accounts);
-  setActiveSession(account);
-
-  // Sync to Supabase in background
-  syncToSupabase(account);
+// ---------------------------------------------------------------------------
+// Admin (every call is re-checked by the database)
+// ---------------------------------------------------------------------------
+export async function checkIsAdmin(): Promise<boolean> {
+  if (!supabase || !currentUser) return false;
+  const { data, error } = await supabase.rpc('is_admin');
+  return !error && data === true;
 }
 
-export function logoutUser() {
-  setActiveSession(null);
+export async function adminListPlayers(): Promise<Result<AdminPlayerRow[]>> {
+  if (!supabase) return notConfigured();
+  const { data, error } = await supabase.rpc('admin_list_players');
+  if (error) return { ok: false, message: error.message.includes('admin only') ? 'Admins only.' : friendlyError(error.message) };
+  return { ok: true, data: (data as AdminPlayerRow[]) || [] };
+}
+
+export async function adminUpdatePlayer(
+  userId: string,
+  patch: { stats?: PlayerStats; arrow_level?: number; username?: string }
+): Promise<Result> {
+  if (!supabase) return notConfigured();
+  const { error } = await supabase.from('player_progress').update(patch).eq('user_id', userId);
+  if (error) return { ok: false, message: friendlyError(error.message) };
+  return { ok: true, data: undefined };
+}
+
+export async function adminDeletePlayer(userId: string): Promise<Result> {
+  if (!supabase) return notConfigured();
+  const { error } = await supabase.from('player_progress').delete().eq('user_id', userId);
+  if (error) return { ok: false, message: friendlyError(error.message) };
+  return { ok: true, data: undefined };
+}
+
+export async function adminRestorePlayers(rows: Partial<CloudProgressRow>[]): Promise<Result<number>> {
+  if (!supabase) return notConfigured();
+  const clean = rows
+    .filter((r) => r && typeof r.user_id === 'string')
+    .map((r) => ({
+      user_id: r.user_id!,
+      username: (r.username || 'Player').slice(0, 24),
+      avatar_id: r.avatar_id || 'fox',
+      stats: r.stats || {},
+      arrow_level: r.arrow_level || 1,
+      game_state: r.game_state || {},
+    }));
+  if (clean.length === 0) return { ok: false, message: 'No valid players found in this file.' };
+  const { error } = await supabase.from('player_progress').upsert(clean, { onConflict: 'user_id' });
+  if (error) return { ok: false, message: friendlyError(error.message) };
+  return { ok: true, data: clean.length };
+}
+
+/** Apply stats edited by an admin to this device if they edited their own row. */
+export function applyOwnRowIfCurrent(row: CloudProgressRow): PlayerStats | null {
+  if (!currentUser || row.user_id !== currentUser.id) return null;
+  return applyCloudRowLocally(row);
 }

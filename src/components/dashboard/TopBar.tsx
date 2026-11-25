@@ -4,7 +4,6 @@ import {
   Coins, Flame, Trophy, Sun, Moon, Smartphone,
 } from 'lucide-react';
 import { PlayerStats, CARTOON_AVATARS, ThemeMode } from '../../types';
-import { getCurrentUser } from '../../lib/authService';
 import { AvatarBadge, FunzoMark } from '../ui/Brand';
 
 interface TopBarProps {
@@ -46,8 +45,7 @@ export const TopBar: React.FC<TopBarProps> = ({
   onOpenInstallModal,
 }) => {
   const avatar = CARTOON_AVATARS.find((a) => a.id === stats.avatarId) || CARTOON_AVATARS[0];
-  const currentUser = getCurrentUser();
-  const displayName = stats.username || (currentUser ? currentUser.username : 'Player');
+  const displayName = stats.username || 'Player';
 
   const statPills = [
     { key: 'coins', icon: <Coins className="w-4 h-4 text-amber-400" />, value: stats.coins, label: 'Coins', title: 'Coins' },

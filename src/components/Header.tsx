@@ -1,7 +1,7 @@
 import React from 'react';
 import { Flame, Coins, Volume2, VolumeX, Sun, Moon, HelpCircle } from 'lucide-react';
 import { PlayerStats, GenreType, ThemeMode, CARTOON_AVATARS } from '../types';
-import { getCurrentUser } from '../lib/authService';
+import { getAuthUser } from '../lib/authService';
 
 interface HeaderProps {
   stats: PlayerStats;
@@ -66,7 +66,7 @@ export const Header: React.FC<HeaderProps> = ({
             <span className="text-xl font-black tracking-tight text-slate-900 dark:text-white leading-none">
               FUNZO
             </span>
-            {getCurrentUser() ? (
+            {getAuthUser() ? (
               <span className="w-2.5 h-2.5 rounded-full bg-[#58cc02] shadow-sm shadow-[#58cc02]/60 animate-pulse" title="Cloud Synced" />
             ) : (
               <button

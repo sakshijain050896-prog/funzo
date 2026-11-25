@@ -202,7 +202,7 @@ export const SpillItHub: React.FC<SpillItHubProps> = ({
       <div className="w-full flex items-center justify-between mb-1.5 px-1">
         <span className="text-[11px] font-black uppercase tracking-wider text-pink-500 flex items-center gap-1">
           <Sparkles className="w-3.5 h-3.5" />
-          <span>Spill It! 10k+ Party Arcade</span>
+          <span>Spill It! Party Games</span>
         </span>
         {onOpenHowToPlay && (
           <button
@@ -405,7 +405,7 @@ export const SpillItHub: React.FC<SpillItHubProps> = ({
           </div>
 
           <span className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-2">
-            Dilemma #{wyrRoundNum} of 10,000+
+            Dilemma #{wyrRoundNum}
           </span>
 
           <div className="w-full flex flex-col gap-2">
@@ -495,7 +495,7 @@ export const SpillItHub: React.FC<SpillItHubProps> = ({
 
           <div className="w-full p-5 rounded-3xl bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-800 mb-3 shadow-xl">
             <span className="text-[9px] uppercase tracking-widest text-pink-500 font-bold block mb-1">
-              Confession Prompt #{nhieRoundNum} / 10,000+
+              Confession Prompt #{nhieRoundNum}
             </span>
             <p className="text-sm sm:text-base font-black text-slate-900 dark:text-white leading-relaxed">
               &quot;{currentNhieText}&quot;
@@ -542,7 +542,7 @@ export const SpillItHub: React.FC<SpillItHubProps> = ({
           <div className="w-full p-6 rounded-3xl bg-amber-50 dark:bg-gradient-to-br dark:from-amber-950/40 dark:via-slate-900 dark:to-slate-950 border-2 border-amber-300 dark:border-amber-500/40 shadow-xl mb-3">
             <span className="text-2xl mb-1 block">👑</span>
             <span className="text-[10px] uppercase tracking-widest text-amber-600 dark:text-amber-400 font-bold block mb-1">
-              Prompt #{mltRoundNum} / 10,000+ · Point at the Person:
+              Prompt #{mltRoundNum} · Point at the Person:
             </span>
             <p className="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-snug">
               &quot;{currentMltText}&quot;

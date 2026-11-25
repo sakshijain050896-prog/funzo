@@ -1,8 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ArrowLeft, Trophy, Crown } from 'lucide-react';
 import { PlayerStats, CARTOON_AVATARS } from '../../types';
 import { sound } from '../../lib/soundEffects';
-import { getAllAccounts, getCurrentUser } from '../../lib/authService';
+import { fetchLeaderboard, isCloudEnabled, useAuthUser, LeaderboardRow } from '../../lib/authService';
 
 interface LeaderboardViewProps {
   stats: PlayerStats;
@@ -22,61 +22,60 @@ interface LeaderboardEntry {
   isUser: boolean;
 }
 
+const pointsFor = (won: number, coins: number, level: number) => won * 1000 + coins * 50 + level * 100;
+const emojiFor = (avatarId: string) => (CARTOON_AVATARS.find((a) => a.id === avatarId) || CARTOON_AVATARS[0]).emoji;
+
 export const LeaderboardView: React.FC<LeaderboardViewProps> = ({ stats, onBackToHome }) => {
-  const currentAvatar = CARTOON_AVATARS.find((a) => a.id === stats.avatarId) || CARTOON_AVATARS[0];
+  const { user } = useAuthUser();
+  const [remote, setRemote] = useState<LeaderboardRow[] | null>(null);
+  const [loading, setLoading] = useState(isCloudEnabled);
 
-  // Compute real leaderboard entries from registered accounts and active session
-  const leaderboardList = useMemo<LeaderboardEntry[]>(() => {
-    const accounts = getAllAccounts();
-    const currentUser = getCurrentUser();
-    const list: LeaderboardEntry[] = [];
-
-    // Map all real registered accounts
-    Object.values(accounts).forEach((acc) => {
-      const accStats = acc.stats || stats;
-      const avatarObj = CARTOON_AVATARS.find((a) => a.id === acc.avatarId) || CARTOON_AVATARS[0];
-      const pts = (accStats.totalGamesWon * 1000) + (accStats.coins * 50) + (accStats.level * 100);
-      const isCurrent = currentUser ? currentUser.id === acc.id : acc.username === stats.username;
-
-      list.push({
-        rank: 0,
-        id: acc.id,
-        name: acc.username || 'Player',
-        avatar: avatarObj.emoji,
-        level: accStats.level || 1,
-        points: pts,
-        streak: accStats.streak || 0,
-        gamesWon: accStats.totalGamesWon || 0,
-        coins: accStats.coins || 0,
-        isUser: isCurrent,
-      });
+  // Global leaderboard from the server (all signed-in players)
+  useEffect(() => {
+    if (!isCloudEnabled) return;
+    let alive = true;
+    setLoading(true);
+    fetchLeaderboard(50).then((rows) => {
+      if (!alive) return;
+      setRemote(rows);
+      setLoading(false);
     });
+    return () => {
+      alive = false;
+    };
+  }, [user?.id]);
 
-    // Ensure the current active user is present in the list
-    const hasCurrentUser = list.some((item) => item.isUser);
-    if (!hasCurrentUser) {
-      const currentPts = (stats.totalGamesWon * 1000) + (stats.coins * 50) + (stats.level * 100);
-      list.push({
+  const leaderboardList = useMemo<LeaderboardEntry[]>(() => {
+    const me: LeaderboardEntry = {
+      rank: 0,
+      id: 'me',
+      name: stats.username || 'Player',
+      avatar: emojiFor(stats.avatarId),
+      level: stats.level || 1,
+      points: pointsFor(stats.totalGamesWon || 0, stats.coins || 0, stats.level || 1),
+      streak: stats.streak || 0,
+      gamesWon: stats.totalGamesWon || 0,
+      coins: stats.coins || 0,
+      isUser: true,
+    };
+    const list: LeaderboardEntry[] = (remote || [])
+      .filter((r) => !r.is_me) // the live local copy of "me" is fresher than the last cloud save
+      .map((r, i) => ({
         rank: 0,
-        id: 'active_session_player',
-        name: stats.username || 'Player 1',
-        avatar: currentAvatar.emoji,
-        level: stats.level || 1,
-        points: currentPts,
-        streak: stats.streak || 0,
-        gamesWon: stats.totalGamesWon || 0,
-        coins: stats.coins || 0,
-        isUser: true,
-      });
-    }
-
-    // Sort descending by points, then assign rank numbers
+        id: `p${i}`,
+        name: r.username || 'Player',
+        avatar: emojiFor(r.avatar_id),
+        level: r.level || 1,
+        points: Number(r.points) || 0,
+        streak: r.streak || 0,
+        gamesWon: r.wins || 0,
+        coins: r.coins || 0,
+        isUser: false,
+      }));
+    list.push(me);
     list.sort((a, b) => b.points - a.points);
-    return list.map((entry, index) => ({
-      ...entry,
-      rank: index + 1,
-    }));
-  }, [stats, currentAvatar]);
+    return list.map((e, i) => ({ ...e, rank: i + 1 }));
+  }, [remote, stats]);
 
   const top1 = leaderboardList[0];
   const top2 = leaderboardList[1];
@@ -191,11 +190,19 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({ stats, onBackT
           ))}
         </div>
 
-        {leaderboardList.length <= 1 && (
+        {(loading || !user || leaderboardList.length <= 1) && (
           <div className="px-4 py-4 border-t border-slate-900/5 dark:border-white/[0.06] text-center">
             <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center justify-center gap-1.5">
-              <Trophy className="w-3.5 h-3.5 text-amber-400" />
-              <span>You are currently the top player! Create more profiles or log in to see friends here.</span>
+              <Trophy className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+              <span>
+                {loading
+                  ? 'Loading players…'
+                  : !isCloudEnabled
+                  ? 'Showing this device only. Global rankings arrive with cloud accounts.'
+                  : !user
+                  ? 'You are shown from this device. Sign in (Profile) to join the global rankings.'
+                  : 'You are the only ranked player so far. Invite friends to compete!'}
+              </span>
             </p>
           </div>
         )}

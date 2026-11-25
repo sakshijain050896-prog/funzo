@@ -41,7 +41,8 @@ import {
   saveStats,
   markDailyChallengeDone,
 } from './lib/storage';
-import { syncPlayerProgress } from './lib/authService';
+import { syncPlayerProgress, reconcileProgress, useAuthUser, onPasswordRecovery } from './lib/authService';
+import { ResetPasswordModal } from './components/ResetPasswordModal';
 import { sound } from './lib/soundEffects';
 import { 
   subscribeToInstallPrompt, 
@@ -256,6 +257,21 @@ export const App: React.FC = () => {
   // Party/mystery games call onActivity on every card; a "game played" is already
   // counted once when the game is launched, so per-card activity must not add more.
   const noopActivity = useCallback(() => {}, []);
+
+  // ---- Cloud account: resume sync on app open + password-reset links ----
+  const { user: authUser, ready: authReady } = useAuthUser();
+  const didResumeRef = useRef(false);
+  useEffect(() => {
+    if (!authReady || didResumeRef.current) return;
+    didResumeRef.current = true;
+    if (authUser) {
+      reconcileProgress('resume').then((restored) => {
+        if (restored) setStats(restored);
+      });
+    }
+  }, [authReady, authUser]);
+  const [isResetPasswordOpen, setIsResetPasswordOpen] = useState(false);
+  useEffect(() => onPasswordRecovery(() => setIsResetPasswordOpen(true)), []);
 
   // Persist + render + cloud-sync any stats change coming from a view/modal.
   // (Rewards/Profile/Admin previously only updated React state, so claimed coins
@@ -775,6 +791,11 @@ export const App: React.FC = () => {
         onClose={() => setAdModalOpen(false)}
         onReward={adOnReward}
         rewardTitle={adRewardTitle}
+      />
+
+      <ResetPasswordModal
+        isOpen={isResetPasswordOpen}
+        onClose={() => setIsResetPasswordOpen(false)}
       />
 
       <InstallAppModal
