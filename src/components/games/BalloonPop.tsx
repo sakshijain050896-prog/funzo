@@ -211,7 +211,7 @@ export const BalloonPop: React.FC<BalloonPopProps> = ({
   };
 
   return (
-    <div className="w-full flex flex-col items-center max-w-xl mx-auto animate-fade-in pb-10 font-['Fredoka'] select-none">
+    <div className="w-full flex flex-col items-center max-w-xl mx-auto animate-fade-in pb-10 font-sans select-none">
       {/* Top Status Bar: Level, Target, Timer */}
       <div className="w-full flex items-center justify-between gap-2 mb-3 px-1">
         <div className="flex items-center gap-1.5 sm:gap-2">
@@ -259,14 +259,14 @@ export const BalloonPop: React.FC<BalloonPopProps> = ({
 
       {/* Coin Power-Ups / Boosters Strip */}
       <div className="w-full max-w-[420px] flex items-center justify-between gap-1.5 mb-2.5 p-2 rounded-2xl bg-white/95 dark:bg-[#181d2f]/95 border-2 border-slate-200 dark:border-slate-800 shadow-xs">
-        <div className="flex items-center gap-1 pl-1 font-['Fredoka']">
+        <div className="flex items-center gap-1 pl-1 font-sans">
           <span className="text-sm">🪙</span>
           <span className="text-xs font-black text-slate-800 dark:text-slate-200">
             {coins}
           </span>
         </div>
 
-        <div className="flex items-center gap-1.5 font-['Fredoka']">
+        <div className="flex items-center gap-1.5 font-sans">
           {/* Booster 1: Super Pop Bomb */}
           <button
             onClick={handleSuperBomb}
@@ -323,7 +323,7 @@ export const BalloonPop: React.FC<BalloonPopProps> = ({
         {balloons.length === 0 && !isLevelCleared && !isTimeUp && (
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
             <span className="text-4xl animate-bounce mb-2">🎈</span>
-            <p className="text-xs font-black text-sky-800 dark:text-sky-200 font-['Fredoka']">Balloons rising! Pop them fast!</p>
+            <p className="text-xs font-black text-sky-800 dark:text-sky-200 font-sans">Balloons rising! Pop them fast!</p>
           </div>
         )}
 
@@ -405,7 +405,7 @@ export const BalloonPop: React.FC<BalloonPopProps> = ({
         )}
       </div>
 
-      <p className="text-xs text-slate-500 dark:text-slate-400 font-['Fredoka'] mt-3 flex items-center gap-1">
+      <p className="text-xs text-slate-500 dark:text-slate-400 font-sans mt-3 flex items-center gap-1">
         <Sparkles className="w-3.5 h-3.5 text-amber-400" />
         <span>Pop {targetForLevel} balloons before the {LEVEL_DURATION}s timer runs out!</span>
       </p>

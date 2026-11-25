@@ -387,7 +387,7 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
     <div className="w-full flex flex-col items-center animate-fade-in max-w-xl mx-auto pb-10">
       {/* Level Up Banner */}
       {levelToast && (
-        <div className="w-full mb-3 p-2.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 border-2 border-emerald-400 text-white font-black text-xs text-center shadow-lg animate-bounce font-['Fredoka']">
+        <div className="w-full mb-3 p-2.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 border-2 border-emerald-400 text-white font-black text-xs text-center shadow-lg animate-bounce font-sans">
           {levelToast}
         </div>
       )}
@@ -397,7 +397,7 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
         <div className="flex items-center gap-1 bg-white/80 dark:bg-[#181d2f] p-1 rounded-2xl border-2 border-slate-200 dark:border-slate-700 shadow-xs">
           <button
             onClick={() => { sound.playTap(); setMode('speed'); resetGame(); }}
-            className={`px-2.5 py-1 rounded-xl text-xs font-black flex items-center gap-1 transition font-['Fredoka'] ${mode === 'speed'
+            className={`px-2.5 py-1 rounded-xl text-xs font-black flex items-center gap-1 transition font-sans ${mode === 'speed'
               ? 'bg-[#fecdd3] text-[#9f1239] border border-[#fda4af] shadow-xs'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
@@ -408,7 +408,7 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
 
           <button
             onClick={() => { sound.playTap(); setMode('operator'); resetGame(); }}
-            className={`px-2.5 py-1 rounded-xl text-xs font-black flex items-center gap-1 transition font-['Fredoka'] ${mode === 'operator'
+            className={`px-2.5 py-1 rounded-xl text-xs font-black flex items-center gap-1 transition font-sans ${mode === 'operator'
               ? 'bg-[#a7f3d0] text-[#065f46] border border-[#6ee7b7] shadow-xs'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
@@ -422,7 +422,7 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
           {level > 1 && (
             <button
               onClick={handleRestartToLevel1}
-              className="px-2.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 border border-rose-300 dark:border-rose-800 text-rose-600 dark:text-rose-300 text-[11px] font-black transition flex items-center gap-1 active:scale-95 shadow-xs font-['Fredoka']"
+              className="px-2.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 border border-rose-300 dark:border-rose-800 text-rose-600 dark:text-rose-300 text-[11px] font-black transition flex items-center gap-1 active:scale-95 shadow-xs font-sans"
               title="Reset progress back to Level 1"
             >
               <RotateCcw className="w-3 h-3" />
@@ -444,7 +444,7 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
       <div className="w-full grid grid-cols-3 gap-1.5 sm:gap-2 mb-2.5">
         {/* Score */}
         <div className="p-2 sm:p-2.5 rounded-2xl bg-white/95 dark:bg-[#181d2f]/95 border-2 border-slate-200 dark:border-slate-700/60 shadow-xs text-center">
-          <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 font-['Fredoka'] block">SCORE</span>
+          <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 font-sans block">SCORE</span>
           <span className="text-sm sm:text-base font-black text-slate-900 dark:text-white font-pixel leading-none">
             {score}
           </span>
@@ -452,8 +452,8 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
 
         {/* Level Display (Always visible) */}
         <div className="p-2 sm:p-2.5 rounded-2xl bg-white/95 dark:bg-[#181d2f]/95 border-2 border-slate-200 dark:border-slate-700/60 shadow-xs text-center">
-          <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 font-['Fredoka'] block">LEVEL {level}</span>
-          <span className="text-xs sm:text-sm font-black text-slate-900 dark:text-white font-['Fredoka'] leading-none">
+          <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 font-sans block">LEVEL {level}</span>
+          <span className="text-xs sm:text-sm font-black text-slate-900 dark:text-white font-sans leading-none">
             {mode === 'operator' ? `${operatorSolvedCount % 5}/5 Solved` : 'Stage Active'}
           </span>
         </div>
@@ -462,7 +462,7 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
         <div className="p-2 sm:p-2.5 rounded-2xl bg-white/95 dark:bg-[#181d2f]/95 border-2 border-slate-200 dark:border-slate-700/60 shadow-xs text-center">
           {mode === 'speed' ? (
             <>
-              <span className="text-[10px] font-bold text-rose-500 font-['Fredoka'] block flex items-center justify-center gap-0.5">
+              <span className="text-[10px] font-bold text-rose-500 font-sans block flex items-center justify-center gap-0.5">
                 <Timer className="w-3 h-3" /> TIME
               </span>
               <span className={`text-sm sm:text-base font-black font-pixel leading-none ${timeLeft <= 10 ? 'text-[#e11d48] animate-pulse' : 'text-slate-900 dark:text-white'}`}>
@@ -471,7 +471,7 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
             </>
           ) : (
             <>
-              <span className="text-[10px] font-bold text-amber-500 font-['Fredoka'] block flex items-center justify-center gap-0.5">
+              <span className="text-[10px] font-bold text-amber-500 font-sans block flex items-center justify-center gap-0.5">
                 <Flame className="w-3 h-3 fill-amber-500 text-amber-500" /> STREAK
               </span>
               <span className="text-sm sm:text-base font-black text-amber-600 dark:text-amber-400 font-pixel leading-none">
@@ -483,7 +483,7 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
       </div>
 
       {/* ---------------- COIN BOOSTERS BAR ---------------- */}
-      <div className="w-full flex items-center justify-between gap-1 mb-2.5 p-1.5 sm:p-2 rounded-2xl bg-white/95 dark:bg-[#181d2f]/95 border-2 border-slate-200 dark:border-slate-800 shadow-xs font-['Fredoka']">
+      <div className="w-full flex items-center justify-between gap-1 mb-2.5 p-1.5 sm:p-2 rounded-2xl bg-white/95 dark:bg-[#181d2f]/95 border-2 border-slate-200 dark:border-slate-800 shadow-xs font-sans">
         <div className="flex items-center gap-1 pl-1">
           <span className="text-xs">🪙</span>
           <span className="text-xs font-black text-slate-800 dark:text-slate-200">
@@ -535,23 +535,23 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
         <div className="absolute top-1.5 left-2.5 text-white/20 font-pixel text-base select-none">?</div>
         <div className="absolute top-1.5 right-2.5 text-white/20 font-pixel text-base select-none">?</div>
 
-        <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-[#1e1b4b] dark:text-[#e0e7ff] font-['Fredoka'] mb-0.5">
+        <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-[#1e1b4b] dark:text-[#e0e7ff] font-sans mb-0.5">
           Level {level} • {mode === 'operator' ? 'Find the Missing Sign' : 'Solve the Equation'}
         </span>
 
-        <h2 className="text-2xl sm:text-4xl font-black text-white font-['Fredoka'] tracking-wide drop-shadow-sm select-none my-1 sm:my-2">
+        <h2 className="text-2xl sm:text-4xl font-black text-white font-sans tracking-wide drop-shadow-sm select-none my-1 sm:my-2">
           {currentProblem.question}
         </h2>
 
         {/* Hint toggle */}
         {showHint ? (
-          <p className="text-[11px] sm:text-xs font-black text-[#1e1b4b] mt-1 font-['Fredoka'] bg-white/60 px-3 py-0.5 rounded-full animate-fade-in shadow-xs">
+          <p className="text-[11px] sm:text-xs font-black text-[#1e1b4b] mt-1 font-sans bg-white/60 px-3 py-0.5 rounded-full animate-fade-in shadow-xs">
             💡 {currentProblem.hint}
           </p>
         ) : (
           <button
             onClick={handleHintClick}
-            className="mt-1 text-[11px] sm:text-xs font-bold text-white/90 hover:text-white flex items-center gap-1 font-['Fredoka'] transition"
+            className="mt-1 text-[11px] sm:text-xs font-bold text-white/90 hover:text-white flex items-center gap-1 font-sans transition"
           >
             <Lightbulb className="w-3 h-3 text-yellow-200" />
             <span>Need a hint? ({freeHints} free)</span>
@@ -581,7 +581,7 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
               key={idx}
               disabled={selectedOption !== null || isGameOver || isHiddenByBooster}
               onClick={() => handleSelectOption(opt)}
-              className={`py-3 sm:py-4 px-2.5 rounded-2xl border-2 shadow-xs active:translate-y-0.5 transition text-lg sm:text-2xl font-black font-['Fredoka'] flex items-center justify-center gap-2 select-none ${btnStyle}`}
+              className={`py-3 sm:py-4 px-2.5 rounded-2xl border-2 shadow-xs active:translate-y-0.5 transition text-lg sm:text-2xl font-black font-sans flex items-center justify-center gap-2 select-none ${btnStyle}`}
             >
               <span>{opt}</span>
               {isSelected && isCorrect && <CheckCircle2 className="w-4 h-4 text-[#064e3b] inline" />}
@@ -596,20 +596,20 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
           <div className="w-full max-w-sm rounded-3xl bg-white dark:bg-[#161a29] border-4 border-black shadow-[6px_6px_0_#000] p-5 sm:p-6 text-center flex flex-col items-center">
             <span className="text-4xl sm:text-5xl mb-1 animate-bounce">🏆</span>
             <span className="text-xs font-black uppercase text-[#e52521] font-pixel">TIME UP!</span>
-            <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white font-['Fredoka'] mt-0.5">
+            <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white font-sans mt-0.5">
               Round Complete!
             </h3>
-            <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 font-['Fredoka']">
+            <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 font-sans">
               Level {level} Cleared! 🎉
             </p>
 
             <div className="w-full grid grid-cols-2 gap-2.5 my-3">
               <div className="p-2.5 rounded-2xl bg-amber-50 dark:bg-[#1f2438] border-2 border-amber-300 dark:border-amber-700/50">
-                <span className="text-[11px] text-slate-500 font-bold block font-['Fredoka']">FINAL SCORE</span>
+                <span className="text-[11px] text-slate-500 font-bold block font-sans">FINAL SCORE</span>
                 <span className="text-xl font-black text-amber-600 dark:text-amber-400 font-pixel">{score}</span>
               </div>
               <div className="p-2.5 rounded-2xl bg-emerald-50 dark:bg-[#1f2438] border-2 border-emerald-300 dark:border-emerald-700/50">
-                <span className="text-[11px] text-slate-500 font-bold block font-['Fredoka']">BEST SCORE</span>
+                <span className="text-[11px] text-slate-500 font-bold block font-sans">BEST SCORE</span>
                 <span className="text-xl font-black text-[#00a859] dark:text-[#43b047] font-pixel">{bestScore}</span>
               </div>
             </div>
@@ -617,7 +617,7 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
             {onSpendCoins && (
               <button
                 onClick={handleOvertimeRevive}
-                className="w-full py-2.5 rounded-xl bg-[#fef9c3] hover:bg-[#fef08a] border-b-3 border-[#ca8a04] text-[#854d0e] font-black text-xs shadow-xs active:translate-y-0.5 transition flex items-center justify-center gap-1.5 font-['Fredoka'] mb-2"
+                className="w-full py-2.5 rounded-xl bg-[#fef9c3] hover:bg-[#fef08a] border-b-3 border-[#ca8a04] text-[#854d0e] font-black text-xs shadow-xs active:translate-y-0.5 transition flex items-center justify-center gap-1.5 font-sans mb-2"
               >
                 <span>💖 Continue with +25s Overtime (20 🪙)</span>
               </button>
@@ -626,7 +626,7 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
             {/* Primary Action: Pass to Next Level */}
             <button
               onClick={handlePassToNextLevel}
-              className="w-full py-3 rounded-2xl bg-[#00a859] border-b-4 border-[#006633] text-white font-black text-sm shadow-md hover:brightness-110 active:translate-y-0.5 transition flex items-center justify-center gap-2 font-['Fredoka'] mb-2"
+              className="w-full py-3 rounded-2xl bg-[#00a859] border-b-4 border-[#006633] text-white font-black text-sm shadow-md hover:brightness-110 active:translate-y-0.5 transition flex items-center justify-center gap-2 font-sans mb-2"
             >
               <Play className="w-4 h-4 fill-white" />
               <span>Pass to Level {level + 1} ➔</span>
@@ -635,7 +635,7 @@ export const MathPuzzle: React.FC<MathPuzzleProps> = ({
             {/* Secondary Action: Restart from Level 1 */}
             <button
               onClick={handleRestartToLevel1}
-              className="w-full py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs transition flex items-center justify-center gap-1.5 font-['Fredoka']"
+              className="w-full py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs transition flex items-center justify-center gap-1.5 font-sans"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Restart from Level 1 🔄</span>

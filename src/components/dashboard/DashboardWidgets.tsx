@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Gamepad2, Trophy, Flame, Coins, Calculator, CheckCircle2, Play, Zap } from 'lucide-react';
 import { PlayerStats } from '../../types';
 import { sound } from '../../lib/soundEffects';
 
@@ -16,99 +16,78 @@ export const DashboardWidgets: React.FC<DashboardWidgetsProps> = ({
   onOpenStats,
   onPlayDailyChallenge,
 }) => {
+  const tiles = [
+    { label: 'Played', value: stats.totalGamesPlayed, icon: Gamepad2, tint: 'from-sky-400/20 to-indigo-500/10', ic: 'text-sky-400' },
+    { label: 'Won', value: stats.totalGamesWon, icon: Trophy, tint: 'from-emerald-400/20 to-teal-500/10', ic: 'text-emerald-400' },
+    { label: 'Streak', value: `${stats.streak}d`, icon: Flame, tint: 'from-orange-400/20 to-rose-500/10', ic: 'text-orange-400' },
+    { label: 'Coins', value: stats.coins, icon: Coins, tint: 'from-amber-300/25 to-yellow-500/10', ic: 'text-amber-400' },
+  ];
+  const completed = stats.totalGamesWon > 0;
+
   return (
-    <div className="w-full flex flex-col gap-2.5">
-      {/* 2 Compact Essential Cards: Real Player Stats + Today's Daily Challenge */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-3">
-        {/* Card 1: Player Status Tally */}
-        <div className="rounded-2xl p-3 sm:p-3.5 bg-white/95 dark:bg-[#181d2f]/95 backdrop-blur-sm border-2 border-slate-200 dark:border-slate-700/60 shadow-sm flex flex-col justify-between">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-1.5">
-              <span className="text-base">🎮</span>
-              <h4 className="text-xs sm:text-sm font-black text-slate-800 dark:text-white font-['Fredoka']">Your Gaming Stats</h4>
-            </div>
-            <button
-              onClick={() => { sound.playTap(); onOpenStats(); }}
-              className="text-[11px] font-black text-[#e11d48] hover:underline flex items-center gap-0.5 transition font-['Fredoka']"
-            >
-              <span>View All</span>
-              <ArrowRight className="w-3 h-3" />
-            </button>
+    <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+      {/* Card 1: Player stats */}
+      <div className="fz-card p-4 sm:p-5 flex flex-col">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-violet-500 dark:text-violet-400">Your progress</p>
+            <h4 className="font-display text-base sm:text-lg font-bold text-slate-900 dark:text-white">Gaming Stats</h4>
           </div>
-
-          <div className="grid grid-cols-4 gap-1.5 text-center">
-            {/* Games Played - Pastel Sky */}
-            <div className="p-1.5 sm:p-2 rounded-xl bg-[#e0f2fe] dark:bg-sky-950/40 border border-[#bae6fd] dark:border-sky-800/40 flex flex-col items-center justify-center">
-              <span className="text-xs sm:text-sm mb-0.5">🎮</span>
-              <span className="text-xs sm:text-sm font-black text-[#0369a1] dark:text-sky-300 font-['Fredoka'] leading-none mb-0.5">
-                {stats.totalGamesPlayed}
-              </span>
-              <span className="text-[8px] font-extrabold text-[#0284c7] dark:text-sky-400 leading-tight font-['Fredoka']">Played</span>
-            </div>
-
-            {/* Games Won - Pastel Mint */}
-            <div className="p-1.5 sm:p-2 rounded-xl bg-[#d1fae5] dark:bg-emerald-950/40 border border-[#a7f3d0] dark:border-emerald-800/40 flex flex-col items-center justify-center">
-              <span className="text-xs sm:text-sm mb-0.5">🏆</span>
-              <span className="text-xs sm:text-sm font-black text-[#065f46] dark:text-emerald-300 font-['Fredoka'] leading-none mb-0.5">
-                {stats.totalGamesWon}
-              </span>
-              <span className="text-[8px] font-extrabold text-[#059669] dark:text-emerald-400 leading-tight font-['Fredoka']">Won</span>
-            </div>
-
-            {/* Streak - Pastel Peach */}
-            <div className="p-1.5 sm:p-2 rounded-xl bg-[#ffedd5] dark:bg-orange-950/40 border border-[#fed7aa] dark:border-orange-800/40 flex flex-col items-center justify-center">
-              <span className="text-xs sm:text-sm mb-0.5">⭐</span>
-              <span className="text-xs sm:text-sm font-black text-[#c2410c] dark:text-orange-300 font-['Fredoka'] leading-none mb-0.5">
-                {stats.streak}d
-              </span>
-              <span className="text-[8px] font-extrabold text-[#ea580c] dark:text-orange-400 leading-tight font-['Fredoka']">Streak</span>
-            </div>
-
-            {/* Coins - Pastel Buttercup */}
-            <div className="p-1.5 sm:p-2 rounded-xl bg-[#fef9c3] dark:bg-yellow-950/40 border border-[#fef08a] dark:border-yellow-800/40 flex flex-col items-center justify-center">
-              <span className="text-xs sm:text-sm mb-0.5">🪙</span>
-              <span className="text-xs sm:text-sm font-black text-[#854d0e] dark:text-yellow-300 font-['Fredoka'] leading-none mb-0.5">
-                {stats.coins}
-              </span>
-              <span className="text-[8px] font-extrabold text-[#ca8a04] dark:text-yellow-400 leading-tight font-['Fredoka']">Coins</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Card 2: Today's Daily Challenge - Pastel Warm Peach */}
-        <div className="rounded-2xl p-3 sm:p-3.5 bg-gradient-to-br from-[#fef3c7] via-[#fed7aa] to-[#fecdd3] border-2 border-[#fde68a] shadow-sm flex flex-col justify-between relative overflow-hidden">
-          <div className="flex items-center justify-between mb-1.5">
-            <div className="flex items-center gap-1.5">
-              <span className="w-5 h-5 rounded-md bg-[#854d0e] text-[#fef3c7] flex items-center justify-center font-black text-[11px]">?</span>
-              <h4 className="text-xs sm:text-sm font-black text-amber-950 font-['Fredoka']">Today&apos;s Daily Challenge</h4>
-            </div>
-            <span className="text-[9px] font-black px-1.5 py-0.2 rounded-md bg-white/70 border border-amber-300 text-amber-950 font-['Fredoka']">
-              ACTIVE
-            </span>
-          </div>
-
-          <div className="flex items-center justify-between gap-2 mb-2">
-            <div>
-              <p className="text-xs font-black text-amber-950 leading-snug font-['Fredoka']">
-                Clear Maths Puzzle for <span className="text-[#be123c] font-black">+100 Bonus Coins!</span>
-              </p>
-              <span className="text-[10px] text-amber-900 font-black font-['Fredoka']">
-                {stats.totalGamesWon > 0 ? 'Status: Completed ✓' : 'Status: Ready to Play'}
-              </span>
-            </div>
-            <div className="text-2xl select-none animate-bounce shrink-0 drop-shadow">
-              🧮
-            </div>
-          </div>
-
           <button
-            onClick={() => { sound.playTap(); onPlayDailyChallenge(); }}
-            className="w-full py-1.5 sm:py-2 rounded-xl bg-[#f43f5e] hover:bg-[#e11d48] border-b-2 border-[#be123c] text-white font-black text-xs shadow-sm active:translate-y-0.5 transition flex items-center justify-center gap-1 font-['Fredoka']"
+            onClick={() => { sound.playTap(); onOpenStats(); }}
+            className="h-8 px-3 rounded-full fz-btn-ghost text-xs font-semibold flex items-center gap-1"
           >
-            <span>Play Daily Challenge ▶</span>
-            <ArrowRight className="w-3 h-3" />
+            <span>View All</span>
+            <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
+
+        <div className="grid grid-cols-4 gap-2">
+          {tiles.map((t) => {
+            const Icon = t.icon;
+            return (
+              <div key={t.label} className={`relative rounded-2xl p-2.5 sm:p-3 bg-gradient-to-br ${t.tint} border border-slate-900/5 dark:border-white/[0.06] flex flex-col`}>
+                <Icon className={`w-4 h-4 ${t.ic} mb-2`} />
+                <span className="font-display text-base sm:text-xl font-bold text-slate-900 dark:text-white tabular-nums leading-none">
+                  {t.value}
+                </span>
+                <span className="text-[10px] sm:text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1">{t.label}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Card 2: Daily challenge */}
+      <div className="relative rounded-[1.25rem] overflow-hidden isolate p-4 sm:p-5 flex flex-col justify-between text-white border border-white/10 min-h-[180px]">
+        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-cyan-500 via-blue-600 to-indigo-900" />
+        <div className="absolute inset-0 -z-10 opacity-25 bg-[linear-gradient(rgba(255,255,255,.35)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.35)_1px,transparent_1px)] bg-[size:28px_28px] [mask-image:linear-gradient(120deg,#000,transparent_70%)]" />
+        <Calculator className="absolute -right-4 -bottom-6 w-40 h-40 text-white/10 -z-10 rotate-[-12deg]" strokeWidth={1.25} />
+
+        <div className="flex items-start justify-between gap-2">
+          <div>
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/15 border border-white/25 text-[10px] font-bold uppercase tracking-[0.16em]">
+              <Zap className="w-3 h-3" /> Daily challenge
+            </span>
+            <h4 className="mt-2.5 font-display text-lg sm:text-xl font-bold leading-tight">
+              Clear Maths Puzzle
+            </h4>
+            <p className="text-sm text-white/80 mt-0.5">
+              Earn <b className="text-amber-300">+100 bonus coins</b> today.
+            </p>
+          </div>
+          <span className={`shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold ${completed ? 'bg-emerald-400/20 text-emerald-200 border border-emerald-300/30' : 'bg-white/15 text-white border border-white/25'}`}>
+            {completed ? <><CheckCircle2 className="w-3 h-3" /> Completed</> : 'Ready to play'}
+          </span>
+        </div>
+
+        <button
+          onClick={() => { sound.playTap(); onPlayDailyChallenge(); }}
+          className="mt-4 h-11 w-full sm:w-fit sm:px-6 rounded-full bg-white text-slate-950 font-bold text-sm flex items-center justify-center gap-2 shadow-[0_12px_30px_-12px_rgba(0,0,0,.6)] hover:scale-[1.02] active:scale-[.98] transition"
+        >
+          <Play className="w-4 h-4 fill-current" />
+          Play Daily Challenge
+        </button>
       </div>
     </div>
   );

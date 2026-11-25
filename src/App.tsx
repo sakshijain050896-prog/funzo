@@ -7,6 +7,8 @@ import { GameKey } from './components/dashboard/PopularGames';
 import { DashboardWidgets } from './components/dashboard/DashboardWidgets';
 import { LeaderboardView } from './components/dashboard/LeaderboardView';
 import { RewardsView } from './components/dashboard/RewardsView';
+import { HomeHero } from './components/dashboard/HomeHero';
+import { getGameArt } from './components/dashboard/GameArt';
 
 // Game Components
 import { MathPuzzle } from './components/games/MathPuzzle';
@@ -396,14 +398,10 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-[100dvh] w-full bg-gradient-to-br from-[#fdfbf7] via-[#f4f6fc] to-[#eff4fb] dark:from-[#111420] dark:via-[#161a29] dark:to-[#1a1f32] text-slate-800 dark:text-slate-100 flex overflow-x-hidden transition-colors duration-200 relative font-['Fredoka']">
-      {/* Mario Overworld Retro Floating Clouds */}
-      <div className="fixed inset-0 pointer-events-none opacity-15 dark:opacity-5 overflow-hidden z-0 select-none">
-        <div className="absolute top-12 left-[8%] text-5xl">☁️</div>
-        <div className="absolute top-28 left-[58%] text-6xl">☁️</div>
-        <div className="absolute top-52 left-[32%] text-4xl">☁️</div>
-        <div className="absolute top-80 left-[82%] text-5xl">☁️</div>
-      </div>
+    <div className="min-h-[100dvh] w-full bg-[#f5f5fb] dark:bg-[#0a0b14] text-slate-800 dark:text-slate-100 flex overflow-x-hidden transition-colors duration-300 relative font-sans">
+      {/* Ambient aurora + grid backdrop */}
+      <div className="fz-aurora" aria-hidden="true" />
+      <div className="fz-grid-overlay" aria-hidden="true" />
 
       {/* 1. Left Sidebar Navigation */}
       <Sidebar
@@ -457,30 +455,47 @@ export const App: React.FC = () => {
 
         {/* Streak Notification Toast */}
         {streakToast && (
-          <div className="fixed top-24 sm:top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-2xl bg-[#ff9600] border-b-4 border-[#cc7800] text-slate-950 font-black text-xs shadow-xl flex items-center gap-1.5 animate-bounce">
-            <Flame className="w-4 h-4 fill-slate-950" />
+          <div className="fixed top-28 sm:top-20 left-1/2 -translate-x-1/2 z-50 pl-2 pr-4 h-11 rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-rose-500 text-white font-bold text-xs sm:text-sm shadow-[0_18px_40px_-12px_rgba(249,115,22,.8)] border border-white/25 flex items-center gap-2 animate-slide-down whitespace-nowrap">
+            <span className="w-7 h-7 rounded-full bg-white/25 flex items-center justify-center"><Flame className="w-4 h-4 fill-white" /></span>
             <span>{streakToast}</span>
           </div>
         )}
 
         {/* Main Body Area */}
-        <main className="flex-1 p-2.5 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
+        <main className="relative z-10 flex-1 px-3 py-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
           {/* ---------------- SCENARIO A: ACTIVE GAME PLAYER MODE ---------------- */}
           {activeGame !== null ? (
             <div className="w-full flex flex-col items-center animate-fade-in">
               {/* Back Bar & Game Navigation */}
-              <div className="w-full flex items-center justify-between gap-2 mb-4 p-2.5 sm:p-3 rounded-2xl bg-white/95 dark:bg-[#181d2f]/95 backdrop-blur-md border-2 border-slate-200 dark:border-slate-700/60 shadow-sm">
+              <div className="w-full flex items-center justify-between gap-2 mb-4 sm:mb-6 p-2 sm:p-2.5 rounded-2xl fz-glass shadow-[0_20px_40px_-28px_rgba(0,0,0,.6)]">
                 <button
                   onClick={handleBackToHub}
-                  className="px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-[#a7f3d0] hover:bg-[#6ee7b7] border-2 border-[#6ee7b7] border-b-4 border-b-[#059669] text-xs font-black text-[#064e3b] transition flex items-center gap-1 active:translate-y-0.5 shadow-sm font-['Fredoka'] shrink-0"
+                  className="h-10 px-3 sm:px-4 rounded-xl fz-btn-ghost text-xs sm:text-sm font-semibold flex items-center gap-1.5 shrink-0"
                 >
                   <ArrowLeft className="w-4 h-4" />
-                  <span className="hidden sm:inline">← Back to Games</span>
+                  <span className="hidden sm:inline">Back to Games</span>
                   <span className="sm:hidden">Back</span>
                 </button>
 
-                <div className="flex items-center gap-1.5 sm:gap-2 text-center overflow-hidden">
-                  <span className="text-xs sm:text-sm font-black text-slate-900 dark:text-white font-['Fredoka'] leading-tight break-words">
+                <div className="flex items-center gap-2 sm:gap-3 overflow-hidden min-w-0">
+                  {(() => {
+                    const art = getGameArt(activeGame, activeSubTab || undefined);
+                    const ArtIcon = art.icon;
+                    return (
+                      <span
+                        className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shrink-0 border border-white/20 shadow-[0_8px_20px_-8px_rgba(0,0,0,.6)]"
+                        style={{ background: `linear-gradient(145deg, ${art.from}, ${art.via} 60%, ${art.to})` }}
+                      >
+                        <ArtIcon className="w-[18px] h-[18px] text-white" />
+                      </span>
+                    );
+                  })()}
+                  <div className="flex flex-col min-w-0 text-left">
+                  <span className="hidden sm:flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-500 dark:text-emerald-400">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,.9)]" />
+                    Now playing
+                  </span>
+                  <span className="font-display text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-tight truncate">
                     {activeGame === 'tod' && (
                       activeSubTab === 'would-you-rather' ? 'Would You Rather' :
                       activeSubTab === 'never-have-i-ever' ? 'Never Have I Ever' :
@@ -512,17 +527,16 @@ export const App: React.FC = () => {
                       'The Case Files'
                     )}
                   </span>
-                  <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-lg bg-[#fecdd3] text-[#9f1239] text-[9px] font-black uppercase border border-[#fda4af] font-['Fredoka'] shrink-0">
-                    PLAYING
-                  </span>
+                  </div>
                 </div>
 
                 <button
                   onClick={() => handleOpenHowToPlay(activeGame)}
-                  className="p-2 sm:p-2.5 rounded-xl bg-[#fef08a] hover:bg-[#fde047] border-2 border-[#facc15] text-[#854d0e] transition active:translate-y-0.5 shadow-sm shrink-0"
+                  className="h-10 px-3 rounded-xl fz-btn-ghost text-xs font-semibold flex items-center gap-1.5 shrink-0"
                   title="How to Play"
                 >
-                  <HelpCircle className="w-4 h-4" />
+                  <HelpCircle className="w-4 h-4 text-violet-500 dark:text-violet-400" />
+                  <span className="hidden sm:inline">How to play</span>
                 </button>
               </div>
 
@@ -630,6 +644,15 @@ export const App: React.FC = () => {
             <>
               {activeNavTab === 'home' && (
                 <div className="w-full flex flex-col animate-fade-in">
+                  {/* Featured hero (hidden while searching) */}
+                  {searchQuery.trim().length === 0 && (
+                    <HomeHero
+                      stats={stats}
+                      onSelectGame={handleLaunchGame}
+                      onBrowseQuizTopics={() => setActiveCategory('quiz')}
+                    />
+                  )}
+
                   {/* All Game Genres & Games Catalog with Live Search & Filter */}
                   <AllGamesCatalog
                     selectedCategory={activeCategory}

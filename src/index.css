@@ -2,7 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
+/* =====================================================================
+   FUNZO — "Nocturne" premium design system
+   Dark-first, glass surfaces, neon violet/fuchsia accent, gold currency.
+   Legacy class names used by the games are kept and re-skinned below.
+   ===================================================================== */
+
 @layer base {
+  :root {
+    --fz-bg: #f5f5fb;
+    --fz-surface: rgba(255, 255, 255, 0.82);
+    --fz-surface-2: #ffffff;
+    --fz-line: rgba(15, 18, 40, 0.08);
+    --fz-text: #0f1228;
+    --fz-muted: #5b5f7a;
+    --fz-accent: #7c3aed;
+    --fz-accent-2: #c026d3;
+    color-scheme: light;
+  }
+  .dark {
+    --fz-bg: #0a0b14;
+    --fz-surface: rgba(20, 22, 42, 0.62);
+    --fz-surface-2: #13152a;
+    --fz-line: rgba(255, 255, 255, 0.07);
+    --fz-text: #eef0ff;
+    --fz-muted: #9497b8;
+    --fz-accent: #8b5cf6;
+    --fz-accent-2: #d946ef;
+    color-scheme: dark;
+  }
+
   html,
   body,
   #root {
@@ -17,13 +46,18 @@
     overscroll-behavior-y: none;
   }
 
+  html { background: var(--fz-bg); }
+
   body {
-    font-family: 'Fredoka', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    background: var(--fz-bg);
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     user-select: none;
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: 'ss01', 'cv11';
   }
 
   input, textarea, [contenteditable="true"] {
@@ -31,241 +65,245 @@
     user-select: auto;
   }
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: 'Fredoka', 'Outfit', system-ui, sans-serif;
-    letter-spacing: -0.01em;
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Sora', 'Plus Jakarta Sans', system-ui, sans-serif;
+    letter-spacing: -0.02em;
+  }
+
+  button { -webkit-tap-highlight-color: transparent; }
+  button:focus-visible, a:focus-visible, input:focus-visible {
+    outline: 2px solid var(--fz-accent);
+    outline-offset: 2px;
   }
 }
 
-/* Authentic Classic Super Mario Game CSS Utilities */
+@layer components {
+  /* ---------- Premium surfaces ---------- */
+  .fz-glass {
+    background: var(--fz-surface);
+    border: 1px solid var(--fz-line);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    backdrop-filter: blur(18px) saturate(140%);
+  }
+  .fz-card {
+    background: var(--fz-surface);
+    border: 1px solid var(--fz-line);
+    border-radius: 1.25rem;
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 1px 0 rgba(255,255,255,.04) inset, 0 20px 40px -24px rgba(0,0,0,.45);
+  }
+  .fz-gradient-text {
+    background: linear-gradient(100deg, #a78bfa 0%, #e879f9 45%, #22d3ee 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .fz-btn-primary {
+    background: linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%);
+    color: #fff;
+    box-shadow: 0 10px 24px -10px rgba(168, 85, 247, .8), inset 0 1px 0 rgba(255,255,255,.25);
+    transition: transform .15s ease, box-shadow .2s ease, filter .2s ease;
+  }
+  .fz-btn-primary:hover { filter: brightness(1.08); box-shadow: 0 14px 30px -10px rgba(168, 85, 247, .95), inset 0 1px 0 rgba(255,255,255,.25); }
+  .fz-btn-primary:active { transform: scale(.97); }
 
-/* 1. Classic Question Mark Block [?] */
-.mario-q-block {
-  background: linear-gradient(135deg, #ffe04d 0%, #fcb000 50%, #e08b00 100%);
-  border: 3px solid #854400;
-  box-shadow: inset 2px 2px 0 #fff8b3, inset -2px -2px 0 #854400, 0 4px 0 #522a00;
-  position: relative;
-}
-.mario-q-block::before,
-.mario-q-block::after {
-  content: '';
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  background-color: #522a00;
-  border-radius: 1px;
-}
-.mario-q-block::before {
-  top: 4px;
-  left: 4px;
-  box-shadow: calc(100% - 16px) 0 0 #522a00;
-}
-.mario-q-block::after {
-  bottom: 4px;
-  left: 4px;
-  box-shadow: calc(100% - 16px) 0 0 #522a00;
+  .fz-btn-ghost {
+    background: rgba(127, 127, 160, .08);
+    border: 1px solid var(--fz-line);
+    color: var(--fz-text);
+    transition: background .15s ease, transform .15s ease, border-color .15s ease;
+  }
+  .fz-btn-ghost:hover { background: rgba(139, 92, 246, .12); border-color: rgba(139, 92, 246, .35); }
+  .fz-btn-ghost:active { transform: scale(.95); }
+
+  .fz-chip {
+    display: inline-flex; align-items: center; gap: .375rem;
+    border-radius: 9999px;
+    border: 1px solid var(--fz-line);
+    background: rgba(127, 127, 160, .08);
+  }
+
+  /* Ambient aurora behind the whole app */
+  .fz-aurora {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+  }
+  .fz-aurora::before,
+  .fz-aurora::after {
+    content: ''; position: absolute; border-radius: 9999px; filter: blur(90px); opacity: .55;
+  }
+  .fz-aurora::before {
+    width: 46rem; height: 46rem; top: -18rem; left: 10%;
+    background: radial-gradient(circle, rgba(139,92,246,.55), transparent 65%);
+  }
+  .fz-aurora::after {
+    width: 40rem; height: 40rem; bottom: -20rem; right: -8rem;
+    background: radial-gradient(circle, rgba(34,211,238,.28), transparent 65%);
+  }
+  :root:not(.dark) .fz-aurora::before { opacity: .28; }
+  :root:not(.dark) .fz-aurora::after { opacity: .22; }
+  .fz-grid-overlay {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+    background-size: 48px 48px;
+    -webkit-mask-image: radial-gradient(ellipse at top, #000 20%, transparent 70%);
+    mask-image: radial-gradient(ellipse at top, #000 20%, transparent 70%);
+  }
+  :root:not(.dark) .fz-grid-overlay {
+    background-image:
+      linear-gradient(rgba(15,18,40,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(15,18,40,.04) 1px, transparent 1px);
+  }
+
+  /* ---------- Reel cards ---------- */
+  .fz-reel {
+    position: relative;
+    isolation: isolate;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    box-shadow: 0 18px 40px -20px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.07);
+    transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease;
+    transform: translateZ(0);
+  }
+  .fz-reel:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 28px 56px -20px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.14), 0 0 40px -8px var(--reel-glow, rgba(139,92,246,.6));
+  }
+  .fz-reel:active { transform: translateY(-2px) scale(.985); }
+  .fz-reel .fz-reel-art { transition: transform .6s cubic-bezier(.2,.8,.2,1); }
+  .fz-reel:hover .fz-reel-art { transform: scale(1.07); }
+  .fz-reel .fz-reel-play { transition: transform .3s cubic-bezier(.2,.8,.2,1.4), background .2s; }
+  .fz-reel:hover .fz-reel-play { transform: scale(1.12); }
+  .fz-reel::after {
+    content: ''; position: absolute; inset: 0; z-index: 3; pointer-events: none;
+    background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,.14) 50%, transparent 60%);
+    transform: translateX(-120%);
+  }
+  .fz-reel:hover::after { animation: shimmer 1.2s ease-out; }
 }
 
-/* 2. Classic Brick Block */
-.mario-brick-block {
-  background: linear-gradient(135deg, #d35422 0%, #b84010 100%);
-  border: 3px solid #662200;
-  box-shadow: inset 2px 2px 0 #f07b46, inset -2px -2px 0 #662200, 0 4px 0 #3d1400;
-}
-
-/* 3. Classic Green Warp Pipe */
-.mario-pipe-card {
-  background: linear-gradient(90deg, #008800 0%, #00cc00 25%, #88ff88 40%, #00cc00 65%, #006600 100%);
-  border: 3px solid #004400;
-  box-shadow: 0 4px 0 #003300, inset 0 2px 0 #99ff99;
-}
-.mario-pipe-rim {
-  background: linear-gradient(90deg, #007700 0%, #00bb00 20%, #77ee77 35%, #00bb00 60%, #005500 100%);
-  border: 3px solid #003300;
-  box-shadow: 0 3px 0 #002200;
-}
-
-/* 4. Mario Overworld Blue Sky */
-.mario-sky-canvas {
-  background: #5c94fc;
-}
-.mario-underground-canvas {
-  background: #0d1322;
-}
-
-/* 5. Mario Ground Grass-Soil strip */
-.mario-ground-border {
-  border-top: 5px solid #00a800;
-  background-color: #c84c0c;
-}
-.mario-btn-red {
-  background-color: #fecdd3;
-  border-bottom: 3px solid #fda4af;
-  color: #9f1239;
-  transition: all 0.08s ease-in-out;
-}
-.mario-btn-red:active {
-  transform: translateY(2px);
-  border-bottom-width: 2px;
-}
-
-.mario-btn-green {
-  background-color: #a7f3d0;
-  border-bottom: 3px solid #6ee7b7;
-  color: #065f46;
-  transition: all 0.08s ease-in-out;
-}
-.mario-btn-green:active {
-  transform: translateY(2px);
-  border-bottom-width: 2px;
-}
-
-.mario-btn-yellow {
-  background-color: #fef08a;
-  border-bottom: 3px solid #fde047;
-  color: #854d0e;
-  transition: all 0.08s ease-in-out;
-}
-.mario-btn-yellow:active {
-  transform: translateY(2px);
-  border-bottom-width: 2px;
-}
-
-.mario-btn-blue {
-  background-color: #bae6fd;
-  border-bottom: 3px solid #7dd3fc;
-  color: #0369a1;
-  transition: all 0.08s ease-in-out;
-}
-.mario-btn-blue:active {
-  transform: translateY(2px);
-  border-bottom-width: 2px;
-}
+/* =====================================================================
+   Legacy classes (used inside game screens) — re-skinned, same names
+   ===================================================================== */
 
 .font-pixel {
-  font-family: 'Press Start 2P', monospace;
+  font-family: 'Sora', 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
 }
 
-/* Duolingo / Neo-Pop Tactile 3D Depth Classes */
-.btn-tactile-green {
-  background-color: #58cc02;
-  border-bottom: 4px solid #46a302;
-  color: white;
-  transition: all 0.08s ease-in-out;
+/* "Mystery block" → premium gold tile */
+.mario-q-block {
+  background: linear-gradient(145deg, #fde68a 0%, #fbbf24 45%, #d97706 100%);
+  border: 1px solid rgba(255,255,255,.35);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 8px 20px -8px rgba(245,158,11,.7);
+  border-radius: .9rem;
+  position: relative;
+}
+.mario-brick-block {
+  background: linear-gradient(145deg, #fb7185 0%, #e11d48 100%);
+  border: 1px solid rgba(255,255,255,.25);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 8px 20px -8px rgba(225,29,72,.7);
+  border-radius: .9rem;
+}
+.mario-pipe-card {
+  background: linear-gradient(145deg, #34d399 0%, #059669 100%);
+  border: 1px solid rgba(255,255,255,.2);
+  box-shadow: 0 10px 24px -10px rgba(5,150,105,.7), inset 0 1px 0 rgba(255,255,255,.3);
+}
+.mario-pipe-rim {
+  background: linear-gradient(145deg, #6ee7b7 0%, #10b981 100%);
+  border: 1px solid rgba(255,255,255,.25);
+  box-shadow: 0 6px 16px -8px rgba(16,185,129,.7);
+}
+.mario-sky-canvas { background: linear-gradient(180deg, #1b1e38 0%, #0e1020 100%); }
+.mario-underground-canvas { background: #0a0b14; }
+.mario-ground-border {
+  border-top: 1px solid rgba(139,92,246,.4);
+  background: linear-gradient(180deg, #13152a, #0a0b14);
 }
 
-.btn-tactile-green:active {
-  transform: translateY(2px);
-  border-bottom-width: 2px;
+.mario-btn-red, .mario-btn-green, .mario-btn-yellow, .mario-btn-blue {
+  border: 1px solid rgba(255,255,255,.18);
+  color: #fff;
+  transition: transform .12s ease, filter .15s ease;
+}
+.mario-btn-red { background: linear-gradient(135deg, #fb7185, #e11d48); box-shadow: 0 8px 18px -10px rgba(225,29,72,.9); }
+.mario-btn-green { background: linear-gradient(135deg, #34d399, #059669); box-shadow: 0 8px 18px -10px rgba(5,150,105,.9); }
+.mario-btn-yellow { background: linear-gradient(135deg, #fcd34d, #f59e0b); color: #2a1a00; box-shadow: 0 8px 18px -10px rgba(245,158,11,.9); }
+.mario-btn-blue { background: linear-gradient(135deg, #38bdf8, #6366f1); box-shadow: 0 8px 18px -10px rgba(99,102,241,.9); }
+.mario-btn-red:hover, .mario-btn-green:hover, .mario-btn-yellow:hover, .mario-btn-blue:hover { filter: brightness(1.08); }
+.mario-btn-red:active, .mario-btn-green:active, .mario-btn-yellow:active, .mario-btn-blue:active { transform: scale(.97); }
+
+/* Tactile buttons → glossy gradient pills */
+.btn-tactile-green, .btn-tactile-blue, .btn-tactile-purple,
+.btn-tactile-amber, .btn-tactile-rose, .btn-tactile-slate {
+  border: 1px solid rgba(255,255,255,.16);
+  border-bottom-width: 1px;
+  color: #fff;
+  transition: transform .12s ease, filter .15s ease, box-shadow .2s ease;
+}
+.btn-tactile-green  { background: linear-gradient(135deg, #34d399 0%, #059669 100%); box-shadow: 0 10px 22px -12px rgba(16,185,129,.95), inset 0 1px 0 rgba(255,255,255,.25); }
+.btn-tactile-blue   { background: linear-gradient(135deg, #38bdf8 0%, #4f46e5 100%); box-shadow: 0 10px 22px -12px rgba(79,70,229,.95), inset 0 1px 0 rgba(255,255,255,.25); }
+.btn-tactile-purple { background: linear-gradient(135deg, #a78bfa 0%, #c026d3 100%); box-shadow: 0 10px 22px -12px rgba(192,38,211,.95), inset 0 1px 0 rgba(255,255,255,.25); }
+.btn-tactile-amber  { background: linear-gradient(135deg, #fcd34d 0%, #f97316 100%); color: #1f1300; box-shadow: 0 10px 22px -12px rgba(249,115,22,.95), inset 0 1px 0 rgba(255,255,255,.35); }
+.btn-tactile-rose   { background: linear-gradient(135deg, #fb7185 0%, #e11d48 100%); box-shadow: 0 10px 22px -12px rgba(225,29,72,.95), inset 0 1px 0 rgba(255,255,255,.25); }
+.btn-tactile-slate  { background: rgba(39, 43, 77, .75); color: #e8eaff; border-color: rgba(255,255,255,.08); box-shadow: inset 0 1px 0 rgba(255,255,255,.05); }
+
+.btn-tactile-green:hover, .btn-tactile-blue:hover, .btn-tactile-purple:hover,
+.btn-tactile-amber:hover, .btn-tactile-rose:hover, .btn-tactile-slate:hover { filter: brightness(1.08); }
+.btn-tactile-green:active, .btn-tactile-blue:active, .btn-tactile-purple:active,
+.btn-tactile-amber:active, .btn-tactile-rose:active, .btn-tactile-slate:active {
+  transform: scale(.97);
+  border-bottom-width: 1px;
 }
 
-.btn-tactile-blue {
-  background-color: #1cb0f6;
-  border-bottom: 4px solid #1899d6;
-  color: white;
-  transition: all 0.08s ease-in-out;
-}
-
-.btn-tactile-blue:active {
-  transform: translateY(2px);
-  border-bottom-width: 2px;
-}
-
-.btn-tactile-purple {
-  background-color: #a855f7;
-  border-bottom: 4px solid #7e22ce;
-  color: white;
-  transition: all 0.08s ease-in-out;
-}
-
-.btn-tactile-purple:active {
-  transform: translateY(2px);
-  border-bottom-width: 2px;
-}
-
-.btn-tactile-amber {
-  background-color: #ff9600;
-  border-bottom: 4px solid #cc7800;
-  color: white;
-  transition: all 0.08s ease-in-out;
-}
-
-.btn-tactile-amber:active {
-  transform: translateY(2px);
-  border-bottom-width: 2px;
-}
-
-.btn-tactile-rose {
-  background-color: #ff4b4b;
-  border-bottom: 4px solid #d33131;
-  color: white;
-  transition: all 0.08s ease-in-out;
-}
-
-.btn-tactile-rose:active {
-  transform: translateY(2px);
-  border-bottom-width: 2px;
-}
-
-.btn-tactile-slate {
-  background-color: #202f36;
-  border-bottom: 4px solid #142026;
-  color: #e5e5e5;
-  transition: all 0.08s ease-in-out;
-}
-
-.btn-tactile-slate:active {
-  transform: translateY(2px);
-  border-bottom-width: 2px;
-}
-
-/* Bright Mode Tactile Overrides */
+:root:not(.dark) .btn-tactile-slate,
 .light .btn-tactile-slate {
   background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-bottom: 4px solid #cbd5e1;
-  color: #1e293b;
-}
-
-.light .btn-tactile-slate:active {
-  transform: translateY(2px);
-  border-bottom-width: 2px;
+  background-image: none;
+  border: 1px solid rgba(15,18,40,.1);
+  color: #1e2140;
+  box-shadow: 0 1px 2px rgba(15,18,40,.06);
 }
 
 .neo-card {
-  background-color: #1a2c35;
-  border: 2px solid #2b4554;
+  background: rgba(20, 22, 42, .7);
+  border: 1px solid rgba(255,255,255,.07);
   border-radius: 1.5rem;
-  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.4);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 24px 48px -24px rgba(0, 0, 0, 0.6);
+}
+:root:not(.dark) .neo-card,
+.light .neo-card {
+  background: #ffffff;
+  border: 1px solid rgba(15,18,40,.08);
+  box-shadow: 0 20px 40px -24px rgba(15, 18, 40, 0.18);
 }
 
-.light .neo-card {
-  background-color: #ffffff;
-  border: 2px solid #e2e8f0;
-  border-radius: 1.5rem;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+/* ---------- Utilities ---------- */
+.no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+.animate-shake { animation: shake .4s ease-in-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
 }
 
 /* Custom subtle scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: #13141f;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #31344f;
-  border-radius: 9999px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #474c6e;
-}
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(139, 92, 246, .28); border-radius: 9999px; border: 2px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-thumb:hover { background: rgba(139, 92, 246, .5); background-clip: padding-box; }

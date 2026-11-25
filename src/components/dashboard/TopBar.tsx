@@ -1,7 +1,11 @@
 import React from 'react';
-import { Search, Bell, Menu, ChevronDown, Volume2, VolumeX } from 'lucide-react';
+import {
+  Search, Bell, Menu, ChevronDown, Volume2, VolumeX,
+  Coins, Flame, Trophy, Sun, Moon, Smartphone,
+} from 'lucide-react';
 import { PlayerStats, CARTOON_AVATARS, ThemeMode } from '../../types';
 import { getCurrentUser } from '../../lib/authService';
+import { AvatarBadge, FunzoMark } from '../ui/Brand';
 
 interface TopBarProps {
   stats: PlayerStats;
@@ -20,6 +24,9 @@ interface TopBarProps {
   onInstallApp?: () => void;
   onOpenInstallModal?: () => void;
 }
+
+const iconBtn =
+  'w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shrink-0 transition active:scale-95';
 
 export const TopBar: React.FC<TopBarProps> = ({
   stats,
@@ -42,69 +49,64 @@ export const TopBar: React.FC<TopBarProps> = ({
   const currentUser = getCurrentUser();
   const displayName = stats.username || (currentUser ? currentUser.username : 'Player');
 
+  const statPills = [
+    { key: 'coins', icon: <Coins className="w-4 h-4 text-amber-400" />, value: stats.coins, label: 'Coins', title: 'Coins' },
+    { key: 'streak', icon: <Flame className="w-4 h-4 text-orange-400" />, value: `${stats.streak}d`, label: 'Streak', title: 'Streak' },
+    { key: 'won', icon: <Trophy className="w-4 h-4 text-emerald-400" />, value: stats.totalGamesWon, label: 'Won', title: 'Games Won' },
+  ];
+
   return (
-    <header className="w-full bg-white/95 dark:bg-[#181d2f]/95 border-b-2 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white sticky top-0 z-30 shadow-sm max-w-full backdrop-blur-md">
-      {/* Top Row: Search & Profile Controls */}
-      <div className="w-full h-14 sm:h-16 px-2.5 sm:px-6 flex items-center justify-between gap-1.5 sm:gap-3">
-        {/* Left: Mobile Menu Toggle & Search Bar */}
-        <div className="flex items-center gap-1.5 sm:gap-2.5 flex-1 min-w-0 max-w-xs md:max-w-md">
+    <header className="w-full sticky top-0 z-30 max-w-full bg-white/75 dark:bg-[#0a0b14]/70 backdrop-blur-xl border-b border-slate-900/5 dark:border-white/[0.06] text-slate-900 dark:text-white">
+      {/* Top Row */}
+      <div className="w-full h-16 px-3 sm:px-6 lg:px-8 flex items-center justify-between gap-2 sm:gap-3">
+        {/* Left: Menu + Search */}
+        <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0 max-w-xs md:max-w-md">
           <button
             onClick={onOpenMenu}
-            className="p-1.5 sm:p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#22283a] border-2 border-slate-200 dark:border-[#444] text-slate-800 dark:text-white lg:hidden transition active:translate-y-0.5 shrink-0"
+            className={`${iconBtn} fz-btn-ghost lg:hidden`}
             title="Open Menu"
+            aria-label="Open Menu"
           >
-            <Menu className="w-4 h-4 sm:w-5 sm:h-5" />
+            <Menu className="w-[18px] h-[18px]" />
           </button>
 
-          {/* Search Games Pill */}
-          <div className="relative w-full min-w-0">
-            <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400 absolute left-2.5 sm:left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+          {/* Mobile wordmark */}
+          <div className="flex md:hidden items-center gap-2 min-w-0">
+            <FunzoMark className="w-8 h-8 shrink-0" />
+            <span className="font-display text-lg font-extrabold tracking-tight hidden min-[400px]:inline">Funzo</span>
+          </div>
+
+          <div className="relative w-full min-w-0 group hidden md:block">
+            <Search className="w-4 h-4 text-slate-400 group-focus-within:text-violet-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none transition-colors" />
             <input
               type="text"
               placeholder="Search games..."
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="w-full py-1.5 sm:py-2 pl-7 sm:pl-10 pr-2 sm:pr-4 rounded-full bg-slate-100 dark:bg-[#22283a] border-2 border-slate-200 dark:border-[#333] text-xs font-bold text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#e52521] transition font-['Fredoka'] truncate"
+              className="w-full h-10 pl-9 pr-3 rounded-xl bg-slate-900/[0.04] dark:bg-white/[0.05] border border-slate-900/[0.06] dark:border-white/[0.08] text-sm font-medium text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-violet-500/60 focus:bg-white dark:focus:bg-white/[0.08] focus:shadow-[0_0_0_4px_rgba(139,92,246,.15)] transition truncate"
             />
           </div>
         </div>
 
-        {/* Center: Explanatory Player Stats for Desktop */}
-        <div className="hidden md:flex items-center gap-3 font-['Fredoka'] text-xs">
-          {/* Coins Badge - Pastel Sunshine */}
-          <button
-            onClick={onOpenStats}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#fef9c3] border-2 border-[#fef08a] text-[#854d0e] font-black shadow-sm hover:scale-105 active:scale-95 transition"
-            title="Coins"
-          >
-            <span className="text-sm">🪙</span>
-            <span>{stats.coins} Coins</span>
-          </button>
-
-          {/* Day Streak Badge - Pastel Peach */}
-          <button
-            onClick={onOpenStats}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#ffedd5] border-2 border-[#fed7aa] text-[#c2410c] font-black shadow-sm hover:scale-105 active:scale-95 transition"
-            title="Streak"
-          >
-            <span className="text-sm">⭐</span>
-            <span>{stats.streak}d Streak</span>
-          </button>
-
-          {/* Games Won Badge - Pastel Mint */}
-          <button
-            onClick={onOpenStats}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#dcfce7] border-2 border-[#bbf7d0] text-[#065f46] font-black shadow-sm hover:scale-105 active:scale-95 transition"
-            title="Games Won"
-          >
-            <span className="text-sm">🏆</span>
-            <span>{stats.totalGamesWon} Won</span>
-          </button>
+        {/* Center: Stats (desktop) */}
+        <div className="hidden md:flex items-center gap-1 p-1 rounded-2xl bg-slate-900/[0.03] dark:bg-white/[0.04] border border-slate-900/5 dark:border-white/[0.06]">
+          {statPills.map((p) => (
+            <button
+              key={p.key}
+              onClick={onOpenStats}
+              className="flex items-center gap-2 h-8 px-3 rounded-xl hover:bg-white dark:hover:bg-white/[0.06] transition text-xs"
+              title={p.title}
+            >
+              {p.icon}
+              <span className="font-bold tabular-nums text-slate-900 dark:text-white">{p.value}</span>
+              <span className="text-slate-500 dark:text-slate-400 font-medium hidden lg:inline">{p.label}</span>
+            </button>
+          ))}
         </div>
 
-        {/* Right: Quick Controls (Install, Sound, Theme, Notifications, Profile) */}
-        <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-          {/* Install Mobile App Pill - Always visible across Android, iPhone, and PC */}
+        {/* Right: Controls */}
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          {/* Install App */}
           <button
             onClick={() => {
               if (canInstallApp && onInstallApp) {
@@ -113,105 +115,93 @@ export const TopBar: React.FC<TopBarProps> = ({
                 onOpenInstallModal();
               }
             }}
-            className="flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-slate-950 font-black text-xs shadow-sm border-b-2 border-orange-700 active:translate-y-0.5 transition shrink-0 animate-pulse"
+            className="h-9 sm:h-10 px-2.5 sm:px-3 rounded-xl fz-btn-primary text-xs font-bold flex items-center gap-1.5 shrink-0"
             title="Install Funzo App to your Phone Home Screen!"
           >
-            <span>📲</span>
-            <span className="font-['Fredoka']">App</span>
+            <Smartphone className="w-4 h-4" />
+            <span className="hidden min-[400px]:inline">App</span>
           </button>
 
-          {/* Sound Toggle Button - Green when ON, Red when OFF */}
+          {/* Sound Toggle — green when ON, red when OFF */}
           <button
             onClick={onToggleSound}
-            className={`p-1.5 sm:p-2 rounded-xl border-2 transition active:translate-y-0.5 shadow-sm shrink-0 flex items-center justify-center ${
+            className={`${iconBtn} border ${
               soundEnabled
-                ? 'bg-[#dcfce7] hover:bg-[#bbf7d0] dark:bg-emerald-950/70 border-[#86efac] dark:border-emerald-600 text-[#15803d] dark:text-emerald-300'
-                : 'bg-[#ffe4e6] hover:bg-[#fecdd3] dark:bg-rose-950/70 border-[#fca5a5] dark:border-rose-600 text-[#b91c1c] dark:text-rose-300'
+                ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20'
+                : 'bg-rose-500/10 border-rose-500/30 text-rose-600 dark:text-rose-400 hover:bg-rose-500/20'
             }`}
             title={soundEnabled ? 'Volume ON (Click to Mute)' : 'Volume OFF (Click to Unmute)'}
             aria-label={soundEnabled ? 'Mute Audio' : 'Enable Audio'}
           >
-            {soundEnabled ? (
-              <Volume2 className="w-4 h-4 text-[#15803d] dark:text-emerald-300" />
-            ) : (
-              <VolumeX className="w-4 h-4 text-[#b91c1c] dark:text-rose-300" />
-            )}
+            {soundEnabled ? <Volume2 className="w-[18px] h-[18px]" /> : <VolumeX className="w-[18px] h-[18px]" />}
           </button>
 
-          {/* Theme Toggle Button (Overworld Bright ☀️ vs Dark Mode 🌙) */}
+          {/* Theme Toggle */}
           <button
             onClick={onToggleTheme}
-            className="p-1.5 sm:p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#22283a] border-2 border-slate-200 dark:border-[#444] text-slate-700 dark:text-white transition active:translate-y-0.5 shadow-sm shrink-0"
-            title={theme === 'dark' ? 'Switch to Bright Light Mode ☀️' : 'Switch to Dark Mode 🌙'}
+            className={`${iconBtn} fz-btn-ghost`}
+            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            aria-label="Toggle theme"
           >
-            {theme === 'dark' ? (
-              <span className="text-sm sm:text-base leading-none select-none" title="Bright Light Mode ☀️">☀️</span>
-            ) : (
-              <span className="text-sm sm:text-base leading-none select-none" title="Dark Mode 🌙">🌙</span>
-            )}
+            {theme === 'dark' ? <Sun className="w-[18px] h-[18px] text-amber-300" /> : <Moon className="w-[18px] h-[18px] text-violet-600" />}
           </button>
 
-          {/* Notifications Bell Button */}
+          {/* Notifications */}
           <div className="relative shrink-0">
             <button
               onClick={onOpenNotifications}
-              className="p-1.5 sm:p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#22283a] border-2 border-slate-200 dark:border-[#444] text-slate-700 dark:text-white transition active:translate-y-0.5 shadow-sm"
+              className={`${iconBtn} fz-btn-ghost`}
               title="Notifications"
+              aria-label="Notifications"
             >
-              <Bell className="w-4 h-4" />
+              <Bell className="w-[18px] h-[18px]" />
             </button>
             {unreadNotificationCount > 0 && (
-              <span className="absolute -top-1 -right-1 min-w-[17px] h-[17px] px-0.5 rounded-full bg-[#f43f5e] border-2 border-white dark:border-[#181d2f] text-white font-black text-[9px] flex items-center justify-center font-['Fredoka'] pointer-events-none">
+              <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-gradient-to-r from-rose-500 to-fuchsia-500 ring-2 ring-white dark:ring-[#0a0b14] text-white font-bold text-[10px] flex items-center justify-center pointer-events-none tabular-nums">
                 {unreadNotificationCount > 9 ? '9+' : unreadNotificationCount}
               </span>
             )}
           </div>
 
-          {/* Player Profile Chip - Always pinned and fully visible on all mobile viewports */}
+          {/* Profile Chip */}
           <button
             onClick={onOpenProfile}
-            className="flex items-center gap-1 sm:gap-2 pl-1 pr-2 sm:pl-1.5 sm:pr-3 py-1 sm:py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-[#22283a] border-2 border-slate-200 dark:border-[#444] hover:border-pink-300 transition active:scale-95 shadow-sm shrink-0"
+            className="flex items-center gap-2 p-1 sm:pr-2.5 rounded-full fz-btn-ghost shrink-0"
             title="My Profile"
           >
-            <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gradient-to-tr from-[#fecdd3] to-[#fed7aa] border border-white flex items-center justify-center text-xs sm:text-sm shadow-sm shrink-0">
-              <span>{avatar.emoji}</span>
-            </div>
-            <span className="text-xs font-black text-slate-800 dark:text-white hidden md:block max-w-[85px] truncate font-['Fredoka']">
+            <AvatarBadge emoji={avatar.emoji} size="xs" />
+            <span className="text-xs font-bold text-slate-800 dark:text-white hidden md:block max-w-[90px] truncate">
               {displayName}
             </span>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+            <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0 hidden sm:block" />
           </button>
         </div>
       </div>
 
-      {/* Row 2: Mobile Stats Sub-bar (Streak, Coin, and Won icons at top on mobile) */}
-      <div className="flex md:hidden items-center justify-between gap-1.5 px-2.5 py-1.5 border-t border-slate-100 dark:border-slate-800/80 bg-slate-50/90 dark:bg-[#141824]/90 text-xs font-['Fredoka'] w-full">
-        <button
-          onClick={onOpenStats}
-          className="flex-1 flex items-center justify-center gap-1 py-1.5 px-1.5 rounded-xl bg-[#fef9c3] border border-[#fef08a] text-[#854d0e] font-black shadow-xs active:scale-95 transition min-w-0"
-          title="Your Coins"
-        >
-          <span className="text-xs shrink-0">🪙</span>
-          <span className="text-[11px] font-bold leading-tight truncate">{stats.coins} Coins</span>
-        </button>
-
-        <button
-          onClick={onOpenStats}
-          className="flex-1 flex items-center justify-center gap-1 py-1.5 px-1.5 rounded-xl bg-[#ffedd5] border border-[#fed7aa] text-[#c2410c] font-black shadow-xs active:scale-95 transition min-w-0"
-          title="Your Day Streak"
-        >
-          <span className="text-xs shrink-0">⭐</span>
-          <span className="text-[11px] font-bold leading-tight truncate">{stats.streak}d Streak</span>
-        </button>
-
-        <button
-          onClick={onOpenStats}
-          className="flex-1 flex items-center justify-center gap-1 py-1.5 px-1.5 rounded-xl bg-[#dcfce7] border border-[#bbf7d0] text-[#065f46] font-black shadow-xs active:scale-95 transition min-w-0"
-          title="Total Games Won"
-        >
-          <span className="text-xs shrink-0">🏆</span>
-          <span className="text-[11px] font-bold leading-tight truncate">{stats.totalGamesWon} Won</span>
-        </button>
+      {/* Mobile sub-bar: search + compact stats */}
+      <div className="flex md:hidden items-center gap-1.5 px-3 pb-2.5 w-full">
+        <div className="relative flex-1 min-w-0 group">
+          <Search className="w-4 h-4 text-slate-400 group-focus-within:text-violet-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none transition-colors" />
+          <input
+            type="text"
+            placeholder="Search games..."
+            value={searchQuery}
+            onChange={(e) => onSearchChange(e.target.value)}
+            className="w-full h-9 pl-9 pr-2 rounded-xl bg-slate-900/[0.04] dark:bg-white/[0.05] border border-slate-900/[0.06] dark:border-white/[0.08] text-sm font-medium text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-violet-500/60 focus:shadow-[0_0_0_4px_rgba(139,92,246,.15)] transition"
+          />
+        </div>
+        {statPills.map((p) => (
+          <button
+            key={p.key}
+            onClick={onOpenStats}
+            className="flex items-center justify-center gap-1 h-9 px-2 rounded-xl bg-slate-900/[0.04] dark:bg-white/[0.05] border border-slate-900/5 dark:border-white/[0.06] active:scale-95 transition shrink-0"
+            title={p.title}
+            aria-label={`${p.title}: ${p.value}`}
+          >
+            {p.icon}
+            <span className="text-[12px] font-bold tabular-nums">{p.value}</span>
+          </button>
+        ))}
       </div>
     </header>
   );

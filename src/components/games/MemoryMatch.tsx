@@ -212,7 +212,7 @@ export const MemoryMatch: React.FC<MemoryMatchProps> = ({
   const gridColsClass = level === 1 ? 'grid-cols-4' : level === 2 ? 'grid-cols-4' : 'grid-cols-5';
 
   return (
-    <div className="w-full max-w-md mx-auto flex flex-col items-center select-none pb-6 animate-fade-in font-['Fredoka']">
+    <div className="w-full max-w-md mx-auto flex flex-col items-center select-none pb-6 animate-fade-in font-sans">
       {/* Top Header info */}
       <div className="w-full flex items-center justify-between mb-3 px-1">
         <div className="flex items-center gap-1.5 sm:gap-2">

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Gift, Coins, Zap, CheckCircle2, PlayCircle } from 'lucide-react';
 import { PlayerStats } from '../../types';
 import { sound } from '../../lib/soundEffects';
 import confetti from 'canvas-confetti';
@@ -45,104 +45,90 @@ export const RewardsView: React.FC<RewardsViewProps> = ({
   };
 
   return (
-    <div className="w-full flex flex-col gap-4 sm:gap-6 animate-fade-in pb-12 font-['Fredoka']">
-      {/* Header Banner - Pastel Warm Sunset */}
-      <div className="p-5 sm:p-6 rounded-3xl bg-gradient-to-r from-[#fecdd3] via-[#fed7aa] to-[#fef08a] border-2 border-[#fde68a] shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-slate-900 relative overflow-hidden">
-        <div className="relative z-10">
-          <button
-            onClick={() => { sound.playTap(); onBackToHome(); }}
-            className="text-xs font-black text-[#9f1239] hover:underline flex items-center gap-1.5 mb-2.5 transition active:translate-y-0.5 font-['Fredoka']"
-          >
-            <ArrowLeft className="w-4 h-4" /> ← Back to Games
-          </button>
-          <div className="flex items-center gap-3">
-            <span className="text-3xl filter drop-shadow-sm">🎁</span>
+    <div className="w-full flex flex-col gap-4 sm:gap-5 animate-fade-in pb-12">
+      {/* Header */}
+      <div className="relative rounded-[1.75rem] overflow-hidden isolate p-5 sm:p-8 text-white border border-white/10">
+        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-amber-400 via-orange-500 to-rose-600" />
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(80%_100%_at_100%_0%,rgba(255,255,255,.35),transparent_60%)]" />
+        <Gift className="absolute -right-6 -bottom-8 w-48 h-48 text-white/15 -z-10 rotate-[-10deg]" strokeWidth={1.2} />
+
+        <button
+          onClick={() => { sound.playTap(); onBackToHome(); }}
+          className="h-8 px-3 -ml-1 mb-4 rounded-full bg-white/15 hover:bg-white/25 border border-white/25 text-xs font-semibold flex items-center gap-1.5 transition w-fit"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" /> Back to Games
+        </button>
+
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/80">Daily loot &amp; perks</p>
+            <h2 className="font-display text-2xl sm:text-4xl font-extrabold tracking-tight mt-1">Rewards &amp; Free Coins</h2>
+            <p className="text-sm text-white/85 mt-2 max-w-md">
+              Claim free daily bonus coins, keep your streak alive, and power up your games.
+            </p>
+          </div>
+          <div className="self-start sm:self-auto px-4 py-3 rounded-2xl bg-black/20 border border-white/25 backdrop-blur-md">
+            <span className="text-[10px] uppercase font-bold tracking-[0.16em] text-white/75 block">Your coins</span>
+            <span className="font-display text-2xl sm:text-3xl font-extrabold tabular-nums flex items-center gap-2">
+              <Coins className="w-6 h-6 text-amber-200" /> {stats.coins}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+        {/* Daily claim */}
+        <div className="fz-card p-5 sm:p-6 flex flex-col gap-5">
+          <div className="flex items-start gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-300 to-orange-500 flex items-center justify-center shadow-[0_12px_28px_-10px_rgba(249,115,22,.8)] shrink-0">
+              <Gift className="w-7 h-7 text-white" />
+            </div>
             <div>
-              <span className="text-[10px] font-black uppercase tracking-widest text-[#9a3412] block">
-                DAILY LOOT &amp; PERKS
-              </span>
-              <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-wide">
-                Rewards &amp; Free Coins
-              </h2>
+              <div className="flex items-center gap-2">
+                <h3 className="font-display text-lg font-bold text-slate-900 dark:text-white">Daily Bonus Gift</h3>
+                <span className="px-2 py-0.5 rounded-full bg-amber-400/15 text-amber-600 dark:text-amber-300 border border-amber-400/30 text-[10px] font-bold">FREE</span>
+              </div>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                Claim <b className="text-amber-600 dark:text-amber-300">+150 coins</b> and maintain your login streak.
+              </p>
             </div>
           </div>
-          <p className="text-xs text-slate-700 mt-1.5 font-medium max-w-md">
-            Claim free daily bonus coins, keep your streak alive, and power up your games!
-          </p>
+          <button
+            onClick={handleClaimDaily}
+            disabled={claimedDaily}
+            className={`h-12 w-full rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition ${
+              claimedDaily
+                ? 'bg-slate-900/5 dark:bg-white/5 text-slate-400 cursor-not-allowed border border-slate-900/5 dark:border-white/5'
+                : 'fz-btn-primary'
+            }`}
+          >
+            {claimedDaily ? <><CheckCircle2 className="w-4 h-4" /> Gift Claimed</> : <><Coins className="w-4 h-4" /> Claim +150 Coins</>}
+          </button>
         </div>
 
-        <div className="relative z-10 sm:text-right bg-white/70 dark:bg-black/30 px-4 py-2.5 rounded-2xl border border-amber-300 backdrop-blur-sm self-start sm:self-auto shadow-xs">
-          <span className="text-[9px] uppercase font-bold text-[#854d0e] dark:text-yellow-300 block mb-0.5">
-            YOUR COINS
-          </span>
-          <span className="text-xl sm:text-2xl font-black text-[#854d0e] dark:text-yellow-300 font-pixel">
-            {stats.coins} 🪙
-          </span>
-        </div>
-      </div>
-
-      {/* Daily Claim Box - Pastel Sunshine */}
-      <div className="p-5 sm:p-6 rounded-3xl bg-[#fef9c3] dark:bg-[#1f2638] border-2 border-[#fef08a] dark:border-slate-700 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 relative overflow-hidden">
-        <div className="flex items-center gap-3.5 w-full sm:w-auto">
-          {/* Question mark block badge */}
-          <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-[#fef08a] dark:bg-[#78350f]/40 border-2 border-[#facc15] text-[#854d0e] dark:text-[#fef08a] flex items-center justify-center text-2xl font-black shadow-xs shrink-0">
-            🎁
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white tracking-tight">
-                Daily Bonus Gift
-              </h3>
-              <span className="px-2 py-0.5 rounded-full bg-[#fef08a] text-[#854d0e] text-[10px] font-black">
-                FREE
-              </span>
+        {/* Sponsor chest */}
+        <div className="fz-card p-5 sm:p-6 flex flex-col gap-5">
+          <div className="flex items-start gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-300 to-teal-600 flex items-center justify-center shadow-[0_12px_28px_-10px_rgba(16,185,129,.8)] shrink-0">
+              <Zap className="w-7 h-7 text-white" />
             </div>
-            <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
-              Claim <strong className="text-[#854d0e] dark:text-amber-300 font-black">+150 Coins</strong> and maintain your login streak!
-            </p>
-          </div>
-        </div>
-
-        <button
-          onClick={handleClaimDaily}
-          disabled={claimedDaily}
-          className={`w-full sm:w-auto px-5 py-3 rounded-2xl font-black text-xs shadow-xs transition active:translate-y-0.5 shrink-0 ${
-            claimedDaily
-              ? 'bg-slate-200 dark:bg-slate-800 text-slate-500 cursor-not-allowed'
-              : 'bg-[#a7f3d0] hover:bg-[#6ee7b7] border-b-4 border-[#059669] text-[#064e3b]'
-          }`}
-        >
-          {claimedDaily ? 'GIFT CLAIMED ✓' : 'CLAIM +150 COINS 🪙'}
-        </button>
-      </div>
-
-      {/* Sponsor Video Chest - Pastel Mint */}
-      <div className="p-5 sm:p-6 rounded-3xl bg-[#dcfce7] dark:bg-[#162529] border-2 border-[#bbf7d0] dark:border-slate-700 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 relative overflow-hidden">
-        <div className="flex items-center gap-3.5 w-full sm:w-auto relative z-10">
-          <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-[#bbf7d0] dark:bg-[#064e3b]/50 border-2 border-[#86efac] text-emerald-800 dark:text-emerald-300 flex items-center justify-center text-2xl shadow-xs shrink-0">
-            ⚡
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white tracking-tight">
-                Bonus Stage Chest
-              </h3>
-              <span className="px-2 py-0.5 rounded-full bg-[#bbf7d0] text-[#065f46] text-[10px] font-black">
-                EXTRA
-              </span>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="font-display text-lg font-bold text-slate-900 dark:text-white">Bonus Stage Chest</h3>
+                <span className="px-2 py-0.5 rounded-full bg-emerald-400/15 text-emerald-600 dark:text-emerald-300 border border-emerald-400/30 text-[10px] font-bold">EXTRA</span>
+              </div>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                Unlock a treasure chest filled with <b className="text-emerald-600 dark:text-emerald-300">+250 coins</b>.
+              </p>
             </div>
-            <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
-              Unlock a treasure chest filled with <strong className="text-[#065f46] dark:text-emerald-300 font-black">+250 Coins</strong>!
-            </p>
           </div>
+          <button
+            onClick={handleWatchAdBonus}
+            className="h-12 w-full rounded-xl font-bold text-sm flex items-center justify-center gap-2 btn-tactile-green"
+          >
+            <PlayCircle className="w-4 h-4" /> Claim +250 Coins
+          </button>
         </div>
-
-        <button
-          onClick={handleWatchAdBonus}
-          className="w-full sm:w-auto px-5 py-3 rounded-2xl bg-[#fef9c3] hover:bg-[#fef08a] border-b-4 border-[#ca8a04] text-[#854d0e] font-black text-xs shadow-xs active:translate-y-0.5 transition shrink-0 relative z-10"
-        >
-          CLAIM +250 COINS 🪙
-        </button>
       </div>
     </div>
   );

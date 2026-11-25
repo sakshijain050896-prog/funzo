@@ -207,9 +207,9 @@ export const saveSoundPreference = (enabled: boolean) => {
 };
 
 export const getThemePreference = (): ThemeMode => {
-  if (typeof window === 'undefined') return 'light';
+  if (typeof window === 'undefined') return 'dark';
   const stored = localStorage.getItem(THEME_KEY);
-  return stored === 'dark' ? 'dark' : 'light';
+  return stored === 'light' ? 'light' : 'dark';
 };
 
 export const saveThemePreference = (theme: ThemeMode) => {

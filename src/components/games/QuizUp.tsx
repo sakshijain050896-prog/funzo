@@ -571,7 +571,7 @@ export const QuizUp: React.FC<QuizUpProps> = ({
 
                 <button
                   onClick={handleNextQuestion}
-                  className="w-full sm:w-auto shrink-0 flex items-center justify-center gap-1.5 bg-[#bae6fd] hover:bg-[#7dd3fc] text-[#0369a1] font-extrabold px-4 py-2 rounded-xl border-b-2 border-[#38bdf8] shadow-xs hover:shadow-sm active:translate-y-0.5 transition-all text-xs font-['Fredoka']"
+                  className="w-full sm:w-auto shrink-0 flex items-center justify-center gap-1.5 bg-[#bae6fd] hover:bg-[#7dd3fc] text-[#0369a1] font-extrabold px-4 py-2 rounded-xl border-b-2 border-[#38bdf8] shadow-xs hover:shadow-sm active:translate-y-0.5 transition-all text-xs font-sans"
                 >
                   <span>{currentIndex + 1 < questions.length ? 'Next Question ➔' : 'Complete Level 🏆'}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -654,7 +654,7 @@ export const QuizUp: React.FC<QuizUpProps> = ({
                     {hasPassed ? `LEVEL ${level} CLEARED` : `LEVEL ${level} NOT CLEARED`}
                   </span>
                 </div>
-                <h2 className="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white font-['Fredoka']">
+                <h2 className="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white font-sans">
                   {hasPassed ? `Level ${level} Passed! 🎉` : 'Passing Criteria Not Met!'}
                 </h2>
                 <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-md">
@@ -764,7 +764,7 @@ export const QuizUp: React.FC<QuizUpProps> = ({
                         startNewLevel(nextLevel, activeTopic, activeDifficulty);
                         showToast(`🎉 Welcome to Level ${nextLevel}!`);
                       }}
-                      className="flex items-center gap-2 bg-[#bae6fd] hover:bg-[#7dd3fc] text-[#0369a1] font-black px-7 py-3 rounded-2xl border-b-4 border-[#38bdf8] shadow-md hover:shadow-lg active:translate-y-0.5 transition-all text-sm font-['Fredoka']"
+                      className="flex items-center gap-2 bg-[#bae6fd] hover:bg-[#7dd3fc] text-[#0369a1] font-black px-7 py-3 rounded-2xl border-b-4 border-[#38bdf8] shadow-md hover:shadow-lg active:translate-y-0.5 transition-all text-sm font-sans"
                     >
                       <span>Pass to Level {level + 1}</span>
                       <ArrowRight className="w-4 h-4" />
@@ -772,7 +772,7 @@ export const QuizUp: React.FC<QuizUpProps> = ({
 
                     <button
                       onClick={() => startNewLevel(level, activeTopic, activeDifficulty)}
-                      className="flex items-center gap-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold px-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-600 transition-all text-sm font-['Fredoka']"
+                      className="flex items-center gap-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold px-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-600 transition-all text-sm font-sans"
                     >
                       <RotateCcw className="w-4 h-4" />
                       <span>Replay Level {level}</span>
@@ -785,7 +785,7 @@ export const QuizUp: React.FC<QuizUpProps> = ({
                         sound.playTap();
                         startNewLevel(level, activeTopic, activeDifficulty);
                       }}
-                      className="flex items-center gap-2 bg-rose-500 hover:bg-rose-600 text-white font-black px-7 py-3 rounded-2xl border-b-4 border-rose-700 shadow-md hover:shadow-lg active:translate-y-0.5 transition-all text-sm font-['Fredoka']"
+                      className="flex items-center gap-2 bg-rose-500 hover:bg-rose-600 text-white font-black px-7 py-3 rounded-2xl border-b-4 border-rose-700 shadow-md hover:shadow-lg active:translate-y-0.5 transition-all text-sm font-sans"
                     >
                       <RotateCcw className="w-4 h-4" />
                       <span>Retry Level {level} 🔄</span>
@@ -796,7 +796,7 @@ export const QuizUp: React.FC<QuizUpProps> = ({
                         sound.playTap();
                         startNewLevel(1, activeTopic, activeDifficulty);
                       }}
-                      className="flex items-center gap-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold px-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-600 transition-all text-sm font-['Fredoka']"
+                      className="flex items-center gap-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold px-4 py-3 rounded-2xl border border-slate-300 dark:border-slate-600 transition-all text-sm font-sans"
                     >
                       <span>Restart from Level 1 ↺</span>
                     </button>

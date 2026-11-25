@@ -128,7 +128,7 @@ export const TicTacToe: React.FC<TicTacToeProps> = ({ onWinOrActivity }) => {
   };
 
   return (
-    <div className="w-full max-w-sm mx-auto flex flex-col items-center select-none pb-4 font-['Fredoka']">
+    <div className="w-full max-w-sm mx-auto flex flex-col items-center select-none pb-4 font-sans">
       {/* Mode Switcher & Status */}
       <div className="w-full flex items-center justify-between mb-3 px-1">
         <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-white/95 dark:bg-[#181d2f]/95 border-2 border-slate-200 dark:border-slate-800 shadow-xs">

@@ -74,7 +74,7 @@ export const CelebrationModal: React.FC<CelebrationModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fade-in">
-      <div className="relative w-full max-w-sm rounded-3xl bg-white dark:bg-[#181d2f] border-4 border-black p-6 text-center shadow-[6px_6px_0_#000] overflow-hidden font-['Fredoka']">
+      <div className="relative w-full max-w-sm rounded-3xl bg-white dark:bg-[#181d2f] border-4 border-black p-6 text-center shadow-[6px_6px_0_#000] overflow-hidden font-sans">
         {/* Glow backdrop behind badge */}
         <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-44 h-44 bg-amber-500/20 rounded-full blur-3xl pointer-events-none" />
 

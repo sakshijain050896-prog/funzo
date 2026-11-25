@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { Play, Sparkles } from 'lucide-react';
+import { Sparkles, Search, LayoutGrid, Lightbulb, Brain, Flame, Smile, LucideIcon } from 'lucide-react';
+import { ReelCard } from './GameArt';
 import { GameKey } from './PopularGames';
 import { sound } from '../../lib/soundEffects';
 
@@ -253,12 +254,12 @@ export const QUIZ_TOPIC_ITEMS: GameCatalogItem[] = [
   },
 ];
 
-const CATEGORY_TABS: { id: CategoryFilter; label: string; emoji: string }[] = [
-  { id: 'all', label: 'All Games', emoji: '⭐' },
-  { id: 'quiz', label: 'Quiz Up', emoji: '💡' },
-  { id: 'brain', label: 'Brain & Logic', emoji: '🧩' },
-  { id: 'social', label: 'Party & Social', emoji: '🔥' },
-  { id: 'kids', label: 'Kids Games', emoji: '🎈' },
+const CATEGORY_TABS: { id: CategoryFilter; label: string; emoji: string; icon: LucideIcon }[] = [
+  { id: 'all', label: 'All Games', emoji: '⭐', icon: LayoutGrid },
+  { id: 'quiz', label: 'Quiz Up', emoji: '💡', icon: Lightbulb },
+  { id: 'brain', label: 'Brain & Logic', emoji: '🧩', icon: Brain },
+  { id: 'social', label: 'Party & Social', emoji: '🔥', icon: Flame },
+  { id: 'kids', label: 'Kids Games', emoji: '🎈', icon: Smile },
 ];
 
 interface AllGamesCatalogProps {
@@ -283,142 +284,120 @@ export const AllGamesCatalog: React.FC<AllGamesCatalogProps> = ({
     const q = searchQuery.trim().toLowerCase();
     if (q.length > 0) {
       // Search matches across both general games and all specific Quiz Up topics
-      return [...ALL_GAMES_DATA, ...QUIZ_TOPIC_ITEMS].filter((game) => 
+      return [...ALL_GAMES_DATA, ...QUIZ_TOPIC_ITEMS].filter((game) =>
         game.title.toLowerCase().includes(q) ||
         game.genreLabel.toLowerCase().includes(q) ||
         game.tag.toLowerCase().includes(q)
       );
     }
     if (selectedCategory === 'all') {
-      // In "All Games" tab, show one clean single row for Quiz Up
+      // In "All Games" tab, show one clean single card for Quiz Up
       return ALL_GAMES_DATA;
     }
     if (selectedCategory === 'quiz') {
-      // In "Quiz Up" category, ALL topic-wise lines should come!
+      // In "Quiz Up" category, ALL topic-wise cards should come!
       return QUIZ_TOPIC_ITEMS;
     }
     return ALL_GAMES_DATA.filter((game) => game.genre === selectedCategory);
   }, [searchQuery, selectedCategory]);
 
   const activeTabInfo = CATEGORY_TABS.find((t) => t.id === selectedCategory);
+  const isSearching = searchQuery.trim().length > 0;
 
   return (
-    <section className="w-full flex flex-col gap-3 mb-5 animate-fade-in">
+    <section className="w-full flex flex-col gap-4 sm:gap-5 mb-6 animate-fade-in" id="games">
       {/* ---------------- CATEGORY FILTER TABS ---------------- */}
-      <div className="w-full flex items-center justify-between gap-1.5">
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 w-full">
-          {CATEGORY_TABS.map((tab) => {
-            const isSelected = selectedCategory === tab.id && !searchQuery.trim();
-            const count = tab.id === 'all' 
-              ? ALL_GAMES_DATA.length 
-              : tab.id === 'quiz'
-              ? QUIZ_TOPIC_ITEMS.length
-              : ALL_GAMES_DATA.filter((g) => g.genre === tab.id).length;
+      <div className="w-full flex items-center gap-2 overflow-x-auto no-scrollbar -mx-1 px-1 py-1">
+        {CATEGORY_TABS.map((tab) => {
+          const isSelected = selectedCategory === tab.id && !isSearching;
+          const count = tab.id === 'all'
+            ? ALL_GAMES_DATA.length
+            : tab.id === 'quiz'
+            ? QUIZ_TOPIC_ITEMS.length
+            : ALL_GAMES_DATA.filter((g) => g.genre === tab.id).length;
+          const Icon = tab.icon;
 
-            let tabActiveStyle = 'bg-[#c7d2fe] text-[#312e81] border-2 border-[#a5b4fc] shadow-sm';
-            if (tab.id === 'quiz') tabActiveStyle = 'bg-[#fef08a] text-[#854d0e] border-2 border-[#fde047] shadow-sm';
-            if (tab.id === 'all') tabActiveStyle = 'bg-[#fef3c7] text-[#92400e] border-2 border-[#fde68a] shadow-sm';
-            if (tab.id === 'brain') tabActiveStyle = 'bg-[#bae6fd] text-[#0369a1] border-2 border-[#7dd3fc] shadow-sm';
-            if (tab.id === 'social') tabActiveStyle = 'bg-[#fecdd3] text-[#9f1239] border-2 border-[#fda4af] shadow-sm';
-            if (tab.id === 'kids') tabActiveStyle = 'bg-[#a7f3d0] text-[#065f46] border-2 border-[#6ee7b7] shadow-sm';
-
-            return (
-              <button
-                key={tab.id}
-                onClick={() => {
-                  sound.playTap();
-                  setSelectedCategory(tab.id);
-                }}
-                className={`px-3 py-1.5 rounded-2xl text-xs font-black flex items-center gap-1.5 shrink-0 transition-all font-['Fredoka'] ${
-                  isSelected
-                    ? `${tabActiveStyle} scale-[1.02]`
-                    : 'bg-white/80 dark:bg-[#181d2f]/80 text-slate-700 dark:text-slate-300 border-2 border-slate-200 dark:border-slate-700/60 hover:bg-slate-50 shadow-sm'
-                }`}
-              >
-                <span>{tab.emoji}</span>
-                <span>{tab.label}</span>
-                <span className={`text-[10px] px-1.5 py-0.2 rounded-md font-pixel ${
-                  isSelected 
-                    ? 'bg-black/10 text-current' 
-                    : 'bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-400'
-                }`}>
-                  {count}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+          return (
+            <button
+              key={tab.id}
+              onClick={() => {
+                sound.playTap();
+                setSelectedCategory(tab.id);
+              }}
+              className={`group relative h-10 pl-3 pr-2 rounded-full text-[13px] font-semibold flex items-center gap-2 shrink-0 transition-all duration-200 ${
+                isSelected
+                  ? 'fz-btn-primary'
+                  : 'fz-btn-ghost text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              <Icon className={`w-4 h-4 ${isSelected ? 'text-white' : 'text-violet-500 dark:text-violet-400'}`} />
+              <span className="whitespace-nowrap">{tab.label}</span>
+              <span className={`min-w-[22px] h-[22px] px-1.5 rounded-full text-[11px] font-bold flex items-center justify-center tabular-nums ${
+                isSelected
+                  ? 'bg-white/25 text-white'
+                  : 'bg-slate-900/5 dark:bg-white/10 text-slate-500 dark:text-slate-400'
+              }`}>
+                {count}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
-      {/* Active Category / Search Banner */}
-      {searchQuery.trim().length > 0 ? (
-        <div className="flex items-center gap-1.5 px-1 text-xs font-black text-slate-700 dark:text-slate-300 font-['Fredoka']">
-          <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-          <span>Search Results for &ldquo;{searchQuery}&rdquo; ({filteredGames.length} games)</span>
+      {/* Section heading */}
+      <div className="flex items-end justify-between gap-3 px-0.5">
+        <div className="min-w-0">
+          {isSearching ? (
+            <>
+              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-violet-500 dark:text-violet-400 flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5" /> Search
+              </p>
+              <h2 className="font-display text-lg sm:text-2xl font-bold text-slate-900 dark:text-white truncate">
+                Results for &ldquo;{searchQuery}&rdquo;
+              </h2>
+            </>
+          ) : (
+            <>
+              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-violet-500 dark:text-violet-400">
+                {selectedCategory === 'all' ? 'Browse' : 'Category'}
+              </p>
+              <h2 className="font-display text-lg sm:text-2xl font-bold text-slate-900 dark:text-white">
+                {selectedCategory === 'all'
+                  ? 'All Games'
+                  : selectedCategory === 'quiz'
+                  ? 'Quiz Up Topics'
+                  : `${activeTabInfo?.label} Games`}
+              </h2>
+            </>
+          )}
         </div>
-      ) : selectedCategory !== 'all' && (
-        <div className="flex items-center justify-between px-1 text-xs font-black text-slate-700 dark:text-slate-300 font-['Fredoka']">
-          <div className="flex items-center gap-1.5">
-            <span>{activeTabInfo?.emoji}</span>
-            <span>{selectedCategory === 'quiz' ? 'Quiz Up Topics' : `${activeTabInfo?.label} Games`}</span>
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-200 dark:bg-white/10 text-slate-700 dark:text-slate-300">
-              {filteredGames.length} {selectedCategory === 'quiz' ? 'Topics' : 'Games'}
-            </span>
-          </div>
-        </div>
-      )}
+        <span className="shrink-0 text-xs font-semibold text-slate-500 dark:text-slate-400 tabular-nums">
+          {filteredGames.length} {selectedCategory === 'quiz' && !isSearching ? 'topics' : 'games'}
+        </span>
+      </div>
 
-      {/* ---------------- GAMES PARALLELLY LINED UP (PARALLEL BROAD HORIZONTAL LINES) ---------------- */}
+      {/* ---------------- REEL CARD GRID ---------------- */}
       {filteredGames.length > 0 ? (
-        <div className="flex flex-col gap-2 sm:gap-2.5 w-full">
-          {filteredGames.map((game, idx) => {
-            const theme = CATEGORY_THEMES[game.genre] || CATEGORY_THEMES.brain;
-            return (
-              <div
-                key={`${game.id}-${game.subTab || idx}`}
-                onClick={() => {
-                  sound.playTap();
-                  onSelectGame(game.id, game.subTab);
-                }}
-                className="w-full p-2.5 sm:p-3 rounded-2xl bg-white/95 dark:bg-[#181d2f]/95 backdrop-blur-sm border-2 border-slate-200 dark:border-slate-700/60 shadow-sm hover:shadow-md hover:border-indigo-300 dark:hover:border-indigo-500/50 hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-between gap-3 group"
-              >
-                {/* Left: Game Icon & Title */}
-                <div className="flex items-center gap-3 overflow-hidden min-w-0">
-                  <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-tr ${game.bgGradient} border-2 border-white dark:border-slate-700 flex items-center justify-center text-xl sm:text-2xl shadow-sm shrink-0 group-hover:scale-105 transition-transform`}>
-                    {game.emoji}
-                  </div>
-
-                  <div className="flex items-center gap-2 overflow-hidden min-w-0 flex-wrap">
-                    <h4 className="text-xs sm:text-sm font-black text-slate-900 dark:text-white leading-tight font-['Fredoka'] group-hover:text-[#e52521] dark:group-hover:text-[#ff4a47] transition-colors truncate">
-                      {game.title}
-                    </h4>
-                    <span className={`text-[9px] font-black px-1.5 py-0.2 rounded-md font-['Fredoka'] shrink-0 ${theme.tagBg}`}>
-                      {game.tag}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Right: Small Play Button */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    sound.playTap();
-                    onSelectGame(game.id, game.subTab);
-                  }}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1 shrink-0 transition font-['Fredoka'] ${theme.buttonBg}`}
-                >
-                  <span>Play</span>
-                  <Play className="w-3 h-3 fill-current" />
-                </button>
-              </div>
-            );
-          })}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 w-full">
+          {filteredGames.map((game, idx) => (
+            <ReelCard
+              key={`${game.id}-${game.subTab || idx}`}
+              game={game}
+              index={idx}
+              onPlay={() => {
+                sound.playTap();
+                onSelectGame(game.id, game.subTab);
+              }}
+            />
+          ))}
         </div>
       ) : (
-        <div className="p-6 rounded-2xl bg-white dark:bg-[#161a29] border-2 border-black dark:border-[#2f3752] text-center shadow-[2px_2px_0_#000]">
-          <span className="text-2xl mb-1 block">🔍</span>
-          <p className="text-xs font-black text-slate-800 dark:text-white font-['Fredoka']">No games found</p>
-          <p className="text-[10px] text-slate-500 dark:text-slate-400 font-['Fredoka'] mt-0.5">Try another search keyword or select All Games.</p>
+        <div className="fz-card p-10 text-center flex flex-col items-center">
+          <div className="w-14 h-14 rounded-2xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center mb-3">
+            <Search className="w-6 h-6 text-violet-500" />
+          </div>
+          <p className="font-display text-base font-bold text-slate-900 dark:text-white">No games found</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Try another keyword or browse All Games.</p>
         </div>
       )}
     </section>

@@ -32,7 +32,7 @@ export const InstallAppModal: React.FC<InstallAppModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-3 sm:p-4 animate-fade-in font-['Fredoka']">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-3 sm:p-4 animate-fade-in font-sans">
       <div className="relative w-full max-w-lg rounded-3xl bg-white dark:bg-[#181d2f] border-4 border-black p-4 sm:p-6 shadow-[8px_8px_0_#000] max-h-[90vh] flex flex-col text-slate-900 dark:text-white">
         
         {/* Header */}

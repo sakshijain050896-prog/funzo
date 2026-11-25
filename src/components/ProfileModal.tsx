@@ -200,13 +200,13 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
     >
       <div 
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-sm rounded-3xl bg-white dark:bg-[#181d2f] border-4 border-black p-5 shadow-[6px_6px_0_#000] text-center my-6 font-['Fredoka'] max-h-[92vh] overflow-y-auto"
+        className="relative w-full max-w-sm rounded-3xl bg-white dark:bg-[#181d2f] border-4 border-black p-5 shadow-[6px_6px_0_#000] text-center my-6 font-sans max-h-[92vh] overflow-y-auto"
       >
         {/* Top Header Bar with prominent Title and Red Mario Close Button */}
         <div className="flex items-center justify-between pb-3 mb-3 border-b-2 border-slate-200 dark:border-white/10">
           <div className="flex items-center gap-2">
             <span className="text-xl">👤</span>
-            <h2 className="text-base font-black text-slate-900 dark:text-white font-['Fredoka']">
+            <h2 className="text-base font-black text-slate-900 dark:text-white font-sans">
               Player Profile
             </h2>
           </div>
@@ -329,7 +329,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
             {/* Save Profile Button */}
             <button
               onClick={handleSaveProfile}
-              className="w-full py-2.5 rounded-2xl bg-[#00a859] hover:bg-[#00c868] border-b-4 border-[#006633] text-white font-black text-xs shadow-md active:translate-y-0.5 transition flex items-center justify-center gap-1.5 font-['Fredoka']"
+              className="w-full py-2.5 rounded-2xl bg-[#00a859] hover:bg-[#00c868] border-b-4 border-[#006633] text-white font-black text-xs shadow-md active:translate-y-0.5 transition flex items-center justify-center gap-1.5 font-sans"
             >
               {isSaved ? (
                 <>
@@ -514,7 +514,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
         {/* Bottom Close Button */}
         <button
           onClick={() => { sound.playTap(); onClose(); }}
-          className="w-full mt-4 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-slate-700 dark:text-slate-200 text-xs font-black transition flex items-center justify-center gap-1.5 active:translate-y-0.5 cursor-pointer font-['Fredoka']"
+          className="w-full mt-4 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-slate-700 dark:text-slate-200 text-xs font-black transition flex items-center justify-center gap-1.5 active:translate-y-0.5 cursor-pointer font-sans"
         >
           <X className="w-4 h-4 stroke-[2.5]" />
           <span>Close Window</span>
