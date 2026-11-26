@@ -139,7 +139,7 @@ const listeners = new Set<() => void>();
 const recoveryListeners = new Set<() => void>();
 // The recovery event can fire before React subscribes (Supabase parses the URL on load)
 let pendingRecovery =
-  typeof window !== 'undefined' && /type=recovery/.test(window.location.hash + window.location.search);
+  typeof window !== 'undefined' && /type=(recovery|invite)/.test(window.location.hash + window.location.search); // invite = owner/admin invite link: set first password
 const emit = () => listeners.forEach((l) => l());
 
 const toAuthUser = (u: User | null | undefined): AuthUser | null =>

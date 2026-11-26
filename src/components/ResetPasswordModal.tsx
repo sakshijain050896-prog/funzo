@@ -39,7 +39,7 @@ export const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({ isOpen, 
         <div className="w-12 h-12 rounded-2xl bg-violet-500/15 text-violet-500 flex items-center justify-center mb-3">
           <KeyRound className="w-6 h-6" />
         </div>
-        <h2 className="font-display text-lg font-bold text-slate-900 dark:text-white">Set a new password</h2>
+        <h2 className="font-display text-lg font-bold text-slate-900 dark:text-white">Set your password</h2>
         <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">Choose a password with at least 8 characters.</p>
         <input type="password" autoComplete="new-password" placeholder="New password" value={pw} onChange={(e) => setPw(e.target.value)} className={`${field} mb-2`} aria-label="New password" />
         <input type="password" autoComplete="new-password" placeholder="Repeat new password" value={pw2} onChange={(e) => setPw2(e.target.value)} className={`${field} mb-3`} aria-label="Repeat new password" />
